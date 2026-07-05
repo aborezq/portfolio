@@ -51,7 +51,7 @@
       <div class="hero-meta container">
         <span class="hero-kicker">Creative Portfolio</span>
         <a class="hero-arrow" href="#about" aria-label="Scroll to about section">
-          <svg viewBox="0 0 64 16" width="64" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M0 8h60M54 2l7 6-7 6"/></svg>
+          <svg viewBox="0 0 16 64" width="16" height="64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 0v60M2 54l6 7 6-7"/></svg>
         </a>
       </div>
 
@@ -190,26 +190,26 @@
         <div class="filter-bar reveal" role="group" aria-label="Filter projects by category">
           <button class="filter-btn is-active" data-filter="all" aria-pressed="true">All</button>
           <button class="filter-btn" data-filter="web" aria-pressed="false">Web</button>
-          <button class="filter-btn" data-filter="mobile" aria-pressed="false">Mobile</button>
           <button class="filter-btn" data-filter="ml" aria-pressed="false">ML &amp; Data</button>
+          <button class="filter-btn" data-filter="java" aria-pressed="false">Java</button>
+          <button class="filter-btn" data-filter="systems" aria-pressed="false">Systems &amp; Networks</button>
         </div>
 
         <ul class="projects-grid" id="projects-grid">
 
-          <li class="project-card reveal" data-category="mobile">
-            <div class="project-cover" aria-hidden="true"><span>SM</span></div>
+          <li class="project-card reveal" data-category="ml">
+            <div class="project-cover" aria-hidden="true"><span>ML</span></div>
             <div class="project-body">
-              <h3 class="project-title">Student Management System</h3>
+              <h3 class="project-title">ML Research</h3>
               <p class="project-desc">
-                Full Flutter application built as my final project: authentication,
-                complete CRUD for student records, and a clean, consistent UI.
+                A growing collection of machine-learning work: Python, data science,
+                deep learning, and data-analysis experiments and notes.
               </p>
               <ul class="project-tags" aria-label="Technologies used">
-                <li>Flutter</li><li>Dart</li><li>Auth</li><li>CRUD</li>
+                <li>Python</li><li>Data Science</li><li>Deep Learning</li>
               </ul>
               <div class="project-links">
-                <a href="#" aria-label="Source code of Student Management System (link coming soon)">Code ↗</a>
-                <a href="#" aria-label="Live demo of Student Management System (link coming soon)">Demo ↗</a>
+                <a href="https://github.com/aborezq/ML_Research" target="_blank" rel="noopener noreferrer" aria-label="Source code of ML Research on GitHub">Code ↗</a>
               </div>
             </div>
           </li>
@@ -217,7 +217,7 @@
           <li class="project-card reveal" data-category="ml">
             <div class="project-cover" aria-hidden="true"><span>CP</span></div>
             <div class="project-body">
-              <h3 class="project-title">Customer Churn Prediction</h3>
+              <h3 class="project-title">Bank Customer Churn Prediction</h3>
               <p class="project-desc">
                 End-to-end machine-learning pipeline: exploratory data analysis,
                 model comparison, and feature-importance interpretation.
@@ -231,19 +231,19 @@
             </div>
           </li>
 
-          <li class="project-card reveal" data-category="web">
-            <div class="project-cover" aria-hidden="true"><span>CE</span></div>
+          <li class="project-card reveal" data-category="ml">
+            <div class="project-cover" aria-hidden="true"><span>PR</span></div>
             <div class="project-body">
-              <h3 class="project-title">Campus Event Management System</h3>
+              <h3 class="project-title">Pattern Recognition Research</h3>
               <p class="project-desc">
-                Software-engineering project covering the full lifecycle: requirements
-                specification, usage scenarios, and structured test cases.
+                Analytical study: when feature scaling changes the optimal
+                classifier in pattern recognition.
               </p>
               <ul class="project-tags" aria-label="Technologies used">
-                <li>Software Engineering</li><li>UML</li><li>Test Cases</li>
+                <li>Pattern Recognition</li><li>Feature Scaling</li><li>Research</li>
               </ul>
               <div class="project-links">
-                <a href="#" aria-label="Documentation of Campus Event Management System (link coming soon)">Docs ↗</a>
+                <a href="https://github.com/aborezq/Pattern-Recognition-Research" target="_blank" rel="noopener noreferrer" aria-label="Source code of Pattern Recognition Research on GitHub">Code ↗</a>
               </div>
             </div>
           </li>
@@ -265,24 +265,24 @@
             </div>
           </li>
 
-          <li class="project-card reveal" data-category="mobile">
-            <div class="project-cover" aria-hidden="true"><span>SU</span></div>
+          <li class="project-card reveal" data-category="java">
+            <div class="project-cover" aria-hidden="true"><span>IT</span></div>
             <div class="project-body">
-              <h3 class="project-title">Smart University Portal</h3>
+              <h3 class="project-title">IT Company</h3>
               <p class="project-desc">
-                Multi-screen Flutter app for university services with structured
-                navigation and a reusable widget architecture.
+                Java application modeling an IT company: OOP design, class
+                relationships, collections (ArrayList), and file handling.
               </p>
               <ul class="project-tags" aria-label="Technologies used">
-                <li>Flutter</li><li>Dart</li><li>Multi-screen</li>
+                <li>Java</li><li>OOP</li><li>Collections</li><li>File I/O</li>
               </ul>
               <div class="project-links">
-                <a href="#" aria-label="Source code of Smart University Portal (link coming soon)">Code ↗</a>
+                <a href="https://github.com/aborezq/IT-Company" target="_blank" rel="noopener noreferrer" aria-label="Source code of IT Company on GitHub">Code ↗</a>
               </div>
             </div>
           </li>
 
-          <li class="project-card reveal" data-category="net">
+          <li class="project-card reveal" data-category="systems">
             <div class="project-cover" aria-hidden="true"><span>CN</span></div>
             <div class="project-body">
               <h3 class="project-title">Campus Network Design</h3>
@@ -299,19 +299,36 @@
             </div>
           </li>
 
-          <li class="project-card reveal" data-category="ml">
-            <div class="project-cover" aria-hidden="true"><span>AI</span></div>
+          <li class="project-card reveal" data-category="java">
+            <div class="project-cover" aria-hidden="true"><span>LS</span></div>
             <div class="project-body">
-              <h3 class="project-title">AI Design Visualization</h3>
+              <h3 class="project-title">Library System</h3>
               <p class="project-desc">
-                Freelance generative-AI work for real clients: photorealistic interior
-                concepts for wedding halls and cafés, from brief to final render.
+                Library management system built in Java with a clean
+                object-oriented structure for books, members, and loans.
               </p>
               <ul class="project-tags" aria-label="Technologies used">
-                <li>Generative AI</li><li>Prompt Design</li><li>Client Work</li>
+                <li>Java</li><li>OOP</li>
               </ul>
               <div class="project-links">
-                <a href="#" aria-label="Gallery of AI Design Visualization (link coming soon)">Gallery ↗</a>
+                <a href="https://github.com/aborezq/Library_System" target="_blank" rel="noopener noreferrer" aria-label="Source code of Library System on GitHub">Code ↗</a>
+              </div>
+            </div>
+          </li>
+
+          <li class="project-card reveal" data-category="systems">
+            <div class="project-cover" aria-hidden="true"><span>CS</span></div>
+            <div class="project-body">
+              <h3 class="project-title">Control System</h3>
+              <p class="project-desc">
+                Control-system designs for classic automation scenarios:
+                a traffic-signal controller and a water-pump controller.
+              </p>
+              <ul class="project-tags" aria-label="Technologies used">
+                <li>Automation</li><li>Control Systems</li>
+              </ul>
+              <div class="project-links">
+                <a href="https://github.com/aborezq/Control-System" target="_blank" rel="noopener noreferrer" aria-label="Source code of Control System on GitHub">Code ↗</a>
               </div>
             </div>
           </li>

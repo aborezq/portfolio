@@ -276,7 +276,7 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   color: var(--accent);
 }
 .hero-arrow { color: var(--accent); transition: transform 0.3s var(--ease); }
-.hero-arrow:hover { transform: translateX(6px); }
+.hero-arrow:hover { transform: translateY(6px); }
 
 /* The stage stacks three layers in one grid cell:
    1. filled word  →  2. photo  →  3. outlined word (over the face) */
