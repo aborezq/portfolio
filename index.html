@@ -10,6 +10,24 @@
 
   <link rel="preload" href="assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Theme is resolved before first paint so a saved (or OS) light preference
+       never flashes the dark palette. Kept in sync with script.js §1. -->
+  <script>
+    (() => {
+      const root = document.documentElement;
+      try {
+        const saved = localStorage.getItem("preferred-theme");
+        if (saved === "light" || saved === "dark") {
+          root.dataset.theme = saved;
+          return;
+        }
+      } catch { /* storage unavailable — fall through to the OS preference */ }
+      if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        root.dataset.theme = "light";
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>

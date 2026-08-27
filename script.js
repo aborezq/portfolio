@@ -5,20 +5,27 @@
 "use strict";
 
 /* --------------------------------------------------------------------------
-   1. Theme toggle — preference kept in a JS variable (+ localStorage so it
-      survives a refresh when available).
+   1. Theme toggle — the inline script in <head> already resolved the theme
+      before first paint, so this only mirrors it in the UI and handles clicks.
+      An explicit click is persisted; merely following the OS setting is not.
    -------------------------------------------------------------------------- */
-let currentTheme = "dark";
-
 const themeToggle = document.getElementById("theme-toggle");
 const rootEl = document.documentElement;
+const lightMedia = window.matchMedia("(prefers-color-scheme: light)");
 
-const applyTheme = (theme) => {
+let currentTheme = rootEl.dataset.theme === "light" ? "light" : "dark";
+
+// Reflect a theme in the DOM and on the toggle, without writing to storage.
+const syncTheme = (theme) => {
   currentTheme = theme;
   rootEl.dataset.theme = theme;
   const toLight = theme === "dark";
   themeToggle.setAttribute("aria-label", `Switch to ${toLight ? "light" : "dark"} theme`);
   themeToggle.setAttribute("aria-pressed", String(theme === "light"));
+};
+
+const applyTheme = (theme) => {
+  syncTheme(theme);
   try {
     localStorage.setItem("preferred-theme", theme);
   } catch {
@@ -26,14 +33,24 @@ const applyTheme = (theme) => {
   }
 };
 
-// Restore a saved preference, if any
-try {
-  const saved = localStorage.getItem("preferred-theme");
-  if (saved === "light" || saved === "dark") applyTheme(saved);
-} catch { /* ignore */ }
+const storedTheme = () => {
+  try {
+    return localStorage.getItem("preferred-theme");
+  } catch {
+    return null; /* storage unavailable */
+  }
+};
+
+syncTheme(currentTheme); // label the toggle to match what <head> already painted
 
 themeToggle.addEventListener("click", () => {
   applyTheme(currentTheme === "dark" ? "light" : "dark");
+});
+
+// No explicit choice saved? Keep following the OS as the visitor changes it.
+lightMedia.addEventListener("change", (e) => {
+  const saved = storedTheme();
+  if (saved !== "light" && saved !== "dark") syncTheme(e.matches ? "light" : "dark");
 });
 
 /* --------------------------------------------------------------------------
@@ -186,6 +203,7 @@ filterButtons.forEach((btn) => {
 const form = document.getElementById("contact-form");
 const formStatus = document.getElementById("form-status");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const CONTACT_EMAIL = "momoawad2004@gmail.com";
 
 const validators = {
   "cf-name": (v) => (v.trim().length >= 2 ? "" : "Please enter your name (at least 2 characters)."),
@@ -222,10 +240,17 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  // No backend wired up yet — acknowledge and reset
-  formStatus.textContent = "Thanks! Your message passed validation — hook up a backend or email service to deliver it.";
-  form.reset();
-  fields.forEach((f) => f.classList.remove("is-invalid"));
+  // Static host, no backend: hand the message to the visitor's mail client.
+  const [name, email, message] = fields.map((f) => f.value.trim());
+  const subject = `Portfolio message from ${name}`;
+  const body = `${message}\n\n— ${name} (${email})`;
+  window.location.href =
+    `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  // Deliberately not resetting: when no mail client is configured mailto: does
+  // nothing at all, and the visitor still needs their text to copy out.
+  formStatus.textContent =
+    `Opening your email app… if nothing happened, send your message to ${CONTACT_EMAIL} directly.`;
 });
 
 /* --------------------------------------------------------------------------

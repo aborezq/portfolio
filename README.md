@@ -12,19 +12,21 @@ build step, no external requests (fonts are self-hosted).
 ```
 index.html    — semantic, accessible markup
 style.css     — custom properties, Grid/Flexbox, animations, light/dark themes
-script.js     — ES6+: typing effect, IntersectionObserver reveals, filters, validation
+script.js     — ES6+: theme, typing effect, IntersectionObserver reveals, filters, validation
 assets/       — profile photo + self-hosted woff2 fonts (Anton, Inter)
 ```
 
 ## Features
 
 - Cover-style hero: layered display type behind & in front of the portrait
-- Light/dark theme toggle with saved preference
+- Light/dark theme: follows `prefers-color-scheme`, remembers an explicit
+  choice, and is resolved before first paint so nothing flashes
 - Animated typing effect cycling through roles
 - Sticky nav, smooth scroll, active-section highlighting
 - Scroll-reveal animations and animated skill bars (IntersectionObserver)
-- Project filtering (All / Web / Mobile / ML & Data)
-- Contact form with client-side validation
+- Project filtering (All / Web / ML & Data / Java / Systems & Networks)
+- Contact form with client-side validation, handed off to the visitor's mail
+  client via `mailto:` (no backend, no third-party requests)
 - Fully responsive, mobile-first, hamburger menu
 - Accessibility: skip link, ARIA labels, focus styles, `prefers-reduced-motion`
 
