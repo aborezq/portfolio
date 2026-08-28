@@ -56,7 +56,7 @@ lightMedia.addEventListener("change", (e) => {
 /* --------------------------------------------------------------------------
    2. Typing effect — cycles through roles with type / pause / delete phases.
    -------------------------------------------------------------------------- */
-const ROLES = ["Front-End Developer", "Computer Engineer", "Problem Solver"];
+const ROLES = ["Computer Engineer", "Problem Solver"];
 const typedEl = document.getElementById("typed");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -205,6 +205,17 @@ const formStatus = document.getElementById("form-status");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CONTACT_EMAIL = "momoawad2004@gmail.com";
 
+/* Where the contact form POSTs its JSON. Leave empty and the form falls back to
+   opening the visitor's mail client, which is unreliable — set this before the
+   site goes on a real domain so messages actually reach an inbox.
+
+   Paste the endpoint from whichever service you sign up for, e.g.
+     Formspree   https://formspree.io/f/xxxxxxxx
+     Web3Forms   https://api.web3forms.com/submit   (also needs an access_key field)
+     Netlify     handled by the host, see their forms docs
+   Anything that accepts a JSON POST of { name, email, message } works. */
+const FORM_ENDPOINT = "";
+
 const validators = {
   "cf-name": (v) => (v.trim().length >= 2 ? "" : "Please enter your name (at least 2 characters)."),
   "cf-email": (v) => (EMAIL_RE.test(v.trim()) ? "" : "Please enter a valid email address."),
@@ -227,7 +238,35 @@ Object.keys(validators).forEach((id) => {
   });
 });
 
-form.addEventListener("submit", (e) => {
+const submitBtn = document.getElementById("cf-submit");
+const honeypot = document.getElementById("cf-company");
+
+const setStatus = (text, state) => {
+  formStatus.textContent = text;
+  formStatus.classList.toggle("is-ok", state === "ok");
+  formStatus.classList.toggle("is-error", state === "error");
+};
+
+const setSending = (sending) => {
+  submitBtn.disabled = sending;
+  submitBtn.textContent = sending ? "Sending…" : "Send message";
+};
+
+// Fallback for when no endpoint is configured: hand the message to the
+// visitor's mail client. Unreliable — mailto: does nothing at all when no mail
+// client is set up — so it is a stopgap, not the delivery path.
+const handOffToMailClient = ({ name, email, message }) => {
+  const subject = `Portfolio message from ${name}`;
+  const body = `${message}\n\n— ${name} (${email})`;
+  window.location.href =
+    `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  setStatus(
+    `Opening your email app… if nothing happened, send your message to ${CONTACT_EMAIL} directly.`,
+    "ok"
+  );
+};
+
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const fields = Object.keys(validators).map((id) => document.getElementById(id));
@@ -236,21 +275,51 @@ form.addEventListener("submit", (e) => {
 
   if (firstInvalid) {
     firstInvalid.focus();
-    formStatus.textContent = "";
+    setStatus("", null);
     return;
   }
 
-  // Static host, no backend: hand the message to the visitor's mail client.
-  const [name, email, message] = fields.map((f) => f.value.trim());
-  const subject = `Portfolio message from ${name}`;
-  const body = `${message}\n\n— ${name} (${email})`;
-  window.location.href =
-    `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  // Honeypot tripped — a person never sees this field. Act successful so the
+  // bot has nothing to learn from, but send nothing.
+  if (honeypot.value) {
+    form.reset();
+    setStatus("Thanks — your message has been sent.", "ok");
+    return;
+  }
 
-  // Deliberately not resetting: when no mail client is configured mailto: does
-  // nothing at all, and the visitor still needs their text to copy out.
-  formStatus.textContent =
-    `Opening your email app… if nothing happened, send your message to ${CONTACT_EMAIL} directly.`;
+  const [name, email, message] = fields.map((f) => f.value.trim());
+
+  if (!FORM_ENDPOINT) {
+    handOffToMailClient({ name, email, message });
+    return;
+  }
+
+  setSending(true);
+  setStatus("Sending…", null);
+
+  try {
+    const res = await fetch(FORM_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ name, email, message }),
+    });
+
+    if (!res.ok) throw new Error(`Form endpoint returned ${res.status}`);
+
+    form.reset();
+    fields.forEach((f) => f.classList.remove("is-invalid"));
+    setStatus(`Thanks, ${name} — your message is on its way. I'll reply to ${email}.`, "ok");
+  } catch (err) {
+    // Network down, endpoint misconfigured, CORS — never drop the message
+    // silently; point the visitor at a channel that works.
+    console.error("Contact form submit failed:", err);
+    setStatus(
+      `Sorry — that didn't send. Please email me at ${CONTACT_EMAIL} or message me on WhatsApp.`,
+      "error"
+    );
+  } finally {
+    setSending(false);
+  }
 });
 
 /* --------------------------------------------------------------------------

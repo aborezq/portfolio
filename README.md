@@ -25,8 +25,11 @@ assets/       — profile photo + self-hosted woff2 fonts (Anton, Inter)
 - Sticky nav, smooth scroll, active-section highlighting
 - Scroll-reveal animations and animated skill bars (IntersectionObserver)
 - Project filtering (All / Web / ML & Data / Java / Systems & Networks)
-- Contact form with client-side validation, handed off to the visitor's mail
-  client via `mailto:` (no backend, no third-party requests)
+- Certificates section: 12 credentials, with Coursera verification links
+- Contact form: client-side validation, honeypot spam trap, and a JSON POST to a
+  configurable endpoint (`FORM_ENDPOINT` in `script.js`). Falls back to a
+  `mailto:` handoff while that is unset
+- Contact channels: email, WhatsApp, GitHub, LinkedIn
 - Fully responsive, mobile-first, hamburger menu
 - Accessibility: skip link, ARIA labels, focus styles, `prefers-reduced-motion`
 

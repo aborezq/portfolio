@@ -140,6 +140,7 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 .btn:hover { transform: translateY(-2px); }
 .btn:active { transform: translateY(0); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 .btn-outline {
   border: 1px solid var(--accent);
@@ -563,8 +564,11 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 .project-title { font-size: 1.08rem; }
 .project-desc { color: var(--muted); font-size: 0.92rem; flex: 1; }
 
-.project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.project-tags li {
+.project-tags,
+.cert-courses { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.cert-courses { margin-top: 0.55rem; }
+.project-tags li,
+.cert-courses li {
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -573,6 +577,17 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   color: var(--accent-strong);
   background: color-mix(in srgb, var(--accent-strong) 12%, transparent);
 }
+
+/* Course pills that link to their own verification page — the anchor carries the
+   padding so the whole pill is a hit target, not just the text. */
+.cert-courses--links li { padding: 0; }
+.cert-courses--links li a {
+  display: block;
+  padding: 0.22rem 0.65rem;
+  color: inherit;
+  transition: opacity 0.2s;
+}
+.cert-courses--links li a:hover { opacity: 0.72; }
 
 .project-links { display: flex; gap: 1.1rem; }
 .project-links a {
@@ -584,6 +599,68 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 .project-links a:hover { opacity: 0.75; }
 
 .projects-empty { color: var(--muted); margin-top: 1rem; }
+
+/* ---------- Certificates ---------- */
+.cert-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+}
+
+.cert-card {
+  display: flex;
+  gap: 1.1rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: transform 0.3s var(--ease), border-color 0.3s, box-shadow 0.3s;
+}
+.cert-card--program { grid-column: 1 / -1; }
+
+.cert-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-strong);
+  box-shadow: var(--shadow);
+}
+
+.cert-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent-strong) 12%, transparent);
+  transition: transform 0.3s var(--ease);
+}
+.cert-card:hover .cert-mark { transform: scale(1.08) rotate(-6deg); }
+
+.cert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0; /* let long issuer names wrap instead of stretching the grid track */
+}
+.cert-title { font-size: 1.02rem; }
+.cert-issuer { color: var(--muted); font-size: 0.92rem; }
+.cert-date {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+.cert-link {
+  align-self: flex-start;
+  margin-top: 0.6rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+  transition: opacity 0.2s;
+}
+.cert-link:hover { opacity: 0.75; }
 
 /* ---------- Contact ---------- */
 .contact-grid { display: grid; gap: 2.75rem; }
@@ -642,6 +719,18 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   color: #d06060;
 }
 .form-status { font-size: 0.9rem; color: var(--accent-strong); min-height: 1.4em; }
+.form-status.is-ok { color: var(--accent-strong); }
+.form-status.is-error { color: #e06d5f; }
+
+/* Honeypot. Pushed off-screen rather than display:none — bots skip fields that
+   are outright hidden, and this one is meant to be filled in. */
+.form-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 
 /* ---------- Footer & back-to-top ---------- */
 .footer {
