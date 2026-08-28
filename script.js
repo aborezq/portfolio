@@ -1,14 +1,6 @@
-/* ==========================================================================
-   Mohammed R. Awad — Portfolio
-   Vanilla ES6+: DOM APIs, IntersectionObserver, no dependencies.
-   ========================================================================== */
 "use strict";
 
-/* --------------------------------------------------------------------------
-   1. Theme toggle — the inline script in <head> already resolved the theme
-      before first paint, so this only mirrors it in the UI and handles clicks.
-      An explicit click is persisted; merely following the OS setting is not.
-   -------------------------------------------------------------------------- */
+// The inline head script resolves the initial theme before paint; clicks persist explicit choices.
 const themeToggle = document.getElementById("theme-toggle");
 const rootEl = document.documentElement;
 const themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -16,15 +8,13 @@ const lightMedia = window.matchMedia("(prefers-color-scheme: light)");
 
 let currentTheme = rootEl.dataset.theme === "light" ? "light" : "dark";
 
-// Reflect a theme in the DOM and on the toggle, without writing to storage.
 const syncTheme = (theme) => {
   currentTheme = theme;
   rootEl.dataset.theme = theme;
   const toLight = theme === "dark";
   themeToggle.setAttribute("aria-label", `Switch to ${toLight ? "light" : "dark"} theme`);
   themeToggle.setAttribute("aria-pressed", String(theme === "light"));
-  // Tint the mobile browser chrome to match. Read --bg back off the root so the
-  // palette stays owned by the stylesheet rather than duplicated here.
+  // Keep browser chrome synced without duplicating palette values in JavaScript.
   themeColorMeta.content = getComputedStyle(rootEl).getPropertyValue("--bg").trim();
 };
 
@@ -45,7 +35,7 @@ const storedTheme = () => {
   }
 };
 
-syncTheme(currentTheme); // label the toggle to match what <head> already painted
+syncTheme(currentTheme);
 
 themeToggle.addEventListener("click", () => {
   applyTheme(currentTheme === "dark" ? "light" : "dark");
@@ -57,9 +47,6 @@ lightMedia.addEventListener("change", (e) => {
   if (saved !== "light" && saved !== "dark") syncTheme(e.matches ? "light" : "dark");
 });
 
-/* --------------------------------------------------------------------------
-   2. Typing effect — cycles through roles with type / pause / delete phases.
-   -------------------------------------------------------------------------- */
 const ROLES = ["Computer Engineer", "Problem Solver"];
 const typedEl = document.getElementById("typed");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -78,7 +65,7 @@ if (prefersReducedMotion) {
 
     let delay = deleting ? 45 : 90;
     if (!deleting && charIndex === word.length) {
-      delay = 1800;                 // linger on the full word
+      delay = 1800;
       deleting = true;
     } else if (deleting && charIndex === 0) {
       deleting = false;
@@ -90,9 +77,6 @@ if (prefersReducedMotion) {
   tick();
 }
 
-/* --------------------------------------------------------------------------
-   3. Sticky nav styling + hamburger menu
-   -------------------------------------------------------------------------- */
 const nav = document.getElementById("nav");
 const hamburger = document.getElementById("hamburger");
 const navLinksList = document.getElementById("nav-links");
@@ -108,7 +92,6 @@ hamburger.addEventListener("click", () => {
   setMenu(!navLinksList.classList.contains("is-open"));
 });
 
-// Close the mobile menu when a link is chosen or Escape is pressed
 navLinksList.addEventListener("click", (e) => {
   if (e.target.closest("a")) setMenu(false);
 });
@@ -119,21 +102,15 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* --------------------------------------------------------------------------
-   4. Scroll-linked UI: nav backdrop + back-to-top visibility
-      (one passive listener, work deferred to rAF)
-   -------------------------------------------------------------------------- */
 const backToTop = document.getElementById("back-to-top");
-backToTop.hidden = false; // JS is running, so the button can exist
+backToTop.hidden = false; // Enable only when JavaScript is available.
 
 let scrollTicking = false;
 const onScroll = () => {
   nav.classList.toggle("is-scrolled", window.scrollY > 24);
   const showTop = window.scrollY > window.innerHeight * 0.8;
   backToTop.classList.toggle("is-shown", showTop);
-  // The class only drives the fade. inert is what actually keeps the faded-out
-  // button out of the tab order and out of hit-testing, with no dependence on
-  // a transition having finished.
+  // inert removes the faded button from hit-testing and the tab order.
   backToTop.inert = !showTop;
   scrollTicking = false;
 };
@@ -149,9 +126,6 @@ backToTop.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
 });
 
-/* --------------------------------------------------------------------------
-   5. Active-section highlighting — IntersectionObserver over the sections
-   -------------------------------------------------------------------------- */
 const navLinks = [...document.querySelectorAll(".nav-link")];
 const linkFor = (id) => navLinks.find((a) => a.getAttribute("href") === `#${id}`);
 
@@ -170,24 +144,18 @@ const sectionObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll("main section[id]").forEach((s) => sectionObserver.observe(s));
 
-/* --------------------------------------------------------------------------
-   6. Progressive scroll-reveal animations
-   -------------------------------------------------------------------------- */
 rootEl.classList.add("reveal-ready");
 const revealObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
     entry.target.classList.add("is-visible");
 
-    observer.unobserve(entry.target); // reveal once, then stop watching
+    observer.unobserve(entry.target);
   });
 }, { threshold: 0.15 });
 
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
-/* --------------------------------------------------------------------------
-   7. Project filtering
-   -------------------------------------------------------------------------- */
 const filterButtons = document.querySelectorAll(".filter-btn");
 const projectCards = document.querySelectorAll(".project-card");
 const emptyNote = document.getElementById("projects-empty");
@@ -210,9 +178,6 @@ filterButtons.forEach((btn) => {
   });
 });
 
-/* --------------------------------------------------------------------------
-   8. Credential disclosure — enhanced only when JavaScript is available
-   -------------------------------------------------------------------------- */
 const certGrid = document.getElementById("certificate-grid");
 const certToggle = document.getElementById("cert-toggle");
 const extraCertificates = certGrid.querySelectorAll(".cert-card--extra");
@@ -227,14 +192,11 @@ if (extraCertificates.length) {
   });
 }
 
-/* --------------------------------------------------------------------------
-   9. Contact form validation
-   -------------------------------------------------------------------------- */
 const form = document.getElementById("contact-form");
 const formStatus = document.getElementById("form-status");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CONTACT_EMAIL = "momoawad2004@gmail.com";
-form.noValidate = true; // custom accessible errors once JS is running
+form.noValidate = true; // Use custom accessible errors only when JavaScript is running.
 
 /* Use the form's native action as the AJAX destination so the endpoint lives
    in one place and the markup retains a standard HTML submission target. */
@@ -250,15 +212,12 @@ const validateField = (input) => {
   const message = validators[input.id](input.value);
   const invalid = Boolean(message);
   input.classList.toggle("is-invalid", invalid);
-  // The red outline is only half the signal — aria-invalid is what tells a
-  // screen reader the field is wrong when the user tabs back to it, and the
-  // aria-describedby in the markup is what reads out this error text.
+  // Expose validation state and its associated error text to assistive technology.
   input.setAttribute("aria-invalid", String(invalid));
   document.getElementById(`${input.id}-error`).textContent = message;
   return !message;
 };
 
-// Validate as the user leaves each field, and re-check live once flagged
 Object.keys(validators).forEach((id) => {
   const input = document.getElementById(id);
   input.addEventListener("blur", () => validateField(input));
@@ -281,9 +240,7 @@ const setSending = (sending) => {
   submitBtn.textContent = sending ? "Sending…" : "Send message";
 };
 
-// Fallback for when no endpoint is configured: hand the message to the
-// visitor's mail client. Unreliable — mailto: does nothing at all when no mail
-// client is set up — so it is a stopgap, not the delivery path.
+// Use email only as a fallback when the form endpoint is unavailable.
 const handOffToMailClient = ({ name, email, message }) => {
   const subject = `Portfolio message from ${name}`;
   const body = `${message}\n\n— ${name} (${email})`;
@@ -299,7 +256,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const fields = Object.keys(validators).map((id) => document.getElementById(id));
-  const results = fields.map(validateField); // validate all, don't stop at first
+  const results = fields.map(validateField);
   const firstInvalid = fields[results.indexOf(false)];
 
   if (firstInvalid) {
@@ -308,8 +265,7 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Honeypot tripped — a person never sees this field. Act successful so the
-  // bot has nothing to learn from, but send nothing.
+  // Return a silent success when the honeypot is filled.
   if (honeypot.value) {
     form.reset();
     setStatus("Thanks — your message has been sent.", "ok");
@@ -346,8 +302,6 @@ form.addEventListener("submit", async (e) => {
     });
     setStatus(`Thanks, ${name} — your message is on its way. I'll reply to ${email}.`, "ok");
   } catch (err) {
-    // Network down, endpoint misconfigured, CORS — never drop the message
-    // silently; point the visitor at a channel that works.
     console.error("Contact form submit failed:", err);
     const reason = err.name === "AbortError" ? "The request timed out." : "That didn't send.";
     setStatus(`${reason} Please email me at ${CONTACT_EMAIL} or message me on WhatsApp.`, "error");
@@ -357,7 +311,4 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-/* --------------------------------------------------------------------------
-   10. Footer year
-   -------------------------------------------------------------------------- */
 document.getElementById("year").textContent = new Date().getFullYear();

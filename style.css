@@ -1,9 +1,3 @@
-/* ==========================================================================
-   Mohammed R. Awad — Portfolio
-   Vanilla CSS: custom properties, Grid/Flexbox, animations, mobile-first.
-   ========================================================================== */
-
-/* ---------- Self-hosted fonts (no external requests) ---------- */
 @font-face {
   font-family: "Anton";
   font-style: normal;
@@ -19,7 +13,6 @@
   src: url("assets/fonts/inter-latin.woff2") format("woff2");
 }
 
-/* ---------- Design tokens ---------- */
 :root {
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -29,7 +22,6 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Dark (default) */
 [data-theme="dark"] {
   --bg: #0e0d0b;
   --bg-alt: #14120f;
@@ -37,16 +29,15 @@
   --border: #2b2822;
   --text: #f1ece1;
   --muted: #a49d8e;
-  --accent: #e8dcc0;          /* cream — the cover color */
-  --accent-strong: #d9b36a;   /* warm gold for emphasis */
-  --accent-ink: #14120f;      /* text color on accent surfaces */
+  --accent: #e8dcc0;
+  --accent-strong: #d9b36a;
+  --accent-ink: #14120f;
   --field-border: #6b6458;
   --error: #ef8175;
   --shadow: 0 18px 45px rgb(0 0 0 / 0.45);
   color-scheme: dark;
 }
 
-/* Light */
 [data-theme="light"] {
   --bg: #f6f1e7;
   --bg-alt: #efe8da;
@@ -54,7 +45,7 @@
   --border: #ddd3c0;
   --text: #201c14;
   --muted: #6d6455;
-  --accent: #1f1a12;          /* ink takes the cream's role on paper */
+  --accent: #1f1a12;
   --accent-strong: #80520d;
   --accent-ink: #f6f1e7;
   --field-border: #9f9078;
@@ -63,7 +54,6 @@
   color-scheme: light;
 }
 
-/* ---------- Reset & base ---------- */
 *,
 *::before,
 *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -102,7 +92,6 @@ button {
 
 ::selection { background: var(--accent-strong); color: var(--accent-ink); }
 
-/* Custom scrollbar */
 html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thin; }
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg-alt); }
@@ -119,7 +108,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 
 .accent { color: var(--accent-strong); }
 
-/* Available to assistive tech and to crawlers, invisible on screen. */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -145,7 +133,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 .skip-link:focus { top: 0; }
 
-/* ---------- Buttons ---------- */
 .btn {
   display: inline-block;
   padding: 0.7rem 1.6rem;
@@ -172,9 +159,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 .btn-solid:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
 
-/* ==========================================================================
-   Navigation
-   ========================================================================== */
 .nav {
   position: fixed;
   inset: 0 0 auto 0;
@@ -248,7 +232,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 [data-theme="dark"] .icon-moon { display: none; }
 [data-theme="light"] .icon-sun { display: none; }
 
-/* Hamburger (mobile only) */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -270,9 +253,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 .hamburger.is-open span:nth-child(2) { opacity: 0; }
 .hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ==========================================================================
-   Hero — recreation of the cover: giant display word layered with the photo
-   ========================================================================== */
 .hero {
   min-height: 100svh;
   display: flex;
@@ -326,8 +306,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
           mask-image: linear-gradient(90deg, transparent 30%, #000 42%, #000 60%, transparent 72%);
 }
 
-/* Keep the responsive <picture> in the same grid cell as both word layers.
-   The portrait then sits above the filled word and below the outlined word. */
 .hero-picture {
   z-index: 2;
   align-self: end;
@@ -340,7 +318,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   height: min(74vh, 640px);
   width: auto;
   object-fit: contain;
-  /* The portrait's dark backdrop melts into the page; fade the hard edges */
   -webkit-mask-image: radial-gradient(58% 82% at 50% 44%, #000 46%, transparent 86%);
           mask-image: radial-gradient(58% 82% at 50% 44%, #000 46%, transparent 86%);
   animation: hero-rise 1.1s var(--ease) both 0.15s;
@@ -409,7 +386,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   flex: none;
 }
 
-/* Blinking caret for the typing effect */
 .caret {
   display: inline-block;
   width: 2px;
@@ -421,9 +397,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* ==========================================================================
-   Sections
-   ========================================================================== */
 .section { padding-block: clamp(4.5rem, 9vw, 7.5rem); }
 .section-alt { background: var(--bg-alt); }
 
@@ -461,7 +434,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 .reveal-ready .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
-/* ---------- About ---------- */
 .about-grid {
   display: grid;
   gap: 2.5rem;
@@ -503,7 +475,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 .exp-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
 .exp-card p { color: var(--muted); font-size: 0.95rem; }
 
-/* ---------- Skills ---------- */
 .skills-grid { display: grid; gap: 3rem; }
 .skills-heading {
   font-size: 0.85rem;
@@ -559,7 +530,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   color: var(--accent-strong);
 }
 
-/* ---------- Projects ---------- */
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
@@ -715,12 +685,9 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 
 .projects-empty { color: var(--muted); margin-top: 1rem; }
 
-/* ---------- Certificates ---------- */
 .cert-grid {
   display: grid;
   gap: 1.25rem;
-  /* Two tracks on desktop: most issuers are grouped into full-width program
-     bands, so a third narrow column would just leave a hole in the last row. */
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
 }
 
@@ -781,7 +748,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 .cert-link:hover { opacity: 0.75; }
 
-/* ---------- Contact ---------- */
 .contact-grid { display: grid; gap: 2.75rem; }
 .contact-info p { max-width: 46ch; margin-bottom: 1.75rem; }
 
@@ -851,7 +817,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   overflow: hidden;
 }
 
-/* ---------- Footer & back-to-top ---------- */
 .footer {
   border-top: 1px solid var(--border);
   padding-block: 1.75rem;
@@ -903,9 +868,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 .back-to-top:hover { background: var(--accent-strong); }
 
-/* ==========================================================================
-   Responsive — mobile-first upgrades
-   ========================================================================== */
 @media (min-width: 700px) {
   .about-grid { grid-template-columns: 1.6fr 1fr; align-items: start; }
   .exp-grid { grid-template-columns: 1fr 1fr; }
@@ -974,7 +936,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   .project-proof { font-size: 0.78rem; }
 }
 
-/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *,

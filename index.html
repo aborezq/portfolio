@@ -6,12 +6,8 @@
   <meta name="description" content="Mohammed R. Awad — Computer Engineering student (Intelligent Systems) from Gaza, Palestine. Portfolio of AI, data-analytics and machine-learning projects.">
   <title>Mohammed R. Awad — Computer Engineer</title>
 
-  <!-- Tints the mobile browser chrome. Seeded with the dark palette's --bg;
-       script.js §1 rewrites it whenever the theme resolves or is toggled, so
-       it tracks an explicit choice, not just the OS preference. -->
   <meta name="theme-color" content="#0e0d0b">
 
-  <!-- Social scrapers require absolute URLs for canonical and preview assets. -->
   <link rel="canonical" href="https://mohammedawad.online/">
 
   <meta property="og:type" content="website">
@@ -35,8 +31,6 @@
   <link rel="preload" href="assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-  <!-- Theme is resolved before first paint so a saved (or OS) light preference
-       never flashes the dark palette. Kept in sync with script.js §1. -->
   <script>
     (() => {
       const root = document.documentElement;
@@ -46,7 +40,7 @@
           root.dataset.theme = saved;
           return;
         }
-      } catch { /* storage unavailable — fall through to the OS preference */ }
+      } catch {}
       if (window.matchMedia("(prefers-color-scheme: light)").matches) {
         root.dataset.theme = "light";
       }
@@ -54,8 +48,6 @@
   </script>
   <link rel="stylesheet" href="style.css">
 
-  <!-- Structured data for a name search. sameAs is the part that matters: it
-       ties this page to the GitHub and LinkedIn profiles as one identity. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -93,7 +85,6 @@
 
   <a class="skip-link" href="#main">Skip to main content</a>
 
-  <!-- ============ NAVIGATION ============ -->
   <header class="nav" id="nav">
     <nav class="nav-inner container" aria-label="Primary">
       <a href="#home" class="nav-logo" aria-label="Home — Mohammed R. Awad">
@@ -124,7 +115,6 @@
 
   <main id="main">
 
-    <!-- ============ HERO (cover design) ============ -->
     <section class="hero" id="home" aria-label="Introduction">
       <div class="hero-meta container">
         <a class="hero-arrow" href="#about" aria-label="Scroll to about section">
@@ -133,9 +123,6 @@
       </div>
 
       <div class="hero-stage">
-        <!-- The display word is decoration; the real heading text is the name,
-             so that search engines index it (they read heading text, not an
-             aria-label) and screen readers announce something useful. -->
         <h1 class="hero-word">
           <span class="sr-only">Mohammed R. Awad — AI, Data Analytics and Machine Learning</span>
           <span aria-hidden="true">PORTFOLIO</span>
@@ -163,7 +150,6 @@
       </div>
     </section>
 
-    <!-- ============ ABOUT ============ -->
     <section class="section" id="about">
       <div class="container">
         <p class="section-kicker reveal">01 — About</p>
@@ -225,7 +211,6 @@
       </div>
     </section>
 
-    <!-- ============ SKILLS ============ -->
     <section class="section section-alt" id="skills">
       <div class="container">
         <p class="section-kicker reveal">02 — Skills</p>
@@ -309,7 +294,6 @@
       </div>
     </section>
 
-    <!-- ============ PROJECTS ============ -->
     <section class="section" id="projects">
       <div class="container">
         <p class="section-kicker reveal">03 — Projects</p>
@@ -473,16 +457,11 @@
       </div>
     </section>
 
-    <!-- ============ CERTIFICATES ============ -->
     <section class="section section-alt" id="certificates">
       <div class="container">
         <p class="section-kicker reveal">04 — Certificates</p>
         <h2 class="section-title reveal">Proof of the reps.</h2>
 
-        <!-- Certificate cards. Coursera links are the "Verify at:" URL printed on
-             each certificate. The six course URLs were confirmed to resolve; the
-             professional-cert URL was transcribed from the certificate image.
-             Anthropic and LangChain course names link to their public credentials. -->
         <ul class="cert-grid" id="certificate-grid">
 
           <li class="cert-card cert-card--program reveal">
@@ -589,7 +568,6 @@
       </div>
     </section>
 
-    <!-- ============ CONTACT ============ -->
     <section class="section" id="contact">
       <div class="container">
         <p class="section-kicker reveal">05 — Contact</p>
@@ -650,9 +628,6 @@
               <p class="form-error" id="cf-message-error" aria-live="polite"></p>
             </div>
 
-            <!-- Honeypot: hidden from people, irresistible to bots. A filled value
-                 means "spam", so the submit is dropped silently. Named _gotcha,
-                 which Formspree also filters server-side. -->
             <div class="form-hp" aria-hidden="true">
               <label for="cf-company">Company</label>
               <input type="text" id="cf-company" name="_gotcha" tabindex="-1" autocomplete="off">
