@@ -185,8 +185,8 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 }
 .nav.is-scrolled {
   background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border-bottom-color: var(--border);
 }
 
@@ -310,6 +310,7 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   letter-spacing: 0.01em;
   text-align: center;
   align-self: center;
+  -webkit-user-select: none;
   user-select: none;
   white-space: nowrap;
 }
@@ -394,7 +395,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   color: var(--text);
   font-size: clamp(0.98rem, 1.5vw, 1.12rem);
   line-height: 1.5;
-  text-wrap: balance;
 }
 .hero-typed {
   color: var(--muted);
@@ -442,7 +442,12 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   line-height: 1.08;
   letter-spacing: 0.01em;
   margin-bottom: clamp(2rem, 5vw, 3.5rem);
-  text-wrap: balance;
+  max-width: 30ch;
+}
+
+@supports (text-wrap: balance) {
+  .hero-value,
+  .section-title { text-wrap: balance; }
 }
 
 /* Content stays visible without JavaScript. JS adds .reveal-ready only after
@@ -601,6 +606,7 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 .project-card.is-hidden { display: none; }
 .project-card--lead,
 .project-card--featured {
+  border-color: var(--accent-strong); /* fallback for browsers without color-mix() */
   border-color: color-mix(in srgb, var(--accent-strong) 55%, var(--border));
 }
 
