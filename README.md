@@ -1,8 +1,8 @@
 # Mohammed R. Awad — Portfolio
 
-Personal portfolio website of **Mohammed R. Awad** — Front-End Developer and
-Computer Engineering student (Intelligent Systems) at Al-Aqsa University,
-Gaza, Palestine.
+Personal portfolio website of **Mohammed R. Awad** — Computer Engineering
+student (Intelligent Systems) at Al-Aqsa University, Gaza, Palestine, working
+in **AI, Data Analytics and Machine Learning**.
 
 Built entirely with **vanilla HTML, CSS and JavaScript** — no frameworks, no
 build step, no external requests (fonts are self-hosted).
@@ -13,7 +13,9 @@ build step, no external requests (fonts are self-hosted).
 index.html    — semantic, accessible markup
 style.css     — custom properties, Grid/Flexbox, animations, light/dark themes
 script.js     — ES6+: theme, typing effect, IntersectionObserver reveals, filters, validation
-assets/       — profile photo + self-hosted woff2 fonts (Anton, Inter)
+assets/       — portrait (jpg + webp), social card, self-hosted woff2 fonts (Anton, Inter)
+robots.txt    — crawler policy
+sitemap.xml   — single-page sitemap
 ```
 
 ## Features
@@ -23,15 +25,28 @@ assets/       — profile photo + self-hosted woff2 fonts (Anton, Inter)
   choice, and is resolved before first paint so nothing flashes
 - Animated typing effect cycling through roles
 - Sticky nav, smooth scroll, active-section highlighting
-- Scroll-reveal animations and animated skill bars (IntersectionObserver)
-- Project filtering (All / Web / ML & Data / Java / Systems & Networks)
-- Certificates section: 12 credentials, with Coursera verification links
-- Contact form: client-side validation, honeypot spam trap, and a JSON POST to a
-  configurable endpoint (`FORM_ENDPOINT` in `script.js`). Falls back to a
-  `mailto:` handoff while that is unset
+- Progressive scroll-reveal animations that preserve visible content when
+  JavaScript is unavailable
+- Evidence-led skill groups instead of subjective percentage scores
+- Featured-project hierarchy, live-demo links, and category filtering
+- Collapsible certificate groups with issuer verification links
+- Open Graph / Twitter card metadata so shared links render a preview
+- Contact form: Formspree delivery, client-side validation, accessible status
+  feedback, and a honeypot spam trap
 - Contact channels: email, WhatsApp, GitHub, LinkedIn
 - Fully responsive, mobile-first, hamburger menu
 - Accessibility: skip link, ARIA labels, focus styles, `prefers-reduced-motion`
+
+## Deployment
+
+The absolute URLs in `index.html` (`canonical`, `og:url`, `og:image`),
+`robots.txt` and `sitemap.xml` all assume the GitHub Pages project site at
+`https://aborezq.github.io/portfolio/`. Update all three files together if the
+site moves to a custom domain.
+
+Note that GitHub Pages only serves `robots.txt` from the *domain* root, so on a
+project site the file is decorative until a custom domain is attached — submit
+`sitemap.xml` to Google Search Console directly in the meantime.
 
 ## Run locally
 
