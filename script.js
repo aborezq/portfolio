@@ -11,6 +11,7 @@
    -------------------------------------------------------------------------- */
 const themeToggle = document.getElementById("theme-toggle");
 const rootEl = document.documentElement;
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 const lightMedia = window.matchMedia("(prefers-color-scheme: light)");
 
 let currentTheme = rootEl.dataset.theme === "light" ? "light" : "dark";
@@ -22,6 +23,9 @@ const syncTheme = (theme) => {
   const toLight = theme === "dark";
   themeToggle.setAttribute("aria-label", `Switch to ${toLight ? "light" : "dark"} theme`);
   themeToggle.setAttribute("aria-pressed", String(theme === "light"));
+  // Tint the mobile browser chrome to match. Read --bg back off the root so the
+  // palette stays owned by the stylesheet rather than duplicated here.
+  themeColorMeta.content = getComputedStyle(rootEl).getPropertyValue("--bg").trim();
 };
 
 const applyTheme = (theme) => {
@@ -109,7 +113,10 @@ navLinksList.addEventListener("click", (e) => {
   if (e.target.closest("a")) setMenu(false);
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") setMenu(false);
+  if (e.key === "Escape" && navLinksList.classList.contains("is-open")) {
+    setMenu(false);
+    hamburger.focus();
+  }
 });
 
 /* --------------------------------------------------------------------------
@@ -122,7 +129,12 @@ backToTop.hidden = false; // JS is running, so the button can exist
 let scrollTicking = false;
 const onScroll = () => {
   nav.classList.toggle("is-scrolled", window.scrollY > 24);
-  backToTop.classList.toggle("is-shown", window.scrollY > window.innerHeight * 0.8);
+  const showTop = window.scrollY > window.innerHeight * 0.8;
+  backToTop.classList.toggle("is-shown", showTop);
+  // The class only drives the fade. inert is what actually keeps the faded-out
+  // button out of the tab order and out of hit-testing, with no dependence on
+  // a transition having finished.
+  backToTop.inert = !showTop;
   scrollTicking = false;
 };
 window.addEventListener("scroll", () => {
@@ -146,25 +158,26 @@ const linkFor = (id) => navLinks.find((a) => a.getAttribute("href") === `#${id}`
 const sectionObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
-    navLinks.forEach((a) => a.classList.remove("is-active"));
-    linkFor(entry.target.id)?.classList.add("is-active");
+    navLinks.forEach((a) => {
+      a.classList.remove("is-active");
+      a.removeAttribute("aria-current");
+    });
+    const activeLink = linkFor(entry.target.id);
+    activeLink?.classList.add("is-active");
+    activeLink?.setAttribute("aria-current", "location");
   });
 }, { rootMargin: "-40% 0px -55% 0px" });
 
 document.querySelectorAll("main section[id]").forEach((s) => sectionObserver.observe(s));
 
 /* --------------------------------------------------------------------------
-   6. Scroll-reveal animations + skill-bar fill, one observer for both
+   6. Progressive scroll-reveal animations
    -------------------------------------------------------------------------- */
+rootEl.classList.add("reveal-ready");
 const revealObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
     entry.target.classList.add("is-visible");
-
-    // Animate any skill bars inside the revealed block
-    entry.target.querySelectorAll(".skill-fill").forEach((fill) => {
-      fill.style.width = `${fill.dataset.level}%`;
-    });
 
     observer.unobserve(entry.target); // reveal once, then stop watching
   });
@@ -198,33 +211,49 @@ filterButtons.forEach((btn) => {
 });
 
 /* --------------------------------------------------------------------------
-   8. Contact form validation
+   8. Credential disclosure — enhanced only when JavaScript is available
+   -------------------------------------------------------------------------- */
+const certGrid = document.getElementById("certificate-grid");
+const certToggle = document.getElementById("cert-toggle");
+const extraCertificates = certGrid.querySelectorAll(".cert-card--extra");
+
+if (extraCertificates.length) {
+  certGrid.classList.add("is-collapsible");
+  certToggle.hidden = false;
+  certToggle.addEventListener("click", () => {
+    const expanded = certGrid.classList.toggle("is-expanded");
+    certToggle.setAttribute("aria-expanded", String(expanded));
+    certToggle.textContent = expanded ? "Show fewer credential groups" : "View all credential groups";
+  });
+}
+
+/* --------------------------------------------------------------------------
+   9. Contact form validation
    -------------------------------------------------------------------------- */
 const form = document.getElementById("contact-form");
 const formStatus = document.getElementById("form-status");
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CONTACT_EMAIL = "momoawad2004@gmail.com";
+form.noValidate = true; // custom accessible errors once JS is running
 
-/* Where the contact form POSTs its JSON. Leave empty and the form falls back to
-   opening the visitor's mail client, which is unreliable — set this before the
-   site goes on a real domain so messages actually reach an inbox.
-
-   Paste the endpoint from whichever service you sign up for, e.g.
-     Formspree   https://formspree.io/f/xxxxxxxx
-     Web3Forms   https://api.web3forms.com/submit   (also needs an access_key field)
-     Netlify     handled by the host, see their forms docs
-   Anything that accepts a JSON POST of { name, email, message } works. */
-const FORM_ENDPOINT = "";
+/* Use the form's native action as the AJAX destination so the endpoint lives
+   in one place and the markup retains a standard HTML submission target. */
+const FORM_ENDPOINT = form.getAttribute("action")?.trim() || "";
 
 const validators = {
-  "cf-name": (v) => (v.trim().length >= 2 ? "" : "Please enter your name (at least 2 characters)."),
-  "cf-email": (v) => (EMAIL_RE.test(v.trim()) ? "" : "Please enter a valid email address."),
-  "cf-message": (v) => (v.trim().length >= 10 ? "" : "Please write a message of at least 10 characters."),
+  "cf-name": (v) => (v.trim().length >= 2 && v.trim().length <= 80 ? "" : "Please enter a name between 2 and 80 characters."),
+  "cf-email": (v) => (EMAIL_RE.test(v.trim()) && v.trim().length <= 254 ? "" : "Please enter a valid email address."),
+  "cf-message": (v) => (v.trim().length >= 10 && v.trim().length <= 2000 ? "" : "Please write a message between 10 and 2,000 characters."),
 };
 
 const validateField = (input) => {
   const message = validators[input.id](input.value);
-  input.classList.toggle("is-invalid", Boolean(message));
+  const invalid = Boolean(message);
+  input.classList.toggle("is-invalid", invalid);
+  // The red outline is only half the signal — aria-invalid is what tells a
+  // screen reader the field is wrong when the user tabs back to it, and the
+  // aria-describedby in the markup is what reads out this error text.
+  input.setAttribute("aria-invalid", String(invalid));
   document.getElementById(`${input.id}-error`).textContent = message;
   return !message;
 };
@@ -296,33 +325,39 @@ form.addEventListener("submit", async (e) => {
 
   setSending(true);
   setStatus("Sending…", null);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
 
   try {
     const res = await fetch(FORM_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ name, email, message }),
+      signal: controller.signal,
     });
 
     if (!res.ok) throw new Error(`Form endpoint returned ${res.status}`);
 
     form.reset();
-    fields.forEach((f) => f.classList.remove("is-invalid"));
+    fields.forEach((f) => {
+      f.classList.remove("is-invalid");
+      f.removeAttribute("aria-invalid");
+      document.getElementById(`${f.id}-error`).textContent = "";
+    });
     setStatus(`Thanks, ${name} — your message is on its way. I'll reply to ${email}.`, "ok");
   } catch (err) {
     // Network down, endpoint misconfigured, CORS — never drop the message
     // silently; point the visitor at a channel that works.
     console.error("Contact form submit failed:", err);
-    setStatus(
-      `Sorry — that didn't send. Please email me at ${CONTACT_EMAIL} or message me on WhatsApp.`,
-      "error"
-    );
+    const reason = err.name === "AbortError" ? "The request timed out." : "That didn't send.";
+    setStatus(`${reason} Please email me at ${CONTACT_EMAIL} or message me on WhatsApp.`, "error");
   } finally {
+    clearTimeout(timeoutId);
     setSending(false);
   }
 });
 
 /* --------------------------------------------------------------------------
-   9. Footer year
+   10. Footer year
    -------------------------------------------------------------------------- */
 document.getElementById("year").textContent = new Date().getFullYear();
