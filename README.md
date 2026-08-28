@@ -39,14 +39,10 @@ sitemap.xml   — single-page sitemap
 
 ## Deployment
 
-The absolute URLs in `index.html` (`canonical`, `og:url`, `og:image`),
-`robots.txt` and `sitemap.xml` all assume the GitHub Pages project site at
-`https://aborezq.github.io/portfolio/`. Update all three files together if the
-site moves to a custom domain.
-
-Note that GitHub Pages only serves `robots.txt` from the *domain* root, so on a
-project site the file is decorative until a custom domain is attached — submit
-`sitemap.xml` to Google Search Console directly in the meantime.
+The production URL is `https://mohammedawad.online/`. GitHub Pages reads the
+root `CNAME` file to attach that custom domain, while Hostinger manages its DNS.
+If the domain changes, update `CNAME`, the absolute URLs in `index.html`,
+`robots.txt`, and `sitemap.xml` together.
 
 ## Run locally
 
