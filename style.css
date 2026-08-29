@@ -582,6 +582,12 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   box-shadow: var(--shadow);
 }
 .project-card.is-hidden { display: none; }
+.project-card:not(.project-card--case) {
+  align-self: start;
+}
+.project-card:not(.project-card--case) .project-desc {
+  flex: 0;
+}
 .project-card--lead,
 .project-card--featured {
   border-color: var(--accent-strong); /* fallback for browsers without color-mix() */
