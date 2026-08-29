@@ -562,6 +562,7 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 
 .projects-grid {
   display: grid;
+  align-items: start;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
 }
@@ -584,7 +585,9 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 .project-card.is-hidden { display: none; }
 .project-card:not(.project-card--case) {
   align-self: start;
+  height: fit-content;
 }
+.project-card:not(.project-card--case) .project-body,
 .project-card:not(.project-card--case) .project-desc {
   flex: 0;
 }
