@@ -602,7 +602,10 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   display: grid;
   grid-template-columns: minmax(17rem, 0.85fr) minmax(0, 1.15fr);
 }
-.project-card--text-case { grid-template-columns: 1fr; }
+.project-card--text-case {
+  display: block;
+  width: 100%;
+}
 .project-card--case .project-cover {
   border-right: 1px solid var(--border);
   border-bottom: 0;
@@ -642,6 +645,7 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   padding-top: 2.2rem;
 }
 .project-card--text-case .project-body {
+  width: 100%;
   padding: clamp(1.75rem, 4vw, 2.75rem);
 }
 .project-card--text-case .project-title {
@@ -745,6 +749,13 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   background: color-mix(in srgb, var(--accent-strong) 8%, transparent);
 }
 .project-result dd strong { color: var(--text); }
+
+@media (min-width: 1000px) {
+  .project-card--text-case .project-case-details {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
 
 .project-tags,
 .cert-courses { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.55rem; }
