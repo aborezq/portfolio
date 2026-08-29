@@ -309,37 +309,46 @@
 
         <ul class="projects-grid" id="projects-grid">
 
-          <li class="project-card project-card--lead reveal" data-category="ml">
-            <div class="project-cover project-cover--churn" aria-hidden="true"><span>CP</span></div>
+          <li class="project-card project-card--lead project-card--case reveal" data-category="ml">
+            <figure class="project-cover project-cover--image">
+              <img src="assets/project-churn.png" alt="Confusion matrix from the tuned XGBoost customer-churn model" width="515" height="455" loading="lazy">
+              <figcaption>Test-set confusion matrix from the project notebook</figcaption>
+            </figure>
             <div class="project-body">
               <p class="project-label">Featured · Machine Learning</p>
               <h3 class="project-title">Bank Customer Churn Prediction</h3>
-              <p class="project-desc">
-                End-to-end machine-learning pipeline: exploratory data analysis,
-                model comparison, and feature-importance interpretation.
-              </p>
-              <p class="project-proof"><strong>What it proves</strong> A complete path from raw customer data to compared models and explainable business signals.</p>
+              <dl class="project-case-details">
+                <div><dt>Problem</dt><dd>Identify customers at risk of leaving while handling an imbalanced churn class.</dd></div>
+                <div><dt>My contribution</dt><dd>Built the complete notebook workflow, from data quality checks and EDA to model evaluation and interpretation.</dd></div>
+                <div><dt>Approach</dt><dd>Compared Logistic Regression, Random Forest, tuned XGBoost, and an MLP using stratified train, validation, and test splits.</dd></div>
+                <div class="project-result"><dt>Result</dt><dd><strong>0.855 ROC-AUC</strong> and <strong>72.5% recall</strong> on the held-out test set with tuned XGBoost.</dd></div>
+              </dl>
               <ul class="project-tags" aria-label="Technologies used">
-                <li>Python</li><li>pandas</li><li>scikit-learn</li><li>EDA</li>
+                <li>Python</li><li>pandas</li><li>scikit-learn</li><li>XGBoost</li>
               </ul>
               <div class="project-links">
-                <a class="project-link--primary" href="https://github.com/aborezq/Bank-Customer-Churn-Prediction" target="_blank" rel="noopener noreferrer" aria-label="Explore the Customer Churn Prediction source code on GitHub">Explore case ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/Bank-Customer-Churn-Prediction/blob/main/Churn_Project_Ai.ipynb" target="_blank" rel="noopener noreferrer">View notebook ↗</a>
+                <a href="https://github.com/aborezq/Bank-Customer-Churn-Prediction" target="_blank" rel="noopener noreferrer" aria-label="Customer Churn Prediction source code on GitHub">Source code ↗</a>
               </div>
             </div>
           </li>
 
-          <li class="project-card project-card--featured reveal" data-category="web">
-            <div class="project-cover project-cover--gaza" aria-hidden="true"><span>GA</span></div>
+          <li class="project-card project-card--featured project-card--case reveal" data-category="web">
+            <figure class="project-cover project-cover--image">
+              <img src="assets/project-gaza-aid.png" alt="Humanitarian food distribution in Gaza, featured in the Gaza Aid project" width="561" height="315" loading="lazy">
+              <figcaption>Humanitarian aid visual from the deployed project</figcaption>
+            </figure>
             <div class="project-body">
               <p class="project-label">Featured · Web Product</p>
               <h3 class="project-title">Gaza Aid</h3>
-              <p class="project-desc">
-                Humanitarian-aid website built as a complete web-development course
-                project with vanilla HTML, CSS, and JavaScript.
-              </p>
-              <p class="project-proof"><strong>What it proves</strong> A real, deployed interface shaped around a meaningful community use case.</p>
+              <dl class="project-case-details">
+                <div><dt>Problem</dt><dd>Make humanitarian resources, reporting, registration, and request-status tools easier to find in one interface.</dd></div>
+                <div><dt>My contribution</dt><dd>Designed and built the complete multi-page experience, including responsive navigation, forms, and Arabic-first content.</dd></div>
+                <div><dt>Approach</dt><dd>Created a lightweight front end with semantic HTML, custom CSS, and vanilla JavaScript, plus PHP form endpoints.</dd></div>
+                <div class="project-result"><dt>Result</dt><dd><strong>5 focused user flows</strong> delivered across the home, registration, reporting, status, and contact pages.</dd></div>
+              </dl>
               <ul class="project-tags" aria-label="Technologies used">
-                <li>HTML</li><li>CSS</li><li>JavaScript</li>
+                <li>HTML</li><li>CSS</li><li>JavaScript</li><li>PHP</li>
               </ul>
               <div class="project-links">
                 <a class="project-link--primary" href="https://aborezq.github.io/Mohammed_Awad_Gaza_Aid/" target="_blank" rel="noopener noreferrer" aria-label="Open the live Gaza Aid website">Live demo ↗</a>
@@ -348,21 +357,26 @@
             </div>
           </li>
 
-          <li class="project-card project-card--featured reveal" data-category="ml">
-            <div class="project-cover project-cover--pattern" aria-hidden="true"><span>PR</span></div>
+          <li class="project-card project-card--featured project-card--case reveal" data-category="ml">
+            <figure class="project-cover project-cover--image">
+              <img src="assets/project-pattern-research.png" alt="GitHub preview of the Pattern Recognition Research project" width="1200" height="600" loading="lazy">
+              <figcaption>Published research repository and analytical study</figcaption>
+            </figure>
             <div class="project-body">
               <p class="project-label">Featured · Research</p>
               <h3 class="project-title">Pattern Recognition Research</h3>
-              <p class="project-desc">
-                Analytical study: when feature scaling changes the optimal
-                classifier in pattern recognition.
-              </p>
-              <p class="project-proof"><strong>What it proves</strong> A focused research question translated into technical analysis and reproducible reasoning.</p>
+              <dl class="project-case-details">
+                <div><dt>Problem</dt><dd>Understand when feature scaling changes which classifier is the best choice for a pattern-recognition task.</dd></div>
+                <div><dt>My contribution</dt><dd>Framed the research question, compared algorithm sensitivity, and organized the findings into a focused technical report.</dd></div>
+                <div><dt>Approach</dt><dd>Analyzed distance-based, margin-based, probabilistic, tree-based, and neural classifiers through the lens of feature scale.</dd></div>
+                <div class="project-result"><dt>Result</dt><dd><strong>5 classifier families</strong> mapped to practical scaling decisions in a documented analytical study.</dd></div>
+              </dl>
               <ul class="project-tags" aria-label="Technologies used">
                 <li>Pattern Recognition</li><li>Feature Scaling</li><li>Research</li>
               </ul>
               <div class="project-links">
-                <a class="project-link--primary" href="https://github.com/aborezq/Pattern-Recognition-Research" target="_blank" rel="noopener noreferrer" aria-label="Explore the Pattern Recognition Research source code on GitHub">Explore research ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/Pattern-Recognition-Research/blob/main/Pattern_Recognition_Research.pdf" target="_blank" rel="noopener noreferrer">Read paper ↗</a>
+                <a href="https://github.com/aborezq/Pattern-Recognition-Research" target="_blank" rel="noopener noreferrer" aria-label="Pattern Recognition Research repository on GitHub">Repository ↗</a>
               </div>
             </div>
           </li>
