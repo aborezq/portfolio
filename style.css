@@ -640,6 +640,13 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
     repeating-radial-gradient(circle at 50% 50%, transparent 0 1.35rem, color-mix(in srgb, var(--accent-strong) 12%, transparent) 1.4rem 1.48rem),
     var(--bg-alt);
 }
+.project-cover--ml-ai {
+  background-image:
+    linear-gradient(rgb(0 0 0 / 0.04), rgb(0 0 0 / 0.18)),
+    url("assets/project-ml-ai.jpg");
+  background-position: center;
+  background-size: cover;
+}
 
 .project-cover--image {
   position: relative;
