@@ -5,7 +5,7 @@ student (Intelligent Systems) at Al-Aqsa University, Gaza, Palestine, working
 in **AI, Data Analytics and Machine Learning**.
 
 Built entirely with **vanilla HTML, CSS and JavaScript** — no frameworks, no
-build step, no external requests (fonts are self-hosted).
+build step, and no external asset requests on page load (fonts are self-hosted).
 
 ## Structure
 

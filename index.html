@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Must stay above the inline theme script below, which the sha256 below covers.
+       Editing that script without recomputing the hash silently reintroduces the
+       theme flash in production only. frame-ancestors is omitted deliberately: it
+       is ignored in meta form and GitHub Pages cannot send headers. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-04rfQHbg9hz6bFnSyq+e1rUFfe6Zs6HmfybFL2T/My4='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://formspree.io; form-action https://formspree.io; base-uri 'none'; object-src 'none'">
   <meta name="description" content="Mohammed R. Awad — Computer Engineering student (Intelligent Systems) from Gaza, Palestine. Portfolio of AI, data-analytics and machine-learning projects.">
   <title>Mohammed R. Awad — Computer Engineer</title>
 
@@ -57,7 +63,7 @@
     "image": "https://mohammedawad.online/assets/profile.jpg",
     "jobTitle": "Computer Engineering Student, Intelligent Systems",
     "description": "Computer Engineering student (Intelligent Systems) from Gaza, Palestine, working in AI, data analytics and machine learning.",
-    "email": "mailto:momoawad2004@gmail.com",
+    "email": "momoawad2004@gmail.com",
     "affiliation": {
       "@type": "CollegeOrUniversity",
       "name": "Al-Aqsa University"
@@ -309,13 +315,8 @@
 
         <ul class="projects-grid" id="projects-grid">
 
-          <li class="project-card project-card--lead project-card--case reveal" data-category="ml" data-project-index="01">
-            <figure class="project-cover project-cover--image">
-              <img src="assets/project-churn.png" alt="Confusion matrix from the tuned XGBoost customer-churn model" width="515" height="455" loading="lazy">
-              <figcaption>Test-set confusion matrix from the project notebook</figcaption>
-            </figure>
+          <li class="project-card project-card--featured project-card--case project-card--text-case project-card--no-cover reveal" data-category="ml" data-project-index="01">
             <div class="project-body">
-              <span class="project-card-index" aria-hidden="true">01</span>
               <p class="project-label">Featured · Machine Learning</p>
               <h3 class="project-title">Bank Customer Churn Prediction</h3>
               <dl class="project-case-details">
@@ -456,7 +457,7 @@
           </li>
 
         </ul>
-        <p class="projects-empty" id="projects-empty" hidden>No projects in this category yet.</p>
+        <p class="projects-empty" id="projects-empty" role="status" aria-live="polite" hidden>No projects in this category yet.</p>
       </div>
     </section>
 

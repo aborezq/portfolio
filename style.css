@@ -591,7 +591,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
 .project-card:not(.project-card--case) .project-desc {
   flex: 0;
 }
-.project-card--lead,
 .project-card--featured {
   border-color: var(--accent-strong); /* fallback for browsers without color-mix() */
   border-color: color-mix(in srgb, var(--accent-strong) 55%, var(--border));
@@ -606,11 +605,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   display: block;
   width: 100%;
 }
-.project-card--case .project-cover {
-  border-right: 1px solid var(--border);
-  border-bottom: 0;
-}
-
 .project-card--no-cover {
   position: relative;
   isolation: isolate;
@@ -652,60 +646,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   max-width: 34rem;
   font-size: clamp(1.4rem, 3vw, 2rem);
 }
-.project-card-index {
-  position: absolute;
-  top: 0.45rem;
-  right: 1rem;
-  z-index: -1;
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: clamp(4.75rem, 9vw, 8rem);
-  line-height: 1;
-  opacity: 0.055;
-  pointer-events: none;
-}
-.project-card--lead .project-body {
-  position: relative;
-  isolation: isolate;
-}
-
-.project-cover {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 16 / 7;
-  background:
-    radial-gradient(90% 140% at 15% 0%, color-mix(in srgb, var(--accent-strong) 22%, transparent), transparent 60%),
-    var(--bg-alt);
-  border-bottom: 1px solid var(--border);
-}
-.project-cover--image {
-  position: relative;
-  aspect-ratio: auto;
-  min-height: 100%;
-  overflow: hidden;
-  background: var(--bg-alt);
-}
-.project-cover--image img {
-  width: 100%;
-  height: 100%;
-  min-height: 19rem;
-  object-fit: cover;
-  transition: transform 0.55s var(--ease), filter 0.35s var(--ease);
-}
-.project-card:hover .project-cover--image img {
-  transform: scale(1.025);
-  filter: saturate(1.06) contrast(1.03);
-}
-.project-cover--image figcaption {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 2.5rem 1rem 0.8rem;
-  color: #fff;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  background: linear-gradient(transparent, rgb(0 0 0 / 0.78));
-}
-
 .project-body {
   display: flex;
   flex-direction: column;
@@ -722,21 +662,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.project-proof {
-  padding-left: 0.8rem;
-  border-left: 2px solid var(--accent-strong);
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-.project-proof strong {
-  display: block;
-  margin-bottom: 0.1rem;
-  color: var(--text);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .project-case-details {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1000,30 +925,11 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   .about-grid { grid-template-columns: 1.6fr 1fr; align-items: start; }
   .exp-grid { grid-template-columns: 1fr 1fr; }
   .skills-grid { grid-template-columns: 1.15fr 1fr; }
-  .project-card--lead {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: minmax(16rem, 0.9fr) 1.35fr;
-  }
-  .project-card--lead .project-cover {
-    min-height: 100%;
-    aspect-ratio: auto;
-    border-right: 1px solid var(--border);
-    border-bottom: 0;
-  }
-  .project-card--lead .project-title { font-size: clamp(1.25rem, 2.4vw, 1.75rem); }
-  .project-card--lead .project-body { padding: clamp(1.5rem, 3vw, 2.25rem); }
   .contact-grid { grid-template-columns: 1fr 1.2fr; align-items: start; }
 }
 
 @media (max-width: 699px) {
   .project-card--case { grid-template-columns: 1fr; }
-  .project-card--case .project-cover {
-    min-height: 15rem;
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .project-cover--image img { min-height: 15rem; }
   .project-case-details { grid-template-columns: 1fr; }
 }
 
@@ -1072,7 +978,6 @@ html { scrollbar-color: var(--accent-strong) var(--bg-alt); scrollbar-width: thi
   .hero-actions { width: 100%; }
   .hero-actions .btn { flex: 1; padding-inline: 1rem; text-align: center; }
   .availability { font-size: 0.68rem; letter-spacing: 0.07em; }
-  .project-proof { font-size: 0.78rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

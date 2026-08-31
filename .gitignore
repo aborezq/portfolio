@@ -1,2 +1,12 @@
 # Local Claude Code tooling (dev-server config, etc.)
 .claude/
+
+# Dev-only test tooling. Nothing here is deployed; GitHub Pages serves the
+# static files at the repo root, so the live site stays dependency-free.
+node_modules/
+test-results/
+playwright-report/
+
+.env*
+.DS_Store
+Thumbs.db
