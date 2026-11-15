@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aborezq.github.io/portfolio/sitemap.xml
+Sitemap: https://mohammedawad.online/sitemap.xml

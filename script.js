@@ -874,7 +874,7 @@ filterButtons.forEach((btn) => {
     const filter = btn.dataset.filter;
     let visible = 0;
     projectCards.forEach((card) => {
-      const match = filter === "all" || card.dataset.category.split(" ").includes(filter);
+      const match = filter === "all" || (card.dataset.category ?? "").split(" ").includes(filter);
       card.classList.toggle("is-hidden", !match);
       // A row filtered back in may never have been scrolled to.
       if (match) card.classList.add("is-visible");
@@ -1002,14 +1002,25 @@ form.noValidate = true; // custom accessible errors once JS is running
    in one place and the markup retains a standard HTML submission target. */
 const FORM_ENDPOINT = form.getAttribute("action")?.trim() || "";
 
+/* Bounds are read from each field's minlength/maxlength, so the markup stays the
+   single source of truth and the limits cannot drift away from the messages. */
+const withinLength = (value, el) => {
+  const { length } = value.trim();
+  return length >= el.minLength && length <= el.maxLength;
+};
+const count = (n) => n.toLocaleString("en-US");
+
 const validators = {
-  "cf-name": (v) => (v.trim().length >= 2 && v.trim().length <= 80 ? "" : "Please enter a name between 2 and 80 characters."),
-  "cf-email": (v) => (EMAIL_RE.test(v.trim()) && v.trim().length <= 254 ? "" : "Please enter a valid email address."),
-  "cf-message": (v) => (v.trim().length >= 10 && v.trim().length <= 2000 ? "" : "Please write a message between 10 and 2,000 characters."),
+  "cf-name": (v, el) =>
+    withinLength(v, el) ? "" : `Please enter a name between ${count(el.minLength)} and ${count(el.maxLength)} characters.`,
+  "cf-email": (v, el) =>
+    EMAIL_RE.test(v.trim()) && v.trim().length <= el.maxLength ? "" : "Please enter a valid email address.",
+  "cf-message": (v, el) =>
+    withinLength(v, el) ? "" : `Please write a message between ${count(el.minLength)} and ${count(el.maxLength)} characters.`,
 };
 
 const validateField = (input) => {
-  const message = validators[input.id](input.value);
+  const message = validators[input.id](input.value, input);
   const invalid = Boolean(message);
   input.classList.toggle("is-invalid", invalid);
   // The red outline is only half the signal — aria-invalid is what tells a
@@ -1047,11 +1058,9 @@ const setSending = (sending) => {
 // Fallback for when no endpoint is configured: hand the message to the
 // visitor's mail client. Unreliable — mailto: does nothing at all when no mail
 // client is set up — so it is a stopgap, not the delivery path.
-const handOffToMailClient = ({ name, email, message }) => {
-  const subject = `Portfolio message from ${name}`;
-  const body = `${message}\n\n— ${name} (${email})`;
-  window.location.href =
-    `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const handOffToMailClient = () => {
+  const subject = "Portfolio message";
+  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
   setStatus(
     `Opening your email app… if nothing happened, send your message to ${CONTACT_EMAIL} directly.`,
     "ok"
@@ -1082,7 +1091,7 @@ form.addEventListener("submit", async (e) => {
   const [name, email, message] = fields.map((f) => f.value.trim());
 
   if (!FORM_ENDPOINT) {
-    handOffToMailClient({ name, email, message });
+    handOffToMailClient();
     return;
   }
 
