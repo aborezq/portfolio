@@ -5,7 +5,8 @@ student (Intelligent Systems) at Al-Aqsa University, Gaza, Palestine, working
 in **AI, Data Analytics and Machine Learning**.
 
 Built entirely with **vanilla HTML, CSS and JavaScript** — no frameworks, no
-build step, no external requests (fonts and images are self-hosted).
+build step, and no external asset requests on page load (fonts and images are
+self-hosted).
 
 ## Structure
 
@@ -18,10 +19,12 @@ lab.js            — the Lab: a k-nearest-neighbours classifier on a canvas
 assets/
   profile.*       — portrait (jpg + webp)
   og-card.jpg     — social preview card
+  Mohammed_Awad_CV.pdf — the CV behind "Download CV"
   nashrati/       — six screens of the Nashrati app (see below)
   certs/          — one image per certificate, for the viewer and the hover preview
   fonts/          — Anton, Inter, Instrument Serif, a Tajawal subset; LICENSE.txt
-robots.txt, sitemap.xml
+robots.txt, sitemap.xml, CNAME
+tests/            — Playwright smoke tests (dev only; nothing here is deployed)
 ```
 
 ## What's on the page
@@ -75,14 +78,28 @@ set. To refresh them, run that test in the app repository (and again with
 
 ## Deployment
 
-The absolute URLs in `index.html` (`canonical`, `og:url`, `og:image`),
-`robots.txt` and `sitemap.xml` all assume the GitHub Pages project site at
-`https://aborezq.github.io/portfolio/`. Update all three files together if the
-site moves to a custom domain.
+The production URL is `https://mohammedawad.online/`. GitHub Pages reads the
+root `CNAME` file to attach that custom domain, while Hostinger manages its DNS.
+If the domain changes, update `CNAME`, the absolute URLs in `index.html`,
+`robots.txt`, and `sitemap.xml` together.
 
-Note that GitHub Pages only serves `robots.txt` from the *domain* root, so on a
-project site the file is decorative until a custom domain is attached — submit
-`sitemap.xml` to Google Search Console directly in the meantime.
+`index.html` carries a Content-Security-Policy that allows the one inline
+`<head>` script by its SHA-256 hash. After editing that script, recompute the
+hash (the smoke tests fail with a console error if it no longer matches):
+
+```bash
+python3 -c "import re,hashlib,base64;s=open('index.html',encoding='utf-8').read();print(base64.b64encode(hashlib.sha256(re.search(r'<script>(.*?)</script>',s,re.S).group(1).encode()).digest()).decode())"
+```
+
+## Tests
+
+Dev-only Playwright smoke tests cover the console, theme, filters, the contact
+form and its CSP, certificates, the Nashrati screens switch and the Lab:
+
+```bash
+npm install
+npm test
+```
 
 ## Run locally
 

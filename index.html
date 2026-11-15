@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Must stay above the inline script below, which the sha256 covers. Editing
+       that script without recomputing the hash silently breaks the theme and
+       the opening sequence in production only (tests/smoke.spec.js catches it).
+       frame-ancestors is omitted deliberately: it is ignored in meta form and
+       GitHub Pages cannot send headers. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-j6RswuvUTUKssvcHtAD/7k+K0H4Z542SHJAfQ2EQD0U='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://formspree.io; form-action https://formspree.io; base-uri 'none'; object-src 'none'">
   <meta name="description" content="Mohammed R. Awad — Computer Engineering student (Intelligent Systems) from Gaza, Palestine. Portfolio of AI, data-analytics, machine-learning and mobile projects.">
   <title>Mohammed R. Awad — Computer Engineer</title>
 
@@ -11,17 +18,16 @@
        it tracks an explicit choice, not just the OS preference. -->
   <meta name="theme-color" content="#0b0a08">
 
-  <!-- Absolute URLs below assume the GitHub Pages project site. They are the
-       one thing to update if the site moves to a custom domain — og:image in
-       particular is ignored by every scraper unless it is absolute. -->
-  <link rel="canonical" href="https://aborezq.github.io/portfolio/">
+  <!-- Absolute URLs: the custom domain (see CNAME). og:image in particular is
+       ignored by every scraper unless it is absolute. -->
+  <link rel="canonical" href="https://mohammedawad.online/">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Mohammed R. Awad">
-  <meta property="og:url" content="https://aborezq.github.io/portfolio/">
+  <meta property="og:url" content="https://mohammedawad.online/">
   <meta property="og:title" content="Mohammed R. Awad — AI, Data Analytics &amp; Machine Learning">
   <meta property="og:description" content="Computer Engineering student (Intelligent Systems) from Gaza, Palestine, building AI-powered tools and data-analysis projects.">
-  <meta property="og:image" content="https://aborezq.github.io/portfolio/assets/og-card.jpg">
+  <meta property="og:image" content="https://mohammedawad.online/assets/og-card.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Mohammed R. Awad — AI, Data Analytics and Machine Learning">
@@ -30,7 +36,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mohammed R. Awad — AI, Data Analytics &amp; Machine Learning">
   <meta name="twitter:description" content="Computer Engineering student (Intelligent Systems) from Gaza, Palestine, building AI-powered tools and data-analysis projects.">
-  <meta name="twitter:image" content="https://aborezq.github.io/portfolio/assets/og-card.jpg">
+  <meta name="twitter:image" content="https://mohammedawad.online/assets/og-card.jpg">
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0a08'/%3E%3Ctext x='16' y='23' font-family='Arial Black,sans-serif' font-size='17' font-weight='900' fill='%23e8dcc0' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
 
@@ -74,11 +80,11 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Mohammed R. Awad",
-    "url": "https://aborezq.github.io/portfolio/",
-    "image": "https://aborezq.github.io/portfolio/assets/profile.jpg",
+    "url": "https://mohammedawad.online/",
+    "image": "https://mohammedawad.online/assets/profile.jpg",
     "jobTitle": "Computer Engineering Student, Intelligent Systems",
     "description": "Computer Engineering student (Intelligent Systems) from Gaza, Palestine, working in AI, data analytics and machine learning.",
-    "email": "mailto:momoawad2004@gmail.com",
+    "email": "momoawad2004@gmail.com",
     "affiliation": {
       "@type": "CollegeOrUniversity",
       "name": "Al-Aqsa University"
@@ -176,12 +182,12 @@
         <div class="hero-id">
           <p class="availability"><span aria-hidden="true"></span> Available for remote opportunities</p>
           <p class="hero-name">Mohammed R. Awad</p>
-          <p class="hero-value">Computer Engineering student building AI agents, machine-learning systems, and useful data products.</p>
+          <p class="hero-value">Computer Engineering student building <span class="nowrap">machine-learning</span> systems and useful data products.</p>
           <p class="hero-typed">I&nbsp;am&nbsp;a <span id="typed" class="accent"></span><span class="caret" aria-hidden="true"></span></p>
         </div>
         <div class="hero-actions">
           <a href="#projects" class="btn btn-solid" data-magnetic><span>Explore projects</span></a>
-          <a href="#contact" class="btn btn-outline" data-magnetic><span>Let's talk</span></a>
+          <a href="assets/Mohammed_Awad_CV.pdf" class="btn btn-outline" download="Mohammed_Awad_CV.pdf" data-magnetic><span>Download CV</span></a>
         </div>
       </div>
     </section>
@@ -440,17 +446,19 @@
               <div class="project-body">
                 <p class="project-label">Featured · Machine Learning</p>
                 <h4 class="project-title">Bank Customer Churn Prediction</h4>
-                <p class="project-desc">
-                  End-to-end machine-learning pipeline: exploratory data analysis,
-                  model comparison, and feature-importance interpretation.
-                </p>
-                <p class="project-proof"><strong>What it proves</strong> A complete path from raw customer data to compared models and explainable business signals.</p>
+                <dl class="project-case-details">
+                  <div><dt>Problem</dt><dd>Identify customers at risk of leaving while handling an imbalanced churn class.</dd></div>
+                  <div><dt>My contribution</dt><dd>Built the complete notebook workflow, from data quality checks and EDA to model evaluation and interpretation.</dd></div>
+                  <div><dt>Approach</dt><dd>Compared Logistic Regression, Random Forest, tuned XGBoost, and an MLP using stratified train, validation, and test splits.</dd></div>
+                  <div class="project-result"><dt>Result</dt><dd><strong>0.855 ROC-AUC</strong> and <strong>72.5% recall</strong> on the held-out test set with tuned XGBoost.</dd></div>
+                </dl>
                 <ul class="project-tags" aria-label="Technologies used">
-                  <li>Python</li><li>pandas</li><li>scikit-learn</li><li>EDA</li>
+                  <li>Python</li><li>pandas</li><li>scikit-learn</li><li>XGBoost</li>
                 </ul>
               </div>
               <div class="project-links">
-                <a class="project-link--primary" href="https://github.com/aborezq/Bank-Customer-Churn-Prediction" target="_blank" rel="noopener noreferrer" aria-label="Explore the Customer Churn Prediction source code on GitHub">Explore case ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/Bank-Customer-Churn-Prediction/blob/main/Churn_Project_Ai.ipynb" target="_blank" rel="noopener noreferrer">View notebook ↗</a>
+                <a href="https://github.com/aborezq/Bank-Customer-Churn-Prediction" target="_blank" rel="noopener noreferrer" aria-label="Customer Churn Prediction source code on GitHub">Source code ↗</a>
               </div>
             </li>
 
@@ -459,13 +467,14 @@
               <div class="project-body">
                 <p class="project-label">Featured · Web Product</p>
                 <h4 class="project-title">Gaza Aid</h4>
-                <p class="project-desc">
-                  Humanitarian-aid website built as a complete web-development course
-                  project with vanilla HTML, CSS, and JavaScript.
-                </p>
-                <p class="project-proof"><strong>What it proves</strong> A real, deployed interface shaped around a meaningful community use case.</p>
+                <dl class="project-case-details">
+                  <div><dt>Problem</dt><dd>Make humanitarian resources, reporting, registration, and request-status tools easier to find in one interface.</dd></div>
+                  <div><dt>My contribution</dt><dd>Designed and built the complete multi-page experience, including responsive navigation, forms, and Arabic-first content.</dd></div>
+                  <div><dt>Approach</dt><dd>Created a lightweight front end with semantic HTML, custom CSS, and vanilla JavaScript, plus PHP form endpoints.</dd></div>
+                  <div class="project-result"><dt>Result</dt><dd><strong>5 focused user flows</strong> delivered across the home, registration, reporting, status, and contact pages.</dd></div>
+                </dl>
                 <ul class="project-tags" aria-label="Technologies used">
-                  <li>HTML</li><li>CSS</li><li>JavaScript</li>
+                  <li>HTML</li><li>CSS</li><li>JavaScript</li><li>PHP</li>
                 </ul>
               </div>
               <div class="project-links">
@@ -479,17 +488,19 @@
               <div class="project-body">
                 <p class="project-label">Featured · Research</p>
                 <h4 class="project-title">Pattern Recognition Research</h4>
-                <p class="project-desc">
-                  Analytical study: when feature scaling changes the optimal
-                  classifier in pattern recognition.
-                </p>
-                <p class="project-proof"><strong>What it proves</strong> A focused research question translated into technical analysis and reproducible reasoning.</p>
+                <dl class="project-case-details">
+                  <div><dt>Problem</dt><dd>Understand when feature scaling changes which classifier is the best choice for a pattern-recognition task.</dd></div>
+                  <div><dt>My contribution</dt><dd>Framed the research question, compared algorithm sensitivity, and organized the findings into a focused technical report.</dd></div>
+                  <div><dt>Approach</dt><dd>Analyzed distance-based, margin-based, probabilistic, tree-based, and neural classifiers through the lens of feature scale.</dd></div>
+                  <div class="project-result"><dt>Result</dt><dd><strong>5 classifier families</strong> mapped to practical scaling decisions in a documented analytical study.</dd></div>
+                </dl>
                 <ul class="project-tags" aria-label="Technologies used">
                   <li>Pattern Recognition</li><li>Feature Scaling</li><li>Research</li>
                 </ul>
               </div>
               <div class="project-links">
-                <a class="project-link--primary" href="https://github.com/aborezq/Pattern-Recognition-Research" target="_blank" rel="noopener noreferrer" aria-label="Explore the Pattern Recognition Research source code on GitHub">Explore research ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/Pattern-Recognition-Research/blob/main/Pattern_Recognition_Research.pdf" target="_blank" rel="noopener noreferrer">Read paper ↗</a>
+                <a href="https://github.com/aborezq/Pattern-Recognition-Research" target="_blank" rel="noopener noreferrer" aria-label="Pattern Recognition Research repository on GitHub">Repository ↗</a>
                 <a href="#lab" aria-label="Try the idea behind this research in the Lab section">Try it in the Lab ↓</a>
               </div>
             </li>
@@ -507,7 +518,8 @@
                 </ul>
               </div>
               <div class="project-links">
-                <a href="https://github.com/aborezq/ML_Research" target="_blank" rel="noopener noreferrer" aria-label="Source code of ML Research on GitHub">Code ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/ML_Research/blob/main/Machine_Learning_Research.pdf" target="_blank" rel="noopener noreferrer">Read paper ↗</a>
+                <a href="https://github.com/aborezq/ML_Research" target="_blank" rel="noopener noreferrer" aria-label="ML Research repository on GitHub">Repository ↗</a>
               </div>
             </li>
 
@@ -580,7 +592,7 @@
             </li>
 
           </ol>
-          <p class="projects-empty" id="projects-empty" hidden>No projects in this category yet.</p>
+          <p class="projects-empty" id="projects-empty" role="status" aria-live="polite" hidden>No projects in this category yet.</p>
         </div>
       </section>
 
