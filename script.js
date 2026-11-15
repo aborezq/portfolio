@@ -1,8 +1,72 @@
 /* ==========================================================================
    Mohammed R. Awad — Portfolio
    Vanilla ES6+: DOM APIs, IntersectionObserver, no dependencies.
+
+   Contents
+     0. Shared helpers and the two loops     9. Reveal on scroll
+     1. Theme                               10. Nashrati phone strip
+     2. Opening sequence                    11. Counters and the Gaza clock
+     3. Split headings, scrubbed text       12. Project filtering
+     4. Scroll-linked chrome and the cover  13. Certificate viewer and preview
+     5. Marquees                            14. Contact form
+     6. Pointer: ring, depth, light         15. Footer year
+     7. Magnetic buttons
+     8. Typing effect, menu, active link
+
+   Everything decorative is an enhancement: it is skipped under
+   prefers-reduced-motion and on touch where it needs a pointer, and the page
+   reads the same with this file missing (see the .js notes in style.css).
    ========================================================================== */
 "use strict";
+
+/* --------------------------------------------------------------------------
+   0. Shared helpers and the two loops
+   -------------------------------------------------------------------------- */
+const rootEl = document.documentElement;
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const hasObserver = "IntersectionObserver" in window;
+
+const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
+const lerp = (from, to, amount) => from + (to - from) * amount;
+
+/* Frame loop — for things that ease toward a target (the pointer ring, the
+   cover's depth, the marquees). A task returns true while it still has work;
+   when none does, the loop stops, and wake() starts it again. */
+const frameTasks = new Set();
+let frameId = 0;
+let lastFrame = 0;
+const runFrame = (now) => {
+  frameId = 0;
+  const elapsed = lastFrame ? Math.min(50, now - lastFrame) : 16.7;
+  lastFrame = now;
+  let busy = false;
+  frameTasks.forEach((task) => {
+    if (task(elapsed) === true) busy = true;
+  });
+  if (busy) frameId = requestAnimationFrame(runFrame);
+  else lastFrame = 0;
+};
+const wake = () => {
+  if (!frameId) frameId = requestAnimationFrame(runFrame);
+};
+
+/* Scroll loop — one passive listener, the work deferred to the next frame. */
+const scrollTasks = [];
+let scrollQueued = false;
+const runScroll = () => {
+  scrollQueued = false;
+  const y = window.scrollY;
+  const viewport = window.innerHeight;
+  scrollTasks.forEach((task) => task(y, viewport));
+};
+const queueScroll = () => {
+  if (scrollQueued) return;
+  scrollQueued = true;
+  requestAnimationFrame(runScroll);
+};
+window.addEventListener("scroll", queueScroll, { passive: true });
+window.addEventListener("resize", queueScroll);
 
 /* --------------------------------------------------------------------------
    1. Theme toggle — the inline script in <head> already resolved the theme
@@ -10,7 +74,6 @@
       An explicit click is persisted; merely following the OS setting is not.
    -------------------------------------------------------------------------- */
 const themeToggle = document.getElementById("theme-toggle");
-const rootEl = document.documentElement;
 const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 const lightMedia = window.matchMedia("(prefers-color-scheme: light)");
 
@@ -48,7 +111,31 @@ const storedTheme = () => {
 syncTheme(currentTheme); // label the toggle to match what <head> already painted
 
 themeToggle.addEventListener("click", () => {
-  applyTheme(currentTheme === "dark" ? "light" : "dark");
+  const next = currentTheme === "dark" ? "light" : "dark";
+
+  // Where the browser can snapshot the page, the new palette opens as a circle
+  // from the toggle. Everywhere else it simply changes.
+  if (prefersReducedMotion || typeof document.startViewTransition !== "function") {
+    applyTheme(next);
+    return;
+  }
+  const box = themeToggle.getBoundingClientRect();
+  const x = box.left + box.width / 2;
+  const y = box.top + box.height / 2;
+  const reach = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+
+  // Colour transitions would be caught mid-fade by the snapshot.
+  rootEl.classList.add("theme-switching");
+  const transition = document.startViewTransition(() => applyTheme(next));
+  transition.ready
+    .then(() => {
+      rootEl.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${reach}px at ${x}px ${y}px)`] },
+        { duration: 750, easing: "cubic-bezier(0.22, 1, 0.36, 1)", pseudoElement: "::view-transition-new(root)" }
+      );
+    })
+    .catch(() => { /* transition skipped — the theme is applied either way */ });
+  transition.finished.finally(() => rootEl.classList.remove("theme-switching"));
 });
 
 // No explicit choice saved? Keep following the OS as the visitor changes it.
@@ -58,11 +145,398 @@ lightMedia.addEventListener("change", (e) => {
 });
 
 /* --------------------------------------------------------------------------
-   2. Typing effect — cycles through roles with type / pause / delete phases.
+   2. Opening sequence — once per tab session (the <head> script decided, and
+      set .intro-pending before first paint). A counter runs while the portrait
+      loads, then the panel wipes away and the cover assembles: dropping
+      .intro-pending is what releases every hero animation in style.css.
    -------------------------------------------------------------------------- */
-const ROLES = ["Computer Engineer", "Problem Solver"];
+const hero = document.getElementById("home");
+const heroStage = document.getElementById("hero-stage");
+
+// PORTFOLIO, one masked letter at a time — both the filled and outlined layer.
+const splitHeroLetters = () => {
+  document.querySelectorAll(".hero-word-line").forEach((layer) => {
+    let index = 0;
+    layer.querySelectorAll(".hw").forEach((half) => {
+      const letters = [...half.textContent];
+      half.textContent = "";
+      letters.forEach((letter) => {
+        const mask = document.createElement("span");
+        mask.className = "ch-w";
+        const glyph = document.createElement("span");
+        glyph.className = "ch";
+        glyph.style.setProperty("--i", index++);
+        glyph.textContent = letter;
+        mask.append(glyph);
+        half.append(mask);
+      });
+    });
+  });
+};
+
+if (rootEl.classList.contains("intro-pending")) {
+  try {
+    sessionStorage.setItem("intro-seen", "1");
+  } catch {
+    /* storage unavailable — it will simply play again next load */
+  }
+  splitHeroLetters();
+
+  const intro = document.createElement("div");
+  intro.className = "intro";
+  intro.setAttribute("aria-hidden", "true");
+  intro.innerHTML = `
+    <div class="intro-top"><span>Mohammed R. Awad</span><span>Portfolio — ${new Date().getFullYear()}</span></div>
+    <div class="intro-count"><span>0</span><small>Gaza, Palestine</small></div>
+    <div class="intro-bar"><i></i></div>`;
+  document.body.append(intro);
+
+  const counter = intro.querySelector(".intro-count span");
+  const portrait = document.querySelector(".hero-photo");
+  const portraitReady = () => !portrait || (portrait.complete && portrait.naturalWidth > 0);
+  const RUN = 1350;      // the count itself
+  const PATIENCE = 3200; // how long it will hold at 94 for a slow portrait
+  const startedAt = performance.now();
+
+  const count = (now) => {
+    const elapsed = now - startedAt;
+    let progress = 1 - Math.pow(1 - clamp(elapsed / RUN, 0, 1), 3);
+    if (!portraitReady() && elapsed < PATIENCE) progress = Math.min(progress, 0.94);
+    counter.textContent = String(Math.round(progress * 100));
+    intro.style.setProperty("--p", progress.toFixed(3));
+    if (progress < 1) {
+      requestAnimationFrame(count);
+      return;
+    }
+    setTimeout(() => {
+      intro.classList.add("is-leaving");
+      rootEl.classList.remove("intro-pending");
+      setTimeout(() => intro.remove(), 1150);
+    }, 180);
+  };
+  requestAnimationFrame(count);
+}
+
+/* --------------------------------------------------------------------------
+   3. Split headings and scrubbed text
+      Words are wrapped where they stand, so nested markup (<em>, <strong>)
+      and the spaces between words — which is what a screen reader reads —
+      are left exactly as written.
+   -------------------------------------------------------------------------- */
+const wrapWords = (el, makeWord) => {
+  const words = [];
+  const walk = (node) => {
+    [...node.childNodes].forEach((child) => {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        if (child.tagName !== "BR") walk(child);
+        return;
+      }
+      if (child.nodeType !== Node.TEXT_NODE) return;
+      const pieces = document.createDocumentFragment();
+      child.textContent.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (!part.trim()) {
+          pieces.append(" ");
+          return;
+        }
+        const word = makeWord(part, words.length);
+        words.push(word.inner);
+        pieces.append(word.outer);
+      });
+      child.replaceWith(pieces);
+    });
+  };
+  walk(el);
+  return words;
+};
+
+// Section titles: each word rises out of its own mask when the title arrives.
+const splitHeadings = [...document.querySelectorAll("[data-split]")];
+if (!prefersReducedMotion && hasObserver) {
+  splitHeadings.forEach((heading) => {
+    wrapWords(heading, (text, index) => {
+      const mask = document.createElement("span");
+      mask.className = "w";
+      const inner = document.createElement("span");
+      inner.className = "wi";
+      inner.style.setProperty("--i", index);
+      inner.textContent = text;
+      mask.append(inner);
+      return { outer: mask, inner };
+    });
+  });
+}
+
+// The About statement: words light up as the paragraph is scrolled through.
+if (!prefersReducedMotion) {
+  document.querySelectorAll("[data-scrub]").forEach((paragraph) => {
+    const words = wrapWords(paragraph, (text) => {
+      const span = document.createElement("span");
+      span.className = "sw";
+      span.textContent = text;
+      return { outer: span, inner: span };
+    });
+    rootEl.classList.add("scrub-ready");
+    let lit = -1;
+    scrollTasks.push((y, viewport) => {
+      const box = paragraph.getBoundingClientRect();
+      if (box.bottom < -200 || box.top > viewport + 200) return;
+      const progress = clamp((viewport * 0.86 - box.top) / (box.height + viewport * 0.36), 0, 1);
+      const count = Math.round(progress * words.length * 1.04);
+      if (count === lit) return;
+      lit = count;
+      words.forEach((word, index) => word.classList.toggle("is-lit", index < count));
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   4. Scroll-linked chrome and the cover
+   -------------------------------------------------------------------------- */
+const nav = document.getElementById("nav");
+const mainEl = document.getElementById("main");
+const backToTop = document.getElementById("back-to-top");
+backToTop.hidden = false; // JS is running, so the button can exist
+
+let menuOpen = false;
+
+scrollTasks.push((y, viewport) => {
+  nav.classList.toggle("is-scrolled", y > 24);
+  const scrollable = rootEl.scrollHeight - viewport;
+  nav.style.setProperty("--scroll", scrollable > 0 ? clamp(y / scrollable, 0, 1).toFixed(4) : "0");
+
+  const showTop = y > viewport * 0.8;
+  backToTop.classList.toggle("is-shown", showTop);
+  // The class only drives the fade. inert is what actually keeps the faded-out
+  // button out of the tab order and out of hit-testing, with no dependence on
+  // a transition having finished.
+  backToTop.inert = !showTop || menuOpen;
+});
+
+backToTop.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+});
+
+/* The cover is sticky: the rest of the page slides up over it while it sinks
+   back (--hero-p, 0 → 1). A cover taller than the screen pins only once its
+   lower edge has been reached, hence the negative --hero-stick. */
+const heroChrome = [hero.querySelector(".hero-meta"), hero.querySelector(".hero-footer")];
+let heroHeight = hero.offsetHeight;
+const measureHero = () => {
+  // What the cover needs besides the portrait; style.css sizes the portrait
+  // from it. Neither row depends on the portrait, so this cannot feed back.
+  const chrome = heroChrome.reduce((sum, el) => sum + (el ? el.offsetHeight : 0), 0);
+  hero.style.setProperty("--hero-chrome", `${chrome}px`);
+  heroHeight = hero.offsetHeight;
+  hero.style.setProperty("--hero-stick", `${Math.min(0, window.innerHeight - heroHeight)}px`);
+  queueScroll();
+};
+if ("ResizeObserver" in window) new ResizeObserver(measureHero).observe(hero);
+window.addEventListener("resize", measureHero);
+measureHero();
+
+scrollTasks.push((y) => {
+  if (!prefersReducedMotion) {
+    hero.style.setProperty("--hero-p", clamp(y / (heroHeight * 0.85), 0, 1).toFixed(3));
+  }
+  // Fully covered: its loops can rest.
+  hero.classList.toggle("is-past", y > heroHeight + 4);
+});
+
+// A pinned cover is always "in view" as far as the browser is concerned, even
+// with the sheet drawn over it — so Shift+Tab back into it would put focus on
+// a button nobody can see. Scroll back until the sheet clears the cover.
+hero.addEventListener("focusin", () => {
+  const uncovered = Math.max(0, heroHeight - window.innerHeight);
+  if (window.scrollY > uncovered + 1) {
+    window.scrollTo({ top: uncovered, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  }
+});
+
+/* --------------------------------------------------------------------------
+   5. Marquees — a slow drift that leans into the scroll and turns with it.
+      The row is cloned until it can loop without a seam.
+   -------------------------------------------------------------------------- */
+let scrollVelocity = 0;
+let lastScrollY = window.scrollY;
+scrollTasks.push((y) => {
+  scrollVelocity = y - lastScrollY;
+  lastScrollY = y;
+  if (scrollVelocity) wake();
+});
+
+document.querySelectorAll("[data-marquee]").forEach((marquee) => {
+  const track = marquee.querySelector(".marquee-track");
+  const originals = [...track.children];
+  const pace = parseFloat(marquee.dataset.speed || "1");
+  let loopWidth = 0;
+  let offset = 0;
+  let direction = -1;
+  let inView = !hasObserver;
+
+  const build = () => {
+    track.querySelectorAll("[data-clone]").forEach((clone) => clone.remove());
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const first = originals[0];
+    const last = originals[originals.length - 1];
+    loopWidth = last.offsetLeft + last.offsetWidth - first.offsetLeft + gap;
+    if (!loopWidth) return;
+    const copies = Math.ceil((marquee.clientWidth * 1.5) / loopWidth) + 1;
+    for (let n = 0; n < copies; n++) {
+      originals.forEach((item) => {
+        const clone = item.cloneNode(true);
+        clone.dataset.clone = "";
+        track.append(clone);
+      });
+    }
+  };
+  build();
+  // Anton arriving changes every width in the row.
+  if (document.fonts?.ready) document.fonts.ready.then(build);
+  window.addEventListener("resize", build);
+
+  if (prefersReducedMotion) return; // a full, still row
+
+  if (hasObserver) {
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      if (inView) wake();
+    }).observe(marquee);
+  }
+
+  frameTasks.add((elapsed) => {
+    if (!inView || !loopWidth) return false;
+    if (scrollVelocity > 0.5) direction = -1;
+    else if (scrollVelocity < -0.5) direction = 1;
+    const step = (0.55 * pace + Math.min(Math.abs(scrollVelocity), 60) * 0.3) * (elapsed / 16.7);
+    offset += direction * step;
+    if (offset <= -loopWidth) offset += loopWidth;
+    if (offset > 0) offset -= loopWidth;
+    track.style.transform = `translate3d(${offset.toFixed(2)}px, 0, 0)`;
+    return true;
+  });
+  wake();
+});
+
+// The scroll's push on the marquees fades out between scroll events.
+frameTasks.add(() => {
+  scrollVelocity *= 0.9;
+  if (Math.abs(scrollVelocity) < 0.05) scrollVelocity = 0;
+  return false;
+});
+
+/* --------------------------------------------------------------------------
+   6. Pointer: the ring, the cover's depth, and its light
+      Mouse and trackpad only. The system cursor is never hidden — the ring
+      trails it and grows over things that can be used.
+   -------------------------------------------------------------------------- */
+const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, seen: false };
+const pointerEffects = finePointer && !prefersReducedMotion;
+
+if (pointerEffects) {
+  window.addEventListener("pointermove", (e) => {
+    if (e.pointerType === "touch") return;
+    pointer.x = e.clientX;
+    pointer.y = e.clientY;
+    pointer.seen = true;
+    wake();
+  }, { passive: true });
+
+  // The ring.
+  const ring = document.createElement("div");
+  ring.className = "cursor";
+  ring.setAttribute("aria-hidden", "true");
+  const ringLabel = document.createElement("span");
+  ringLabel.className = "cursor-label";
+  ring.append(ringLabel);
+  document.body.append(ring);
+
+  const ringAt = { x: pointer.x, y: pointer.y };
+  frameTasks.add(() => {
+    if (!pointer.seen) return false;
+    ringAt.x = lerp(ringAt.x, pointer.x, 0.22);
+    ringAt.y = lerp(ringAt.y, pointer.y, 0.22);
+    ring.style.setProperty("--x", `${ringAt.x.toFixed(1)}px`);
+    ring.style.setProperty("--y", `${ringAt.y.toFixed(1)}px`);
+    return Math.abs(ringAt.x - pointer.x) + Math.abs(ringAt.y - pointer.y) > 0.2;
+  });
+
+  // data-cursor="Drag" turns the ring into a labelled disc; "none" hides it.
+  document.addEventListener("pointerover", (e) => {
+    const target = e.target instanceof Element ? e.target : null;
+    const text = target?.closest("[data-cursor]")?.dataset.cursor || "";
+    const labelled = Boolean(text) && text !== "none";
+    if (labelled) ringLabel.textContent = text;
+    ring.classList.add("is-on");
+    ring.classList.toggle("is-hidden", text === "none");
+    ring.classList.toggle("is-label", labelled);
+    ring.classList.toggle(
+      "is-hover",
+      !text && Boolean(target?.closest("a, button, summary, label, input, textarea"))
+    );
+  });
+  rootEl.addEventListener("pointerleave", () => ring.classList.remove("is-on"));
+
+  // The cover: the word drifts against the pointer, the portrait with it, and
+  // a warm light follows behind.
+  const depth = { x: 0, y: 0 };
+  const light = { x: 50, y: 36 };
+  frameTasks.add(() => {
+    if (!pointer.seen || hero.classList.contains("is-past")) return false;
+    const aimX = (pointer.x / window.innerWidth) * 2 - 1;
+    const aimY = (pointer.y / window.innerHeight) * 2 - 1;
+    depth.x = lerp(depth.x, aimX, 0.07);
+    depth.y = lerp(depth.y, aimY, 0.07);
+    light.x = lerp(light.x, (pointer.x / window.innerWidth) * 100, 0.06);
+    light.y = lerp(light.y, (pointer.y / window.innerHeight) * 100, 0.06);
+    heroStage.style.setProperty("--px", depth.x.toFixed(3));
+    heroStage.style.setProperty("--py", depth.y.toFixed(3));
+    hero.style.setProperty("--mx", `${light.x.toFixed(1)}%`);
+    hero.style.setProperty("--my", `${light.y.toFixed(1)}%`);
+    return Math.abs(depth.x - aimX) + Math.abs(depth.y - aimY) > 0.002;
+  });
+}
+
+/* --------------------------------------------------------------------------
+   7. Magnetic buttons — they lean toward the pointer, and a button's fill
+      grows from the point where the pointer came in (or left).
+   -------------------------------------------------------------------------- */
+if (pointerEffects) {
+  document.querySelectorAll("[data-magnetic]").forEach((el) => {
+    let box = null;
+    el.addEventListener("pointerenter", () => {
+      box = el.getBoundingClientRect();
+    });
+    el.addEventListener("pointermove", (e) => {
+      if (!box) return;
+      el.style.setProperty("--tx", `${((e.clientX - box.left - box.width / 2) * 0.3).toFixed(1)}px`);
+      el.style.setProperty("--ty", `${((e.clientY - box.top - box.height / 2) * 0.4).toFixed(1)}px`);
+    });
+    el.addEventListener("pointerleave", () => {
+      box = null;
+      el.style.removeProperty("--tx");
+      el.style.removeProperty("--ty");
+    });
+  });
+}
+
+document.querySelectorAll(".btn").forEach((btn) => {
+  const aim = (e) => {
+    const box = btn.getBoundingClientRect();
+    btn.style.setProperty("--bx", `${(e.clientX - box.left).toFixed(0)}px`);
+    btn.style.setProperty("--by", `${(e.clientY - box.top).toFixed(0)}px`);
+  };
+  btn.addEventListener("pointerenter", aim);
+  btn.addEventListener("pointerleave", aim);
+});
+
+/* --------------------------------------------------------------------------
+   8. Typing effect, menu, active link
+   -------------------------------------------------------------------------- */
+
+// Typing effect — cycles through roles with type / pause / delete phases.
+const ROLES = ["Computer Engineer", "Team Leader", "Flutter Developer", "Problem Solver"];
 const typedEl = document.getElementById("typed");
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if (prefersReducedMotion) {
   typedEl.textContent = ROLES[0];
@@ -72,6 +546,11 @@ if (prefersReducedMotion) {
   let deleting = false;
 
   const tick = () => {
+    // Nothing to type for while the sheet covers the cover.
+    if (hero.classList.contains("is-past")) {
+      setTimeout(tick, 600);
+      return;
+    }
     const word = ROLES[roleIndex];
     charIndex += deleting ? -1 : 1;
     typedEl.textContent = word.slice(0, charIndex);
@@ -90,103 +569,296 @@ if (prefersReducedMotion) {
   tick();
 }
 
-/* --------------------------------------------------------------------------
-   3. Sticky nav styling + hamburger menu
-   -------------------------------------------------------------------------- */
-const nav = document.getElementById("nav");
+// Menu — a full-screen sheet on narrow screens.
 const hamburger = document.getElementById("hamburger");
 const navLinksList = document.getElementById("nav-links");
+const navLinks = [...document.querySelectorAll(".nav-link")];
+navLinks.forEach((link, index) => link.style.setProperty("--i", index));
 
 const setMenu = (open) => {
+  menuOpen = open;
   navLinksList.classList.toggle("is-open", open);
   hamburger.classList.toggle("is-open", open);
   hamburger.setAttribute("aria-expanded", String(open));
   hamburger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  // The page behind is covered, so it must not scroll or take focus either.
+  rootEl.classList.toggle("menu-open", open);
+  mainEl.inert = open;
+  queueScroll();
 };
 
-hamburger.addEventListener("click", () => {
-  setMenu(!navLinksList.classList.contains("is-open"));
-});
+hamburger.addEventListener("click", () => setMenu(!menuOpen));
 
-// Close the mobile menu when a link is chosen or Escape is pressed
+// Close the menu when a link is chosen, Escape is pressed, or the screen
+// grows past the point where the menu exists.
 navLinksList.addEventListener("click", (e) => {
   if (e.target.closest("a")) setMenu(false);
 });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && navLinksList.classList.contains("is-open")) {
+  if (e.key === "Escape" && menuOpen) {
     setMenu(false);
     hamburger.focus();
   }
 });
+window.matchMedia("(min-width: 901px)").addEventListener("change", (e) => {
+  if (e.matches && menuOpen) setMenu(false);
+});
 
-/* --------------------------------------------------------------------------
-   4. Scroll-linked UI: nav backdrop + back-to-top visibility
-      (one passive listener, work deferred to rAF)
-   -------------------------------------------------------------------------- */
-const backToTop = document.getElementById("back-to-top");
-backToTop.hidden = false; // JS is running, so the button can exist
+// Active-section highlighting. The cover is sticky — it never leaves the
+// viewport — so "Home" is decided by scroll position and the observer only
+// answers for the sections that follow it.
+const linkFor = (id) => navLinks.find((a) => a.getAttribute("href") === `#${id}`);
+let activeId = "home";
 
-let scrollTicking = false;
-const onScroll = () => {
-  nav.classList.toggle("is-scrolled", window.scrollY > 24);
-  const showTop = window.scrollY > window.innerHeight * 0.8;
-  backToTop.classList.toggle("is-shown", showTop);
-  // The class only drives the fade. inert is what actually keeps the faded-out
-  // button out of the tab order and out of hit-testing, with no dependence on
-  // a transition having finished.
-  backToTop.inert = !showTop;
-  scrollTicking = false;
+const setActive = (id) => {
+  if (id === activeId) return;
+  activeId = id;
+  navLinks.forEach((a) => {
+    a.classList.remove("is-active");
+    a.removeAttribute("aria-current");
+  });
+  const activeLink = linkFor(id);
+  activeLink?.classList.add("is-active");
+  activeLink?.setAttribute("aria-current", "location");
 };
-window.addEventListener("scroll", () => {
-  if (!scrollTicking) {
-    scrollTicking = true;
-    requestAnimationFrame(onScroll);
-  }
-}, { passive: true });
-onScroll();
 
-backToTop.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+const homeEnds = () => heroHeight - window.innerHeight * 0.45;
+
+if (hasObserver) {
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && window.scrollY >= homeEnds()) setActive(entry.target.id);
+    });
+  }, { rootMargin: "-40% 0px -55% 0px" });
+
+  document.querySelectorAll("main section[id]").forEach((section) => {
+    if (section !== hero) sectionObserver.observe(section);
+  });
+}
+scrollTasks.push((y) => {
+  if (y < homeEnds()) setActive("home");
 });
 
 /* --------------------------------------------------------------------------
-   5. Active-section highlighting — IntersectionObserver over the sections
+   9. Reveal on scroll — items that arrive together arrive in sequence
    -------------------------------------------------------------------------- */
-const navLinks = [...document.querySelectorAll(".nav-link")];
-const linkFor = (id) => navLinks.find((a) => a.getAttribute("href") === `#${id}`);
-
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
-    navLinks.forEach((a) => {
-      a.classList.remove("is-active");
-      a.removeAttribute("aria-current");
+if (hasObserver) {
+  rootEl.classList.add("reveal-ready");
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    let order = 0;
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      if (order) {
+        el.style.setProperty("--d", `${order * 80}ms`);
+        // The delay is only for this entrance — not for whatever the element
+        // transitions later.
+        setTimeout(() => el.style.removeProperty("--d"), 1400);
+      }
+      order++;
+      el.classList.add("is-visible");
+      observer.unobserve(el); // reveal once, then stop watching
     });
-    const activeLink = linkFor(entry.target.id);
-    activeLink?.classList.add("is-active");
-    activeLink?.setAttribute("aria-current", "location");
-  });
-}, { rootMargin: "-40% 0px -55% 0px" });
+  }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
 
-document.querySelectorAll("main section[id]").forEach((s) => sectionObserver.observe(s));
+  document.querySelectorAll(".reveal, [data-split]").forEach((el) => revealObserver.observe(el));
+} else {
+  splitHeadings.forEach((heading) => heading.classList.add("is-visible"));
+}
 
 /* --------------------------------------------------------------------------
-   6. Progressive scroll-reveal animations
+   10. Nashrati phone strip — a native horizontal scroller (swipe and arrow
+       keys already work), plus mouse dragging with a little glide, two
+       buttons, a position bar, and the tall captures travelling inside their
+       frames as the page scrolls past.
    -------------------------------------------------------------------------- */
-rootEl.classList.add("reveal-ready");
-const revealObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
-    entry.target.classList.add("is-visible");
+const phones = document.getElementById("phones");
+if (phones) {
+  const track = phones.querySelector(".phones-track");
+  const positionBar = document.getElementById("phones-progress");
+  const prevBtn = document.getElementById("phones-prev");
+  const nextBtn = document.getElementById("phones-next");
+  const shots = [...phones.querySelectorAll(".phone-screen img")];
+  phones.dataset.cursor = "Drag";
 
-    observer.unobserve(entry.target); // reveal once, then stop watching
+  // How far each capture can travel: its height beyond the frame's.
+  const measureTravel = () => {
+    shots.forEach((img) => {
+      const travel = Math.max(0, img.offsetHeight - img.parentElement.clientHeight);
+      img.style.setProperty("--travel", `${travel}px`);
+    });
+  };
+  shots.forEach((img) => {
+    img.draggable = false;
+    if (!img.complete) img.addEventListener("load", measureTravel, { once: true });
   });
-}, { threshold: 0.15 });
+  if ("ResizeObserver" in window) new ResizeObserver(measureTravel).observe(phones);
+  measureTravel();
 
-document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+  // English or Arabic. Both sets are renders of the same screens; the launch
+  // screen is the same in either language, so it carries no data-shot. The
+  // new set is loaded first and swapped in together, so the strip never
+  // shows the two languages at once.
+  const swappable = shots.filter((img) => img.dataset.shot);
+  swappable.forEach((img) => { img.dataset.alt = img.alt; });
+  let screensLang = "en";
+  const showScreens = (lang) => {
+    if (lang === screensLang) return;
+    screensLang = lang;
+    phones.classList.add("is-swapping");
+    const loads = swappable.map((img) => new Promise((resolve) => {
+      const next = new Image();
+      const path = `assets/nashrati/${lang}/${img.dataset.shot}.webp`;
+      next.onload = next.onerror = () => resolve([img, next, path]);
+      next.src = path;
+    }));
+    Promise.all(loads).then((pairs) => {
+      if (lang !== screensLang) return; // a newer choice has taken over
+      pairs.forEach(([img, next, path]) => {
+        if (!next.naturalWidth) return; // keep what is there rather than a hole
+        img.height = Math.round((img.width * next.naturalHeight) / next.naturalWidth);
+        img.src = path; // already in the cache, so it shows at once
+        img.alt = lang === "ar" ? `In Arabic — ${img.dataset.alt}` : img.dataset.alt;
+      });
+      phones.classList.remove("is-swapping");
+      requestAnimationFrame(() => {
+        measureTravel();
+        queueScroll();
+      });
+    });
+  };
+  document.querySelectorAll('input[name="screens-lang"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) showScreens(input.value);
+    });
+  });
+
+  if (!prefersReducedMotion) {
+    scrollTasks.push((y, viewport) => {
+      const box = phones.getBoundingClientRect();
+      if (box.bottom < -100 || box.top > viewport + 100) return;
+      const progress = clamp((viewport * 0.85 - box.top) / (box.height * 0.9 + viewport * 0.35), 0, 1);
+      phones.style.setProperty("--sp", progress.toFixed(3));
+    });
+  }
+
+  const syncBar = () => {
+    const total = phones.scrollWidth;
+    const view = phones.clientWidth;
+    if (!total) return;
+    positionBar.style.setProperty("--w", `${((view / total) * 100).toFixed(2)}%`);
+    positionBar.style.setProperty("--l", `${((phones.scrollLeft / total) * 100).toFixed(2)}%`);
+    prevBtn.disabled = phones.scrollLeft < 4;
+    nextBtn.disabled = phones.scrollLeft > total - view - 4;
+  };
+  phones.addEventListener("scroll", syncBar, { passive: true });
+  window.addEventListener("resize", syncBar);
+  syncBar();
+
+  const stepBy = (direction) => {
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const stride = track.firstElementChild.offsetWidth + gap;
+    phones.scrollBy({
+      left: direction * stride * (window.innerWidth > 900 ? 2 : 1),
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  };
+  prevBtn.addEventListener("click", () => stepBy(-1));
+  nextBtn.addEventListener("click", () => stepBy(1));
+
+  // Mouse drag. Touch already scrolls natively, so only the mouse is handled.
+  let drag = null;
+  let gliding = 0;
+  phones.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    cancelAnimationFrame(gliding);
+    drag = { startX: e.clientX, startLeft: phones.scrollLeft, lastX: e.clientX, lastTime: e.timeStamp, speed: 0 };
+    phones.setPointerCapture(e.pointerId);
+    phones.classList.add("is-dragging");
+  });
+  phones.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    phones.scrollLeft = drag.startLeft - (e.clientX - drag.startX);
+    const dt = Math.max(1, e.timeStamp - drag.lastTime);
+    drag.speed = lerp(drag.speed, (e.clientX - drag.lastX) / dt, 0.5);
+    drag.lastX = e.clientX;
+    drag.lastTime = e.timeStamp;
+  });
+  const release = () => {
+    if (!drag) return;
+    let speed = prefersReducedMotion ? 0 : -drag.speed * 16;
+    drag = null;
+    // Keep snapping off while it glides, or each step would be pulled back.
+    const glide = () => {
+      if (Math.abs(speed) < 0.5) {
+        phones.classList.remove("is-dragging");
+        return;
+      }
+      phones.scrollLeft += speed;
+      speed *= 0.93;
+      gliding = requestAnimationFrame(glide);
+    };
+    glide();
+  };
+  phones.addEventListener("pointerup", release);
+  phones.addEventListener("pointercancel", release);
+}
 
 /* --------------------------------------------------------------------------
-   7. Project filtering
+   11. Counters and the Gaza clock
+   -------------------------------------------------------------------------- */
+
+// Numbers count up once, as they come into view.
+if (!prefersReducedMotion && hasObserver) {
+  const numberFormat = new Intl.NumberFormat("en-US");
+  const countObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(entry.target);
+      const el = entry.target;
+      const end = Number(el.dataset.count);
+      const startedAt = performance.now();
+      const run = (now) => {
+        const progress = clamp((now - startedAt) / 1500, 0, 1);
+        el.textContent = numberFormat.format(Math.round(end * (1 - Math.pow(1 - progress, 4))));
+        if (progress < 1) requestAnimationFrame(run);
+      };
+      requestAnimationFrame(run);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll("[data-count]").forEach((el) => countObserver.observe(el));
+}
+
+// Local time in Gaza — useful to anyone planning a call across time zones.
+const clocks = [...document.querySelectorAll("[data-clock]")];
+if (clocks.length) {
+  try {
+    const timeFormat = new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Gaza",
+    });
+    const zoneFormat = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Gaza", timeZoneName: "shortOffset" });
+    const showTime = () => {
+      const now = new Date();
+      const time = timeFormat.format(now);
+      const zone = zoneFormat.formatToParts(now).find((part) => part.type === "timeZoneName")?.value || "";
+      clocks.forEach((clock) => {
+        clock.textContent = clock.hasAttribute("data-clock-zone") && zone ? `${time} · ${zone}` : time;
+        clock.dateTime = now.toISOString();
+      });
+    };
+    showTime();
+    setInterval(showTime, 15000);
+  } catch {
+    // No time-zone data in this browser: say nothing rather than guess.
+    clocks.forEach((clock) => {
+      const holder = clock.closest(".js-only");
+      if (holder) holder.hidden = true;
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. Project filtering
    -------------------------------------------------------------------------- */
 const filterButtons = document.querySelectorAll(".filter-btn");
 const projectCards = document.querySelectorAll(".project-card");
@@ -204,6 +876,8 @@ filterButtons.forEach((btn) => {
     projectCards.forEach((card) => {
       const match = filter === "all" || card.dataset.category.split(" ").includes(filter);
       card.classList.toggle("is-hidden", !match);
+      // A row filtered back in may never have been scrolled to.
+      if (match) card.classList.add("is-visible");
       if (match) visible++;
     });
     emptyNote.hidden = visible > 0;
@@ -211,24 +885,112 @@ filterButtons.forEach((btn) => {
 });
 
 /* --------------------------------------------------------------------------
-   8. Credential disclosure — enhanced only when JavaScript is available
+   13. Certificate viewer and preview
+       Each certificate name is a plain link to its image, which is what a
+       visitor without this script gets. Here a click opens it in a <dialog>
+       instead, and with a mouse the certificate follows the pointer down the
+       list.
    -------------------------------------------------------------------------- */
-const certGrid = document.getElementById("certificate-grid");
-const certToggle = document.getElementById("cert-toggle");
-const extraCertificates = certGrid.querySelectorAll(".cert-card--extra");
+const lightbox = document.getElementById("lightbox");
+const certLinks = [...document.querySelectorAll(".cert-view")];
+let hidePreview = () => {};
 
-if (extraCertificates.length) {
-  certGrid.classList.add("is-collapsible");
-  certToggle.hidden = false;
-  certToggle.addEventListener("click", () => {
-    const expanded = certGrid.classList.toggle("is-expanded");
-    certToggle.setAttribute("aria-expanded", String(expanded));
-    certToggle.textContent = expanded ? "Show fewer credential groups" : "View all credential groups";
+// The name without its small print ("12 hours", "7 courses").
+const certName = (link) =>
+  [...link.childNodes]
+    .filter((node) => node.nodeType === Node.TEXT_NODE)
+    .map((node) => node.textContent)
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+if (lightbox && typeof lightbox.showModal === "function") {
+  const lightboxImg = document.getElementById("lightbox-img");
+  const lightboxTitle = document.getElementById("lightbox-title");
+  const lightboxVerify = document.getElementById("lightbox-verify");
+
+  certLinks.forEach((link) => {
+    const verifyLink = link.closest(".cert-row").querySelector(".cert-link");
+    const name = certName(link);
+    link.setAttribute("aria-haspopup", "dialog");
+    verifyLink.setAttribute("aria-label", `Verify “${name}” with the issuer`);
+
+    link.addEventListener("click", (e) => {
+      // Leave modified clicks alone: open-in-new-tab should still work.
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      lightboxImg.src = link.href;
+      lightboxImg.alt = `Certificate: ${name}`;
+      lightboxTitle.textContent = name;
+      lightboxVerify.href = verifyLink.href;
+      hidePreview();
+      lightbox.showModal();
+    });
+  });
+
+  // A click on the backdrop (the dialog's own box, outside its contents).
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) lightbox.close();
+  });
+}
+
+if (pointerEffects && certLinks.length) {
+  const preview = document.createElement("div");
+  preview.className = "preview";
+  preview.setAttribute("aria-hidden", "true");
+  const previewImg = new Image();
+  previewImg.alt = "";
+  previewImg.decoding = "async";
+  preview.append(previewImg);
+  document.body.append(preview);
+
+  const at = { x: 0, y: 0 };
+  let size = { w: 0, h: 0 };
+  let showing = false;
+
+  // Beside the pointer, on whichever side has room, and never off-screen.
+  const aim = () => {
+    const right = pointer.x + 30;
+    const x = right + size.w > window.innerWidth - 12 ? pointer.x - size.w - 30 : right;
+    return {
+      x: clamp(x, 12, window.innerWidth - size.w - 12),
+      y: clamp(pointer.y - size.h * 0.55, 12, window.innerHeight - size.h - 12),
+    };
+  };
+
+  frameTasks.add(() => {
+    if (!showing) return false;
+    const target = aim();
+    at.x = lerp(at.x, target.x, 0.16);
+    at.y = lerp(at.y, target.y, 0.16);
+    preview.style.setProperty("--x", `${at.x.toFixed(1)}px`);
+    preview.style.setProperty("--y", `${at.y.toFixed(1)}px`);
+    return true;
+  });
+
+  hidePreview = () => {
+    showing = false;
+    preview.classList.remove("is-on");
+  };
+
+  certLinks.forEach((link) => {
+    const row = link.closest(".cert-row");
+    row.dataset.cursor = "none"; // the certificate takes the ring's place
+    row.addEventListener("pointerenter", (e) => {
+      if (e.pointerType === "touch") return;
+      if (previewImg.getAttribute("src") !== link.getAttribute("href")) previewImg.src = link.getAttribute("href");
+      size = { w: preview.offsetWidth, h: preview.offsetHeight };
+      if (!showing) Object.assign(at, aim()); // appear where it belongs, not fly in
+      showing = true;
+      preview.classList.add("is-on");
+      wake();
+    });
+    row.addEventListener("pointerleave", hidePreview);
   });
 }
 
 /* --------------------------------------------------------------------------
-   9. Contact form validation
+   14. Contact form validation
    -------------------------------------------------------------------------- */
 const form = document.getElementById("contact-form");
 const formStatus = document.getElementById("form-status");
@@ -268,6 +1030,7 @@ Object.keys(validators).forEach((id) => {
 });
 
 const submitBtn = document.getElementById("cf-submit");
+const submitLabel = submitBtn.querySelector("span") || submitBtn;
 const honeypot = document.getElementById("cf-company");
 
 const setStatus = (text, state) => {
@@ -278,7 +1041,7 @@ const setStatus = (text, state) => {
 
 const setSending = (sending) => {
   submitBtn.disabled = sending;
-  submitBtn.textContent = sending ? "Sending…" : "Send message";
+  submitLabel.textContent = sending ? "Sending…" : "Send message";
 };
 
 // Fallback for when no endpoint is configured: hand the message to the
@@ -358,6 +1121,9 @@ form.addEventListener("submit", async (e) => {
 });
 
 /* --------------------------------------------------------------------------
-   10. Footer year
+   15. Footer year
    -------------------------------------------------------------------------- */
 document.getElementById("year").textContent = new Date().getFullYear();
+
+// Everything is wired: settle the scroll-linked state for wherever we are.
+queueScroll();
