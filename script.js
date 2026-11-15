@@ -535,7 +535,7 @@ document.querySelectorAll(".btn").forEach((btn) => {
    -------------------------------------------------------------------------- */
 
 // Typing effect — cycles through roles with type / pause / delete phases.
-const ROLES = ["Computer Engineer", "Flutter Developer", "Problem Solver"];
+const ROLES = ["Computer Engineer", "Team Leader", "Flutter Developer", "Problem Solver"];
 const typedEl = document.getElementById("typed");
 
 if (prefersReducedMotion) {
@@ -694,6 +694,44 @@ if (phones) {
   });
   if ("ResizeObserver" in window) new ResizeObserver(measureTravel).observe(phones);
   measureTravel();
+
+  // English or Arabic. Both sets are renders of the same screens; the launch
+  // screen is the same in either language, so it carries no data-shot. The
+  // new set is loaded first and swapped in together, so the strip never
+  // shows the two languages at once.
+  const swappable = shots.filter((img) => img.dataset.shot);
+  swappable.forEach((img) => { img.dataset.alt = img.alt; });
+  let screensLang = "en";
+  const showScreens = (lang) => {
+    if (lang === screensLang) return;
+    screensLang = lang;
+    phones.classList.add("is-swapping");
+    const loads = swappable.map((img) => new Promise((resolve) => {
+      const next = new Image();
+      const path = `assets/nashrati/${lang}/${img.dataset.shot}.webp`;
+      next.onload = next.onerror = () => resolve([img, next, path]);
+      next.src = path;
+    }));
+    Promise.all(loads).then((pairs) => {
+      if (lang !== screensLang) return; // a newer choice has taken over
+      pairs.forEach(([img, next, path]) => {
+        if (!next.naturalWidth) return; // keep what is there rather than a hole
+        img.height = Math.round((img.width * next.naturalHeight) / next.naturalWidth);
+        img.src = path; // already in the cache, so it shows at once
+        img.alt = lang === "ar" ? `In Arabic — ${img.dataset.alt}` : img.dataset.alt;
+      });
+      phones.classList.remove("is-swapping");
+      requestAnimationFrame(() => {
+        measureTravel();
+        queueScroll();
+      });
+    });
+  };
+  document.querySelectorAll('input[name="screens-lang"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) showScreens(input.value);
+    });
+  });
 
   if (!prefersReducedMotion) {
     scrollTasks.push((y, viewport) => {

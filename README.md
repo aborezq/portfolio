@@ -45,12 +45,20 @@ robots.txt, sitemap.xml
 
 ## Nashrati screens
 
-`assets/nashrati/*.webp` are rendered from the Nashrati app's own Flutter code
-by its screen-capture test (`test/render_screens_test.dart` in the app
-repository, which is private), with the fixture data that test uses — so
-they show the real interface, not a mock-up. To refresh them, run that test
-in the app repository (and again with `RENDER_DARK=1`), then crop and convert
-the chosen captures from `build/screens/` to 640px-wide WebP.
+The phone screens are rendered from the Nashrati app's own Flutter code by its
+screen-capture test (`test/render_screens_test.dart` in the app repository,
+which is private), so they show the real interface, not a mock-up:
+
+- `assets/nashrati/ar/` — the app in Arabic, with its own sample data;
+- `assets/nashrati/en/` — the same screens with the app switched to English
+  and its sample reports and notifications translated (that translation was a
+  local change for the renders only, not committed to the app);
+- `assets/nashrati/splash.webp` — the launch screen, the same in both.
+
+English is shown by default; the switch under the strip swaps in the Arabic
+set. To refresh them, run that test in the app repository (and again with
+`RENDER_DARK=1`), then crop and convert the chosen captures from
+`build/screens/` to 640px-wide WebP.
 
 ## Accessibility and robustness
 

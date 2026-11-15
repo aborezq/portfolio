@@ -1108,7 +1108,20 @@ html:not(.js) .js-only { display: none !important; }
   gap: 1.25rem 2rem;
 }
 .phones-note { max-width: 44ch; color: var(--muted); font-size: 0.9rem; }
-.phones-controls { display: flex; align-items: center; gap: 0.6rem; }
+.phones-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+
+/* English / العربية for the screens — the Lab's segmented control, smaller. */
+.seg--small .seg-options { padding: 0.2rem; }
+.seg--small label span { padding: 0.4rem 0.9rem; font-size: 0.82rem; }
+.screens-lang { margin-right: 0.6rem; }
+.screens-lang [lang="ar"] {
+  font-family: var(--font-arabic);
+  font-weight: 800;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+.phone-screen img { transition: opacity 0.3s var(--ease); }
+.phones.is-swapping .phone-screen img[data-shot] { opacity: 0.25; }
 .phones-progress {
   position: relative;
   width: clamp(5rem, 14vw, 10rem);
@@ -1865,7 +1878,7 @@ html:not(.js) .js-only { display: none !important; }
    12. Responsive — mobile-first upgrades, then the narrow-screen menu
    ========================================================================== */
 @media (min-width: 700px) {
-  .exp-grid { grid-template-columns: repeat(3, 1fr); }
+  .exp-grid { grid-template-columns: repeat(2, 1fr); }
   .contact-grid { grid-template-columns: 1fr 1.2fr; align-items: start; }
 
   .project-card {
@@ -1882,6 +1895,10 @@ html:not(.js) .js-only { display: none !important; }
   .cert-row { grid-template-columns: minmax(0, 1fr) 6.5rem 5rem; }
   .cert-view { grid-column: auto; }
   .cert-date, .cert-link { text-align: right; }
+}
+
+@media (min-width: 1100px) {
+  .exp-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 @media (min-width: 901px) {
@@ -2018,6 +2035,10 @@ html:not(.js) .js-only { display: none !important; }
 }
 
 @media (max-width: 520px) {
+  /* The language switch takes its own row; position bar and arrows share the next. */
+  .phones-controls { width: 100%; }
+  .screens-lang { flex-basis: 100%; margin: 0 0 0.35rem; }
+  .phones-progress { flex: 1; width: auto; }
   .hero-actions { width: 100%; }
   .hero-actions .btn { flex: 1; padding-inline: 1rem; }
   .availability { font-size: 0.68rem; letter-spacing: 0.07em; }
