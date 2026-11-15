@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Mohammed R. Awad — Computer Engineering student (Intelligent Systems) from Gaza, Palestine. Portfolio of AI, data-analytics and machine-learning projects.">
+  <meta name="description" content="Mohammed R. Awad — Computer Engineering student (Intelligent Systems) from Gaza, Palestine. Portfolio of AI, data-analytics, machine-learning and mobile projects.">
   <title>Mohammed R. Awad — Computer Engineer</title>
 
   <!-- Tints the mobile browser chrome. Seeded with the dark palette's --bg;
        script.js §1 rewrites it whenever the theme resolves or is toggled, so
        it tracks an explicit choice, not just the OS preference. -->
-  <meta name="theme-color" content="#0e0d0b">
+  <meta name="theme-color" content="#0b0a08">
 
   <!-- Absolute URLs below assume the GitHub Pages project site. They are the
        one thing to update if the site moves to a custom domain — og:image in
@@ -32,25 +32,36 @@
   <meta name="twitter:description" content="Computer Engineering student (Intelligent Systems) from Gaza, Palestine, building AI-powered tools and data-analysis projects.">
   <meta name="twitter:image" content="https://aborezq.github.io/portfolio/assets/og-card.jpg">
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230e0d0b'/%3E%3Ctext x='16' y='23' font-family='Arial Black,sans-serif' font-size='17' font-weight='900' fill='%23e8dcc0' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0a08'/%3E%3Ctext x='16' y='23' font-family='Arial Black,sans-serif' font-size='17' font-weight='900' fill='%23e8dcc0' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
 
   <link rel="preload" href="assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-  <!-- Theme is resolved before first paint so a saved (or OS) light preference
-       never flashes the dark palette. Kept in sync with script.js §1. -->
+  <!-- Runs before first paint, so nothing flashes:
+       · marks the document as scripted (.js) — every "hidden until animated"
+         style is scoped to it, so the page stays whole without JavaScript;
+       · resolves the theme from a saved choice, else the OS preference;
+       · decides whether the opening sequence plays (once per tab session,
+         never under reduced motion). Kept in sync with script.js §1–2. -->
   <script>
     (() => {
       const root = document.documentElement;
-      try {
-        const saved = localStorage.getItem("preferred-theme");
-        if (saved === "light" || saved === "dark") {
-          root.dataset.theme = saved;
-          return;
-        }
-      } catch { /* storage unavailable — fall through to the OS preference */ }
-      if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+      root.classList.add("js");
+
+      let saved = null;
+      try { saved = localStorage.getItem("preferred-theme"); } catch { /* storage unavailable */ }
+      if (saved === "light" || saved === "dark") {
+        root.dataset.theme = saved;
+      } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
         root.dataset.theme = "light";
+      }
+
+      let seen = true;
+      try { seen = sessionStorage.getItem("intro-seen") === "1"; } catch { /* treat as seen */ }
+      if (!seen && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        root.classList.add("intro-pending");
+        // Whatever becomes of script.js, the curtain lifts.
+        setTimeout(() => root.classList.remove("intro-pending"), 6000);
       }
     })();
   </script>
@@ -82,7 +93,9 @@
       "Data Analytics",
       "Machine Learning",
       "Prompt Engineering",
-      "Python"
+      "Python",
+      "SQL",
+      "Flutter"
     ],
     "sameAs": [
       "https://github.com/aborezq",
@@ -95,24 +108,29 @@
 
   <a class="skip-link" href="#main">Skip to main content</a>
 
+  <!-- Film grain: one fixed, purely decorative layer over the whole page. -->
+  <div class="grain" aria-hidden="true"></div>
+
   <!-- ============ NAVIGATION ============ -->
   <header class="nav" id="nav">
+    <div class="nav-progress" aria-hidden="true"></div>
     <nav class="nav-inner container" aria-label="Primary">
-      <a href="#home" class="nav-logo" aria-label="Home — Mohammed R. Awad">
+      <a href="#home" class="nav-logo" aria-label="Home — Mohammed R. Awad" data-magnetic>
         MR<span class="accent">.</span> AWAD
       </a>
 
       <ul class="nav-links" id="nav-links">
-        <li><a href="#home" class="nav-link is-active" aria-current="location">Home</a></li>
-        <li><a href="#about" class="nav-link">About</a></li>
-        <li><a href="#skills" class="nav-link">Skills</a></li>
-        <li><a href="#projects" class="nav-link">Projects</a></li>
-        <li><a href="#certificates" class="nav-link">Certificates</a></li>
-        <li><a href="#contact" class="nav-link">Contact</a></li>
+        <li><a href="#home" class="nav-link is-active" aria-current="location"><span>Home</span></a></li>
+        <li><a href="#about" class="nav-link"><span>About</span></a></li>
+        <li><a href="#projects" class="nav-link"><span>Work</span></a></li>
+        <li><a href="#lab" class="nav-link"><span>Lab</span></a></li>
+        <li><a href="#skills" class="nav-link"><span>Skills</span></a></li>
+        <li><a href="#certificates" class="nav-link"><span>Certificates</span></a></li>
+        <li><a href="#contact" class="nav-link"><span>Contact</span></a></li>
       </ul>
 
       <div class="nav-actions">
-        <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" aria-pressed="false">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" aria-pressed="false" data-magnetic>
           <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
           <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
         </button>
@@ -129,25 +147,29 @@
     <!-- ============ HERO (cover design) ============ -->
     <section class="hero" id="home" aria-label="Introduction">
       <div class="hero-meta container">
+        <p class="hero-loc">
+          Gaza, Palestine<span class="js-only"> <span aria-hidden="true">·</span> <time data-clock>--:--</time> local time</span>
+        </p>
         <a class="hero-arrow" href="#about" aria-label="Scroll to about section">
           <svg viewBox="0 0 16 64" width="16" height="64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 0v60M2 54l6 7 6-7"/></svg>
         </a>
       </div>
 
-      <div class="hero-stage">
+      <div class="hero-stage" id="hero-stage">
         <!-- The display word is decoration; the real heading text is the name,
              so that search engines index it (they read heading text, not an
-             aria-label) and screen readers announce something useful. -->
+             aria-label) and screen readers announce something useful. The word
+             is two halves so a narrow screen can stack them: PORT / FOLIO. -->
         <h1 class="hero-word">
           <span class="sr-only">Mohammed R. Awad — AI, Data Analytics and Machine Learning</span>
-          <span aria-hidden="true">PORTFOLIO</span>
+          <span class="hero-word-line" aria-hidden="true"><span class="hw">PORT</span><span class="hw">FOLIO</span></span>
         </h1>
         <picture class="hero-picture">
           <source srcset="assets/profile.webp" type="image/webp">
           <img class="hero-photo" src="assets/profile.jpg"
                alt="Portrait of Mohammed R. Awad" width="900" height="1353" fetchpriority="high">
         </picture>
-        <span class="hero-word-outline" aria-hidden="true">PORTFOLIO</span>
+        <span class="hero-word-outline" aria-hidden="true"><span class="hero-word-line"><span class="hw">PORT</span><span class="hw">FOLIO</span></span></span>
       </div>
 
       <div class="hero-footer container">
@@ -158,527 +180,966 @@
           <p class="hero-typed">I&nbsp;am&nbsp;a <span id="typed" class="accent"></span><span class="caret" aria-hidden="true"></span></p>
         </div>
         <div class="hero-actions">
-          <a href="#projects" class="btn btn-solid">Explore projects</a>
-          <a href="#contact" class="btn btn-outline">Let's talk</a>
+          <a href="#projects" class="btn btn-solid" data-magnetic><span>Explore projects</span></a>
+          <a href="#contact" class="btn btn-outline" data-magnetic><span>Let's talk</span></a>
         </div>
       </div>
     </section>
 
-    <!-- ============ ABOUT ============ -->
-    <section class="section" id="about">
-      <div class="container">
-        <p class="section-kicker reveal">01 — About</p>
-        <h2 class="section-title reveal">Built under pressure,<br>driven by curiosity.</h2>
+    <!-- Everything after the cover lives on one sheet that slides up over it. -->
+    <div class="sheet">
 
-        <div class="about-grid">
-          <div class="about-text reveal">
-            <p>
-              I'm a Computer Engineering student focused on <strong>Intelligent Systems</strong>
-              at <strong>Al-Aqsa University</strong>, based in <strong>Gaza, Palestine</strong> —
-              and I'm building my way into tech.
-            </p>
-            <p>
-              My work spans <strong>AI, Data Analytics, and Machine Learning</strong>. What I enjoy
-              most is turning ideas into real products: AI-powered web apps and tools that actually
-              solve problems. Every project teaches me something new, and that's the part I never
-              get tired of.
-            </p>
-            <p>
-              My story isn't a straight line. I kept building, studying, and shipping through
-              extremely difficult circumstances — power cuts, unstable internet, and everything
-              that comes with living through a crisis. Those constraints didn't stop the work;
-              they shaped how I work: resourceful, self-taught, and relentless about finishing
-              what I start.
-            </p>
-            <p>
-              I'm still learning, and I plan to keep going. When things get hard, you adapt;
-              you don't quit. Skills can be taught, but consistency is what carries you through.
-            </p>
-          </div>
-
-          <aside class="about-facts reveal" aria-label="Quick facts">
-            <ul>
-              <li><span class="fact-label">Location</span> Gaza, Palestine</li>
-              <li><span class="fact-label">Degree</span> B.Sc. Computer Engineering — Intelligent Systems</li>
-              <li><span class="fact-label">University</span> Al-Aqsa University</li>
-              <li><span class="fact-label">Focus</span> AI · Data Analytics · Machine Learning</li>
-            </ul>
-          </aside>
-        </div>
-
-        <div class="exp-grid">
-          <article class="exp-card reveal">
-            <h3>Freelance — AI Design Visualization</h3>
-            <p>
-              I run a small freelance service using generative-AI image tools to produce
-              interior-design visualizations for real clients — wedding halls and cafés —
-              turning rough ideas into photorealistic concepts they can act on.
-            </p>
-          </article>
-          <article class="exp-card reveal">
-            <h3>Volunteer — Community Data Organization</h3>
-            <p>
-              During a crisis period I volunteered to organize and structure community data,
-              helping local efforts track needs and resources when it mattered most.
-            </p>
-          </article>
+      <!-- Decorative ticker: the same disciplines listed under Skills. -->
+      <div class="marquee" data-marquee aria-hidden="true">
+        <div class="marquee-track">
+          <span>AI Agents</span><i>✦</i>
+          <span class="is-outline">Machine Learning</span><i>✦</i>
+          <span>Data Analytics</span><i>✦</i>
+          <span class="is-outline">Flutter</span><i>✦</i>
+          <span>Prompt Engineering</span><i>✦</i>
+          <span class="is-outline">Python</span><i>✦</i>
         </div>
       </div>
-    </section>
 
-    <!-- ============ SKILLS ============ -->
-    <section class="section section-alt" id="skills">
-      <div class="container">
-        <p class="section-kicker reveal">02 — Skills</p>
-        <h2 class="section-title reveal">Tools I think in.</h2>
+      <!-- ============ ABOUT ============ -->
+      <section class="section" id="about">
+        <div class="container">
+          <header class="section-head">
+            <p class="section-kicker reveal"><span class="kicker-num">01</span>About</p>
+            <h2 class="section-title" data-split>Built under pressure,<br><em>driven by curiosity.</em></h2>
+          </header>
 
-        <div class="skills-grid">
-          <div class="skills-proof reveal" aria-label="Core strengths demonstrated through projects">
-            <h3 class="skills-heading">Core strengths</h3>
-            <ol class="skill-evidence">
-              <li>
-                <span class="skill-index" aria-hidden="true">01</span>
-                <div>
-                  <h4>Machine Learning &amp; Analytics</h4>
-                  <p>EDA, preprocessing, classifier comparison, interpretation, and research-driven evaluation.</p>
-                  <a href="#projects">Shown in churn prediction and pattern-recognition work ↓</a>
-                </div>
-              </li>
-              <li>
-                <span class="skill-index" aria-hidden="true">02</span>
-                <div>
-                  <h4>AI Agents &amp; Applied GenAI</h4>
-                  <p>LangChain foundations, Claude API workflows, agent skills, subagents, and responsible AI practice.</p>
-                  <a href="#certificates">Backed by verified credentials ↓</a>
-                </div>
-              </li>
-              <li>
-                <span class="skill-index" aria-hidden="true">03</span>
-                <div>
-                  <h4>Web Product Delivery</h4>
-                  <p>Responsive, accessible interfaces built with semantic HTML, modern CSS, and vanilla JavaScript.</p>
-                  <a href="#projects">Shown in Gaza Aid and this portfolio ↓</a>
-                </div>
-              </li>
-            </ol>
-          </div>
-
-          <div class="skills-tags">
-            <div class="reveal">
-              <h3 class="skills-heading">AI &amp; Machine Learning</h3>
-              <ul class="tag-list" aria-label="AI and machine-learning skills">
-                <li>Prompt Engineering</li>
-                <li>Claude API</li>
-                <li>LangChain</li>
-                <li>AI Agents</li>
-                <li>Generative AI</li>
-                <li>Responsible AI</li>
-                <li>scikit-learn</li>
-                <li>Deep Learning</li>
-              </ul>
-            </div>
-            <div class="reveal">
-              <h3 class="skills-heading">Data &amp; Analytics</h3>
-              <ul class="tag-list" aria-label="Data and analytics skills">
-                <li>Python</li>
-                <li>pandas</li>
-                <li>Data Analysis</li>
-                <li>EDA</li>
-                <li>Pattern Recognition</li>
-                <li>MATLAB</li>
-              </ul>
-            </div>
-            <div class="reveal">
-              <h3 class="skills-heading">Also fluent in</h3>
-              <ul class="tag-list" aria-label="Other languages and frameworks">
-                <li>Flutter &amp; Dart</li>
-                <li>Java</li>
-              </ul>
-            </div>
-            <div class="reveal">
-              <h3 class="skills-heading">Tools</h3>
-              <ul class="tag-list" aria-label="Development tools">
-                <li>Git &amp; GitHub</li>
-                <li>VS Code</li>
-                <li>Claude Code</li>
-                <li>Google Colab</li>
-                <li>Cisco Packet Tracer</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ PROJECTS ============ -->
-    <section class="section" id="projects">
-      <div class="container">
-        <p class="section-kicker reveal">03 — Projects</p>
-        <h2 class="section-title reveal">Selected work.</h2>
-
-        <div class="filter-bar reveal" role="group" aria-label="Filter projects by category">
-          <button class="filter-btn is-active" data-filter="all" aria-pressed="true">All</button>
-          <button class="filter-btn" data-filter="web" aria-pressed="false">Web</button>
-          <button class="filter-btn" data-filter="ml" aria-pressed="false">ML &amp; Data</button>
-          <button class="filter-btn" data-filter="java" aria-pressed="false">Java</button>
-          <button class="filter-btn" data-filter="systems" aria-pressed="false">Systems &amp; Networks</button>
-        </div>
-
-        <ul class="projects-grid" id="projects-grid">
-
-          <li class="project-card project-card--lead reveal" data-category="ml">
-            <div class="project-cover project-cover--churn" aria-hidden="true"><span>CP</span></div>
-            <div class="project-body">
-              <p class="project-label">Featured · Machine Learning</p>
-              <h3 class="project-title">Bank Customer Churn Prediction</h3>
-              <p class="project-desc">
-                End-to-end machine-learning pipeline: exploratory data analysis,
-                model comparison, and feature-importance interpretation.
+          <div class="about-grid">
+            <div class="about-text">
+              <p class="about-lead" data-scrub>
+                I'm a Computer Engineering student focused on <strong>Intelligent Systems</strong>
+                at <strong>Al-Aqsa University</strong>, based in <strong>Gaza, Palestine</strong> —
+                and I'm building my way into tech.
               </p>
-              <p class="project-proof"><strong>What it proves</strong> A complete path from raw customer data to compared models and explainable business signals.</p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>Python</li><li>pandas</li><li>scikit-learn</li><li>EDA</li>
+              <p class="reveal">
+                My work spans <strong>AI, Data Analytics, and Machine Learning</strong>. What I enjoy
+                most is turning ideas into real products: AI-powered web apps and tools that actually
+                solve problems. Every project teaches me something new, and that's the part I never
+                get tired of.
+              </p>
+              <p class="reveal">
+                My story isn't a straight line. I kept building, studying, and shipping through
+                extremely difficult circumstances — power cuts, unstable internet, and everything
+                that comes with living through a crisis. Those constraints didn't stop the work;
+                they shaped how I work: resourceful, self-taught, and relentless about finishing
+                what I start.
+              </p>
+              <p class="reveal">
+                I'm still learning, and I plan to keep going. When things get hard, you adapt;
+                you don't quit. Skills can be taught, but consistency is what carries you through.
+              </p>
+            </div>
+
+            <aside class="about-facts reveal" aria-label="Quick facts">
+              <ul>
+                <li><span class="fact-label">Location</span> Gaza, Palestine</li>
+                <li><span class="fact-label">Degree</span> B.Sc. Computer Engineering — Intelligent Systems</li>
+                <li><span class="fact-label">University</span> Al-Aqsa University</li>
+                <li><span class="fact-label">Focus</span> AI · Data Analytics · Machine Learning</li>
+                <li class="js-only"><span class="fact-label">Local time</span> <time data-clock data-clock-zone>--:--</time></li>
               </ul>
+            </aside>
+          </div>
+
+          <div class="exp-grid">
+            <article class="exp-card reveal">
+              <p class="exp-kind">Freelance</p>
+              <h3>AI Design Visualization</h3>
+              <p>
+                I run a small freelance service using generative-AI image tools to produce
+                interior-design visualizations for real clients — wedding halls and cafés —
+                turning rough ideas into photorealistic concepts they can act on.
+              </p>
+            </article>
+            <article class="exp-card reveal">
+              <p class="exp-kind">Volunteer</p>
+              <h3>Community Data Organization</h3>
+              <p>
+                During a crisis period I volunteered to organize and structure community data,
+                helping local efforts track needs and resources when it mattered most.
+              </p>
+            </article>
+            <article class="exp-card reveal">
+              <p class="exp-kind">Training</p>
+              <h3>TAQAT — CodeMap 2026</h3>
+              <p>
+                A 144-hour program in software architecture, code organization and
+                development workflow, completed in November 2026.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ WORK ============ -->
+      <section class="section section-alt" id="projects">
+        <div class="container">
+          <header class="section-head">
+            <p class="section-kicker reveal"><span class="kicker-num">02</span>Work</p>
+            <h2 class="section-title" data-split>Selected <em>work.</em></h2>
+          </header>
+        </div>
+
+        <!-- Lead case study: Nashrati. The screens are rendered from the app's
+             own Flutter code by its screen-capture test, with its fixture data. -->
+        <article class="feature" id="nashrati" aria-labelledby="nashrati-title">
+          <div class="container feature-grid">
+            <div class="feature-copy">
+              <p class="project-label reveal">Lead project · Mobile · AI product</p>
+              <h3 class="feature-title reveal" id="nashrati-title"><span class="ar" lang="ar" dir="rtl">نشرتي</span> Nashrati</h3>
+              <p class="feature-lede reveal">
+                AI-assisted news drafting for field reporters. Record an interview where the
+                story is happening; Nashrati transcribes it, pulls out the people, places and
+                dates, and hands back a structured draft for a journalist or an editor to
+                review before anything is published.
+              </p>
+              <p class="feature-role reveal">
+                Nashrati is a team platform in four parts — a Laravel API, a React dashboard,
+                Python AI services, and the mobile app. <strong>The mobile app is my part:</strong>
+                I set up its architecture and built it in Flutter, from the first commit to
+                the 65th merged pull request.
+              </p>
+            </div>
+
+            <div class="feature-side">
+              <dl class="feature-stats reveal">
+                <div><dt>Commits</dt><dd data-count="459">459</dd></div>
+                <div><dt>Merged pull requests</dt><dd data-count="65">65</dd></div>
+                <div><dt>Automated tests</dt><dd><span data-count="1500">1,500</span>+</dd></div>
+                <div><dt>Built</dt><dd class="is-text">Aug – Oct 2026</dd></div>
+              </dl>
+              <ul class="feature-points reveal">
+                <li><strong>Field capture.</strong> Record or import audio — even lift it out of a video — and keep recording with the app in the background.</li>
+                <li><strong>Offline-first.</strong> Drafts and tasks keep working without a connection, then sync when it returns.</li>
+                <li><strong>AI you can check.</strong> Transcript, extracted entities and a clearly labelled AI suggestion, beside the journalist's own words.</li>
+                <li><strong>Two workflows.</strong> Reporter to editor approval for newsrooms; post, export and publish to Telegram for freelancers.</li>
+              </ul>
+              <ul class="project-tags reveal" aria-label="Technologies used">
+                <li>Flutter</li><li>Dart</li><li>Clean Architecture</li><li>BLoC / Cubit</li><li>REST API</li><li>Offline sync</li><li>Arabic RTL + English</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="phones-wrap">
+            <div class="phones" id="phones" tabindex="0" role="region" aria-label="Nashrati app screens — scroll sideways for more">
+              <ol class="phones-track">
+                <li class="phone">
+                  <figure>
+                    <div class="phone-frame"><div class="phone-screen" data-tone="dark">
+                      <img src="assets/nashrati/splash.webp" width="640" height="1316" loading="lazy" decoding="async"
+                           alt="Nashrati launch screen: the blue N-and-microphone logo on a dark navy background.">
+                    </div></div>
+                    <figcaption><span>01</span>Launch</figcaption>
+                  </figure>
+                </li>
+                <li class="phone">
+                  <figure>
+                    <div class="phone-frame"><div class="phone-screen">
+                      <img src="assets/nashrati/reports.webp" width="640" height="1316" loading="lazy" decoding="async"
+                           alt="Reports feed in Arabic: summary counters, status filters, and report cards marked ready for review, processing failed with a retry button, and revisions requested.">
+                    </div></div>
+                    <figcaption><span>02</span>Reports feed</figcaption>
+                  </figure>
+                </li>
+                <li class="phone">
+                  <figure>
+                    <div class="phone-frame"><div class="phone-screen" data-tone="dark">
+                      <img src="assets/nashrati/record.webp" width="640" height="1316" loading="lazy" decoding="async"
+                           alt="Audio recorder in dark mode: a live waveform, a running timer, pause and stop controls, and options to upload audio or extract it from a video.">
+                    </div></div>
+                    <figcaption><span>03</span>Recording, live</figcaption>
+                  </figure>
+                </li>
+                <li class="phone">
+                  <figure>
+                    <div class="phone-frame"><div class="phone-screen">
+                      <img src="assets/nashrati/draft.webp" width="640" height="2009" loading="lazy" decoding="async"
+                           alt="Report detail: a four-step status rail, the original field recording with a player, the AI-generated draft marked as an AI suggestion, the transcript, and the extracted entities.">
+                    </div></div>
+                    <figcaption><span>04</span>AI draft &amp; transcript</figcaption>
+                  </figure>
+                </li>
+                <li class="phone">
+                  <figure>
+                    <div class="phone-frame"><div class="phone-screen" data-tone="dark">
+                      <img src="assets/nashrati/tasks.webp" width="640" height="1316" loading="lazy" decoding="async"
+                           alt="Tasks screen in dark mode: counters for waiting, urgent and completed work, followed by task cards with retry and open-report actions.">
+                    </div></div>
+                    <figcaption><span>05</span>What still needs me</figcaption>
+                  </figure>
+                </li>
+                <li class="phone">
+                  <figure>
+                    <div class="phone-frame"><div class="phone-screen">
+                      <img src="assets/nashrati/notifications.webp" width="640" height="1280" loading="lazy" decoding="async"
+                           alt="Notification centre: processing finished, processing failed, a newly assigned task, a revision request and an approval, each linking to its report.">
+                    </div></div>
+                    <figcaption><span>06</span>Notifications</figcaption>
+                  </figure>
+                </li>
+              </ol>
+            </div>
+
+            <div class="container phones-bar">
+              <p class="phones-note">
+                Real screens, rendered from the app's own code — Arabic-first, light and dark.
+                The repository is private; I'm glad to walk through the code on request.
+              </p>
+              <div class="phones-controls js-only">
+                <div class="phones-progress" aria-hidden="true"><i id="phones-progress"></i></div>
+                <button class="round-btn" id="phones-prev" type="button" aria-label="Previous screens" aria-controls="phones">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <button class="round-btn" id="phones-next" type="button" aria-label="Next screens" aria-controls="phones">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <div class="container">
+          <div class="work-head">
+            <h3 class="work-heading reveal">More work</h3>
+            <div class="filter-bar reveal" role="group" aria-label="Filter projects by category">
+              <button class="filter-btn is-active" data-filter="all" aria-pressed="true">All</button>
+              <button class="filter-btn" data-filter="web" aria-pressed="false">Web</button>
+              <button class="filter-btn" data-filter="ml" aria-pressed="false">ML &amp; Data</button>
+              <button class="filter-btn" data-filter="java" aria-pressed="false">Java</button>
+              <button class="filter-btn" data-filter="systems" aria-pressed="false">Systems &amp; Networks</button>
+            </div>
+          </div>
+
+          <ol class="work-list" id="projects-grid">
+
+            <li class="project-card reveal" data-category="ml">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <p class="project-label">Featured · Machine Learning</p>
+                <h4 class="project-title">Bank Customer Churn Prediction</h4>
+                <p class="project-desc">
+                  End-to-end machine-learning pipeline: exploratory data analysis,
+                  model comparison, and feature-importance interpretation.
+                </p>
+                <p class="project-proof"><strong>What it proves</strong> A complete path from raw customer data to compared models and explainable business signals.</p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>Python</li><li>pandas</li><li>scikit-learn</li><li>EDA</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a class="project-link--primary" href="https://github.com/aborezq/Bank-Customer-Churn-Prediction" target="_blank" rel="noopener noreferrer" aria-label="Explore the Customer Churn Prediction source code on GitHub">Explore case ↗</a>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li class="project-card project-card--featured reveal" data-category="web">
-            <div class="project-cover project-cover--gaza" aria-hidden="true"><span>GA</span></div>
-            <div class="project-body">
-              <p class="project-label">Featured · Web Product</p>
-              <h3 class="project-title">Gaza Aid</h3>
-              <p class="project-desc">
-                Humanitarian-aid website built as a complete web-development course
-                project with vanilla HTML, CSS, and JavaScript.
-              </p>
-              <p class="project-proof"><strong>What it proves</strong> A real, deployed interface shaped around a meaningful community use case.</p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>HTML</li><li>CSS</li><li>JavaScript</li>
-              </ul>
+            <li class="project-card reveal" data-category="web">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <p class="project-label">Featured · Web Product</p>
+                <h4 class="project-title">Gaza Aid</h4>
+                <p class="project-desc">
+                  Humanitarian-aid website built as a complete web-development course
+                  project with vanilla HTML, CSS, and JavaScript.
+                </p>
+                <p class="project-proof"><strong>What it proves</strong> A real, deployed interface shaped around a meaningful community use case.</p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>HTML</li><li>CSS</li><li>JavaScript</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a class="project-link--primary" href="https://aborezq.github.io/Mohammed_Awad_Gaza_Aid/" target="_blank" rel="noopener noreferrer" aria-label="Open the live Gaza Aid website">Live demo ↗</a>
                 <a href="https://github.com/aborezq/Mohammed_Awad_Gaza_Aid" target="_blank" rel="noopener noreferrer" aria-label="Source code of Gaza Aid on GitHub">Code ↗</a>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li class="project-card project-card--featured reveal" data-category="ml">
-            <div class="project-cover project-cover--pattern" aria-hidden="true"><span>PR</span></div>
-            <div class="project-body">
-              <p class="project-label">Featured · Research</p>
-              <h3 class="project-title">Pattern Recognition Research</h3>
-              <p class="project-desc">
-                Analytical study: when feature scaling changes the optimal
-                classifier in pattern recognition.
-              </p>
-              <p class="project-proof"><strong>What it proves</strong> A focused research question translated into technical analysis and reproducible reasoning.</p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>Pattern Recognition</li><li>Feature Scaling</li><li>Research</li>
-              </ul>
+            <li class="project-card reveal" data-category="ml">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <p class="project-label">Featured · Research</p>
+                <h4 class="project-title">Pattern Recognition Research</h4>
+                <p class="project-desc">
+                  Analytical study: when feature scaling changes the optimal
+                  classifier in pattern recognition.
+                </p>
+                <p class="project-proof"><strong>What it proves</strong> A focused research question translated into technical analysis and reproducible reasoning.</p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>Pattern Recognition</li><li>Feature Scaling</li><li>Research</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a class="project-link--primary" href="https://github.com/aborezq/Pattern-Recognition-Research" target="_blank" rel="noopener noreferrer" aria-label="Explore the Pattern Recognition Research source code on GitHub">Explore research ↗</a>
+                <a href="#lab" aria-label="Try the idea behind this research in the Lab section">Try it in the Lab ↓</a>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li class="project-card reveal" data-category="ml">
-            <div class="project-cover" aria-hidden="true"><span>ML</span></div>
-            <div class="project-body">
-              <h3 class="project-title">ML Research</h3>
-              <p class="project-desc">
-                A growing collection of machine-learning work: Python, data science,
-                deep learning, and data-analysis experiments and notes.
-              </p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>Python</li><li>Data Science</li><li>Deep Learning</li>
-              </ul>
+            <li class="project-card reveal" data-category="ml">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <h4 class="project-title">ML Research</h4>
+                <p class="project-desc">
+                  A growing collection of machine-learning work: Python, data science,
+                  deep learning, and data-analysis experiments and notes.
+                </p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>Python</li><li>Data Science</li><li>Deep Learning</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a href="https://github.com/aborezq/ML_Research" target="_blank" rel="noopener noreferrer" aria-label="Source code of ML Research on GitHub">Code ↗</a>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li class="project-card reveal" data-category="java">
-            <div class="project-cover" aria-hidden="true"><span>IT</span></div>
-            <div class="project-body">
-              <h3 class="project-title">IT Company</h3>
-              <p class="project-desc">
-                Java application modeling an IT company: OOP design, class
-                relationships, collections (ArrayList), and file handling.
-              </p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>Java</li><li>OOP</li><li>Collections</li><li>File I/O</li>
-              </ul>
+            <li class="project-card reveal" data-category="java">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <h4 class="project-title">IT Company</h4>
+                <p class="project-desc">
+                  Java application modeling an IT company: OOP design, class
+                  relationships, collections (ArrayList), and file handling.
+                </p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>Java</li><li>OOP</li><li>Collections</li><li>File I/O</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a href="https://github.com/aborezq/IT-Company" target="_blank" rel="noopener noreferrer" aria-label="Source code of IT Company on GitHub">Code ↗</a>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li class="project-card reveal" data-category="systems">
-            <div class="project-cover" aria-hidden="true"><span>CN</span></div>
-            <div class="project-body">
-              <h3 class="project-title">Campus Network Design</h3>
-              <p class="project-desc">
-                Complete campus network in Cisco Packet Tracer: DHCP, RADIUS
-                authentication, and WPA2-Enterprise wireless security.
-              </p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>Packet Tracer</li><li>DHCP</li><li>RADIUS</li><li>WPA2-Enterprise</li>
-              </ul>
+            <li class="project-card reveal" data-category="systems">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <h4 class="project-title">Campus Network Design</h4>
+                <p class="project-desc">
+                  Complete campus network in Cisco Packet Tracer: DHCP, RADIUS
+                  authentication, and WPA2-Enterprise wireless security.
+                </p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>Packet Tracer</li><li>DHCP</li><li>RADIUS</li><li>WPA2-Enterprise</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a href="https://github.com/aborezq/Networking" target="_blank" rel="noopener noreferrer" aria-label="Topology files of Campus Network Design on GitHub">Topology ↗</a>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li class="project-card reveal" data-category="java">
-            <div class="project-cover" aria-hidden="true"><span>LS</span></div>
-            <div class="project-body">
-              <h3 class="project-title">Library System</h3>
-              <p class="project-desc">
-                Library management system built in Java with a clean
-                object-oriented structure for books, members, and loans.
-              </p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>Java</li><li>OOP</li>
-              </ul>
+            <li class="project-card reveal" data-category="java">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <h4 class="project-title">Library System</h4>
+                <p class="project-desc">
+                  Library management system built in Java with a clean
+                  object-oriented structure for books, members, and loans.
+                </p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>Java</li><li>OOP</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a href="https://github.com/aborezq/Library_System" target="_blank" rel="noopener noreferrer" aria-label="Source code of Library System on GitHub">Code ↗</a>
               </div>
-            </div>
-          </li>
+            </li>
 
-          <li class="project-card reveal" data-category="systems">
-            <div class="project-cover" aria-hidden="true"><span>CS</span></div>
-            <div class="project-body">
-              <h3 class="project-title">Control System</h3>
-              <p class="project-desc">
-                Control-system designs for classic automation scenarios:
-                a traffic-signal controller and a water-pump controller.
-              </p>
-              <ul class="project-tags" aria-label="Technologies used">
-                <li>Automation</li><li>Control Systems</li>
-              </ul>
+            <li class="project-card reveal" data-category="systems">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <h4 class="project-title">Control System</h4>
+                <p class="project-desc">
+                  Control-system designs for classic automation scenarios:
+                  a traffic-signal controller and a water-pump controller.
+                </p>
+                <ul class="project-tags" aria-label="Technologies used">
+                  <li>Automation</li><li>Control Systems</li>
+                </ul>
+              </div>
               <div class="project-links">
                 <a href="https://github.com/aborezq/Control-System" target="_blank" rel="noopener noreferrer" aria-label="Source code of Control System on GitHub">Code ↗</a>
               </div>
+            </li>
+
+          </ol>
+          <p class="projects-empty" id="projects-empty" hidden>No projects in this category yet.</p>
+        </div>
+      </section>
+
+      <!-- ============ LAB ============ -->
+      <section class="section" id="lab">
+        <div class="container">
+          <header class="section-head">
+            <p class="section-kicker reveal"><span class="kicker-num">03</span>Lab</p>
+            <h2 class="section-title" data-split>Same data.<br><em>Different answer.</em></h2>
+          </header>
+
+          <div class="lab">
+            <div class="lab-copy">
+              <p class="lab-lede reveal">
+                The question behind my pattern-recognition research, as something you can play
+                with. A <strong>k-nearest-neighbours</strong> classifier decides whether a bank
+                customer stays or leaves by asking the customers most like them. But
+                <em>“most like”</em> depends on units: measured raw, a balance in the tens of
+                thousands drowns out an age in the tens.
+              </p>
+
+              <div class="lab-controls reveal" id="lab-controls">
+                <fieldset class="seg">
+                  <legend>Measure distance in</legend>
+                  <div class="seg-options">
+                    <label><input type="radio" name="lab-scale" value="raw" checked><span>Raw units</span></label>
+                    <label><input type="radio" name="lab-scale" value="std"><span>Standardized</span></label>
+                  </div>
+                </fieldset>
+
+                <div class="lab-range">
+                  <label for="lab-k">Neighbours asked, <i>k</i> = <output id="lab-k-out" for="lab-k">5</output></label>
+                  <input type="range" id="lab-k" min="1" max="15" step="2" value="5">
+                </div>
+
+                <fieldset class="seg">
+                  <legend>A click on the chart adds a customer who</legend>
+                  <div class="seg-options">
+                    <label><input type="radio" name="lab-class" value="0" checked><span>Stayed</span></label>
+                    <label><input type="radio" name="lab-class" value="1"><span>Left</span></label>
+                  </div>
+                </fieldset>
+
+                <div class="lab-buttons">
+                  <button class="btn btn-outline btn-small" id="lab-shuffle" type="button"><span>New sample</span></button>
+                  <button class="btn btn-outline btn-small" id="lab-reset" type="button"><span>Reset</span></button>
+                </div>
+              </div>
+
+              <dl class="lab-readout reveal" aria-label="Leave-one-out accuracy">
+                <div data-mode="raw">
+                  <dt>Accuracy · raw units</dt>
+                  <dd><span id="lab-acc-raw">–</span><small>%</small></dd>
+                </div>
+                <div data-mode="std">
+                  <dt>Accuracy · standardized</dt>
+                  <dd><span id="lab-acc-std">–</span><small>%</small></dd>
+                </div>
+              </dl>
+              <p class="sr-only" id="lab-status" role="status" aria-live="polite"></p>
             </div>
-          </li>
 
-        </ul>
-        <p class="projects-empty" id="projects-empty" hidden>No projects in this category yet.</p>
-      </div>
-    </section>
-
-    <!-- ============ CERTIFICATES ============ -->
-    <section class="section section-alt" id="certificates">
-      <div class="container">
-        <p class="section-kicker reveal">04 — Certificates</p>
-        <h2 class="section-title reveal">Proof of the reps.</h2>
-
-        <!-- Certificate cards. Coursera links are the "Verify at:" URL printed on
-             each certificate. The six course URLs were confirmed to resolve; the
-             professional-cert URL was transcribed from the certificate image.
-             Anthropic and LangChain course names link to their public credentials. -->
-        <ul class="cert-grid" id="certificate-grid">
-
-          <li class="cert-card cert-card--program reveal">
-            <span class="cert-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
-            </span>
-            <div class="cert-body">
-              <h3 class="cert-title">Google AI Professional Certificate</h3>
-              <p class="cert-issuer">Google · Coursera</p>
-              <p class="cert-date">Aug 2026 · 7 courses</p>
-              <ul class="cert-courses" aria-label="Courses completed">
-                <li>AI Fundamentals</li>
-                <li>AI for Brainstorming and Planning</li>
-                <li>AI for Research and Insights</li>
-                <li>AI for Writing and Communicating</li>
-                <li>AI for Content Creation</li>
-                <li>AI for Data Analysis</li>
-                <li>AI for App Building</li>
-              </ul>
-              <a class="cert-link" href="https://coursera.org/verify/professional-cert/2PKA12G3RPYP" target="_blank" rel="noopener noreferrer">Verify credential ↗</a>
-            </div>
-          </li>
-
-          <li class="cert-card cert-card--program reveal">
-            <span class="cert-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
-            </span>
-            <div class="cert-body">
-              <h3 class="cert-title">Google AI Essentials</h3>
-              <p class="cert-issuer">Google · Coursera</p>
-              <p class="cert-date">Jul 2026 · 4 course certificates</p>
-              <ul class="cert-courses cert-courses--links" aria-label="Courses completed, each linking to its Coursera verification page">
-                <li><a href="https://coursera.org/verify/N1K4MII2X4C0" target="_blank" rel="noopener noreferrer">Introduction to AI ↗</a></li>
-                <li><a href="https://coursera.org/verify/VKVVAZ0EYBFY" target="_blank" rel="noopener noreferrer">Maximize Productivity With AI Tools ↗</a></li>
-                <li><a href="https://coursera.org/verify/KL9HPRJ4I45U" target="_blank" rel="noopener noreferrer">Discover the Art of Prompting ↗</a></li>
-                <li><a href="https://coursera.org/verify/NUONEURGX9PX" target="_blank" rel="noopener noreferrer">Use AI Responsibly ↗</a></li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="cert-card cert-card--extra reveal">
-            <span class="cert-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
-            </span>
-            <div class="cert-body">
-              <h3 class="cert-title">Introduction to Data Analytics</h3>
-              <p class="cert-issuer">IBM · Coursera</p>
-              <p class="cert-date">Aug 2026</p>
-              <a class="cert-link" href="https://coursera.org/verify/L1GHADHSV4CX" target="_blank" rel="noopener noreferrer">Verify credential ↗</a>
-            </div>
-          </li>
-
-          <li class="cert-card cert-card--extra reveal">
-            <span class="cert-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
-            </span>
-            <div class="cert-body">
-              <h3 class="cert-title">Introduction to Responsible AI</h3>
-              <p class="cert-issuer">Google Cloud · Coursera</p>
-              <p class="cert-date">Aug 2026</p>
-              <a class="cert-link" href="https://coursera.org/verify/DNOT7F2SDWJ7" target="_blank" rel="noopener noreferrer">Verify credential ↗</a>
-            </div>
-          </li>
-
-          <li class="cert-card cert-card--program cert-card--extra reveal">
-            <span class="cert-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
-            </span>
-            <div class="cert-body">
-              <h3 class="cert-title">Claude &amp; AI Fluency</h3>
-              <p class="cert-issuer">Anthropic</p>
-              <p class="cert-date">2026 · 6 certificates</p>
-              <ul class="cert-courses cert-courses--links" aria-label="Certificates earned, each linking to its verification page">
-                <li><a href="https://verify.skilljar.com/c/9t3vd9d5ck3n" target="_blank" rel="noopener noreferrer">AI Fluency: Framework &amp; Foundations ↗</a></li>
-                <li><a href="https://verify.skilljar.com/c/fc96rsitgdfs" target="_blank" rel="noopener noreferrer">AI Fluency for Students ↗</a></li>
-                <li><a href="https://verify.skilljar.com/c/xsmkxurv37cr" target="_blank" rel="noopener noreferrer">Claude Code 101 ↗</a></li>
-                <li><a href="https://verify.skilljar.com/c/rsdkputztyn4" target="_blank" rel="noopener noreferrer">Building with the Claude API ↗</a></li>
-                <li><a href="https://verify.skilljar.com/c/xkswwi4gynui" target="_blank" rel="noopener noreferrer">Introduction to Subagents ↗</a></li>
-                <li><a href="https://verify.skilljar.com/c/ff24fs3gbrdy" target="_blank" rel="noopener noreferrer">Introduction to Agent Skills ↗</a></li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="cert-card cert-card--program cert-card--extra reveal">
-            <span class="cert-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
-            </span>
-            <div class="cert-body">
-              <h3 class="cert-title">LangChain Academy</h3>
-              <p class="cert-issuer">LangChain · Python</p>
-              <p class="cert-date">Aug 2026 · 2 certificates</p>
-              <ul class="cert-courses cert-courses--links" aria-label="Certificates earned, each linking to its verification page">
-                <li><a href="https://academy.langchain.com/certificates/wzp14xclb1" target="_blank" rel="noopener noreferrer">Foundation: Introduction to LangChain — Python ↗</a></li>
-                <li><a href="https://academy.langchain.com/certificates/u0kiqumekm" target="_blank" rel="noopener noreferrer">Quickstart: LangChain Essentials — Python ↗</a></li>
-              </ul>
-            </div>
-          </li>
-
-        </ul>
-        <button class="btn btn-outline cert-toggle" id="cert-toggle" type="button"
-                aria-controls="certificate-grid" aria-expanded="false" hidden>
-          View all credential groups
-        </button>
-      </div>
-    </section>
-
-    <!-- ============ CONTACT ============ -->
-    <section class="section" id="contact">
-      <div class="container">
-        <p class="section-kicker reveal">05 — Contact</p>
-        <h2 class="section-title reveal">Let's build something.</h2>
-
-        <div class="contact-grid">
-          <div class="contact-info reveal">
-            <p>
-              Available for remote internships, junior AI and data roles, selected freelance
-              work, and thoughtful collaborations. Send a message here and I'll reply by email.
-            </p>
-            <ul class="contact-links">
-              <li>
-                <a href="mailto:momoawad2004@gmail.com">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>
-                  momoawad2004@gmail.com
-                </a>
-              </li>
-              <li>
-                <a href="https://wa.me/972598630116" target="_blank" rel="noopener noreferrer">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.03-.2-.31a8.2 8.2 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.24-.74-.65-1.23-1.46-1.38-1.71-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.48-.4-.42-.55-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.75.59.25 1.05.4 1.41.52.6.19 1.14.16 1.57.1.47-.07 1.47-.6 1.68-1.18.2-.59.2-1.09.14-1.19-.06-.11-.22-.17-.47-.29z"/></svg>
-                  WhatsApp
-                </a>
-              </li>
-              <li>
-                <a href="https://github.com/aborezq" target="_blank" rel="noopener noreferrer">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.7 1.25 3.35.95.1-.74.4-1.25.72-1.53-2.55-.3-5.24-1.28-5.24-5.69 0-1.25.45-2.28 1.19-3.08-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.06.74.8 1.19 1.83 1.19 3.08 0 4.42-2.7 5.39-5.26 5.67.41.36.77 1.05.77 2.13v3.16c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
-                  github.com/aborezq
-                </a>
-              </li>
-              <li>
-                <a href="https://www.linkedin.com/in/mohammed-r-awad-11a697411" target="_blank" rel="noopener noreferrer">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
-                  LinkedIn
-                </a>
-              </li>
-            </ul>
+            <figure class="lab-stage reveal">
+              <div class="lab-canvas-wrap">
+                <canvas id="lab-canvas" role="img"
+                        aria-label="Scatter plot of synthetic bank customers by age and account balance, shaded by what a k-nearest-neighbours classifier predicts. The accuracy for each way of measuring distance is listed beside the chart."></canvas>
+                <p class="lab-hint js-only" id="lab-hint" aria-hidden="true">Move across the chart to see who gets asked</p>
+              </div>
+              <figcaption class="lab-legend">
+                <span><i class="dot dot-stay"></i>Stayed</span>
+                <span><i class="dot dot-left"></i>Left</span>
+                <span><i class="swatch"></i>Predicted to leave</span>
+                <span><i class="dot dot-miss"></i>Misclassified</span>
+              </figcaption>
+              <noscript><p class="lab-noscript">This demo is drawn with JavaScript, which is switched off in your browser.</p></noscript>
+            </figure>
           </div>
 
-          <form class="contact-form reveal" id="contact-form"
-                action="https://formspree.io/f/mkjnnpje" method="post">
-            <div class="form-field">
-              <label for="cf-name">Name</label>
-              <input type="text" id="cf-name" name="name" autocomplete="name" placeholder="Your name"
-                     minlength="2" maxlength="80" required aria-describedby="cf-name-error">
-              <p class="form-error" id="cf-name-error" aria-live="polite"></p>
-            </div>
-            <div class="form-field">
-              <label for="cf-email">Email</label>
-              <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com"
-                     maxlength="254" required aria-describedby="cf-email-error">
-              <p class="form-error" id="cf-email-error" aria-live="polite"></p>
-            </div>
-            <div class="form-field">
-              <label for="cf-message">Message</label>
-              <textarea id="cf-message" name="message" rows="5" placeholder="Tell me about your project…"
-                        minlength="10" maxlength="2000" required aria-describedby="cf-message-error"></textarea>
-              <p class="form-error" id="cf-message-error" aria-live="polite"></p>
-            </div>
-
-            <!-- Honeypot: hidden from people, irresistible to bots. A filled value
-                 means "spam", so the submit is dropped silently. Named _gotcha,
-                 which Formspree also filters server-side. -->
-            <div class="form-hp" aria-hidden="true">
-              <label for="cf-company">Company</label>
-              <input type="text" id="cf-company" name="_gotcha" tabindex="-1" autocomplete="off">
-            </div>
-
-            <button type="submit" class="btn btn-solid" id="cf-submit">Send message</button>
-            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-          </form>
+          <p class="lab-note reveal">
+            Synthetic toy data, classified live in your browser by a few hundred lines of
+            dependency-free JavaScript. Accuracy is leave-one-out: each customer is predicted
+            from all the others. The chart you are looking at is already scaled to fit the
+            screen — the algorithm isn't, until you tell it to be.
+          </p>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
+      <!-- ============ SKILLS ============ -->
+      <section class="section section-alt" id="skills">
+        <div class="container">
+          <header class="section-head">
+            <p class="section-kicker reveal"><span class="kicker-num">04</span>Skills</p>
+            <h2 class="section-title" data-split>Tools I <em>think in.</em></h2>
+          </header>
 
-  <footer class="footer">
-    <div class="container footer-inner">
-      <p>© <span id="year">2026</span> Mohammed R. Awad. All rights reserved.</p>
-      <a href="#home" class="footer-top">Back to top ↑</a>
+          <div class="skills-grid">
+            <div class="skills-proof reveal" aria-label="Core strengths demonstrated through projects">
+              <h3 class="skills-heading">Core strengths</h3>
+              <ol class="skill-evidence">
+                <li>
+                  <span class="skill-index" aria-hidden="true">01</span>
+                  <div>
+                    <h4>Machine Learning &amp; Analytics</h4>
+                    <p>EDA, preprocessing, classifier comparison, interpretation, and research-driven evaluation.</p>
+                    <a href="#projects-grid">Shown in churn prediction and pattern-recognition work ↑</a>
+                  </div>
+                </li>
+                <li>
+                  <span class="skill-index" aria-hidden="true">02</span>
+                  <div>
+                    <h4>AI Agents &amp; Applied GenAI</h4>
+                    <p>LangChain foundations, Claude API workflows, agent skills, subagents, and responsible AI practice.</p>
+                    <a href="#certificates">Backed by verified credentials ↓</a>
+                  </div>
+                </li>
+                <li>
+                  <span class="skill-index" aria-hidden="true">03</span>
+                  <div>
+                    <h4>Mobile Product Delivery</h4>
+                    <p>A full Flutter app on Clean Architecture: offline-first sync, audio capture, Arabic RTL, and a large automated test suite.</p>
+                    <a href="#nashrati">Shown in Nashrati ↑</a>
+                  </div>
+                </li>
+                <li>
+                  <span class="skill-index" aria-hidden="true">04</span>
+                  <div>
+                    <h4>Web Product Delivery</h4>
+                    <p>Responsive, accessible interfaces built with semantic HTML, modern CSS, and vanilla JavaScript.</p>
+                    <a href="#projects-grid">Shown in Gaza Aid and this portfolio ↑</a>
+                  </div>
+                </li>
+              </ol>
+            </div>
+
+            <div class="skills-tags">
+              <div class="reveal">
+                <h3 class="skills-heading">AI &amp; Machine Learning</h3>
+                <ul class="tag-list" aria-label="AI and machine-learning skills">
+                  <li>Prompt Engineering</li>
+                  <li>Claude API</li>
+                  <li>LangChain</li>
+                  <li>AI Agents</li>
+                  <li>Generative AI</li>
+                  <li>Responsible AI</li>
+                  <li>scikit-learn</li>
+                  <li>Deep Learning</li>
+                </ul>
+              </div>
+              <div class="reveal">
+                <h3 class="skills-heading">Data &amp; Analytics</h3>
+                <ul class="tag-list" aria-label="Data and analytics skills">
+                  <li>Python</li>
+                  <li>pandas</li>
+                  <li>SQL</li>
+                  <li>Data Analysis</li>
+                  <li>EDA</li>
+                  <li>Excel</li>
+                  <li>Dashboards</li>
+                  <li>Pattern Recognition</li>
+                  <li>MATLAB</li>
+                </ul>
+              </div>
+              <div class="reveal">
+                <h3 class="skills-heading">Mobile &amp; Software</h3>
+                <ul class="tag-list" aria-label="Mobile and software-engineering skills">
+                  <li>Flutter &amp; Dart</li>
+                  <li>Clean Architecture</li>
+                  <li>BLoC</li>
+                  <li>REST APIs</li>
+                  <li>Java</li>
+                </ul>
+              </div>
+              <div class="reveal">
+                <h3 class="skills-heading">Tools</h3>
+                <ul class="tag-list" aria-label="Development tools">
+                  <li>Git &amp; GitHub</li>
+                  <li>VS Code</li>
+                  <li>Claude Code</li>
+                  <li>Google Colab</li>
+                  <li>Cisco Packet Tracer</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CERTIFICATES ============ -->
+      <section class="section" id="certificates">
+        <div class="container">
+          <header class="section-head">
+            <p class="section-kicker reveal"><span class="kicker-num">05</span>Certificates</p>
+            <h2 class="section-title" data-split>Proof of <em>the reps.</em></h2>
+          </header>
+
+          <p class="cert-summary reveal">
+            <strong><span data-count="32">32</span> credentials</strong> from Google, IBM, Anthropic,
+            LangChain and TAQAT. Open any one to see the certificate itself; every row links to
+            the issuer's own verification page.
+          </p>
+
+          <!-- One <details> per program, newest first. Each certificate name
+               links to its image (script.js opens it in a viewer instead) and
+               each "Verify" goes to the URL or ID printed on that certificate. -->
+          <div class="cert-groups" id="certificate-grid">
+
+            <details class="cert-group reveal" open>
+              <summary>
+                <span class="cert-issuer">IBM · Coursera</span>
+                <span class="cert-program">Data Analytics</span>
+                <span class="cert-meta">6 certificates · Aug – Nov 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/ibm-databases-sql.webp" target="_blank" rel="noopener">Databases and SQL for Data Science with Python</a>
+                  <span class="cert-date">Nov 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/4GKGV58VP7EO" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/ibm-python-project.webp" target="_blank" rel="noopener">Python Project for Data Science</a>
+                  <span class="cert-date">Sep 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/HJH8GV3H286J" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/ibm-python-ds-ai-dev.webp" target="_blank" rel="noopener">Python for Data Science, AI &amp; Development</a>
+                  <span class="cert-date">Sep 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/63FM0199G49J" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/ibm-data-viz-dashboards.webp" target="_blank" rel="noopener">Data Visualization and Dashboards with Excel and Cognos</a>
+                  <span class="cert-date">Sep 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/UE3TNEAJP180" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/ibm-excel-basics.webp" target="_blank" rel="noopener">Excel Basics for Data Analysis</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/QU5LF05BZ2V8" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/ibm-intro-data-analytics.webp" target="_blank" rel="noopener">Introduction to Data Analytics</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/L1GHADHSV4CX" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal" open>
+              <summary>
+                <span class="cert-issuer">TAQAT</span>
+                <span class="cert-program">CodeMap &amp; AI Coding</span>
+                <span class="cert-meta">2 certificates · Nov 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/taqat-ai-coding-beginner.webp" target="_blank" rel="noopener">AI Coding — Beginner <small>12 hours</small></a>
+                  <span class="cert-date">Nov 2026</span>
+                  <a class="cert-link" href="https://taqat.academy/verify/TQ-2026-01330" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/taqat-codemap-2026.webp" target="_blank" rel="noopener">CodeMap 2026 <small>144 hours</small></a>
+                  <span class="cert-date">Nov 2026</span>
+                  <a class="cert-link" href="https://taqat.academy/verify/TQ-2026-00791" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal">
+              <summary>
+                <span class="cert-issuer">Google · Coursera</span>
+                <span class="cert-program">Prompting Essentials</span>
+                <span class="cert-meta">3 certificates · Sep – Oct 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-speed-up-data-analysis.webp" target="_blank" rel="noopener">Speed Up Data Analysis and Presentation Building</a>
+                  <span class="cert-date">Oct 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/09HX06ZZFAS3" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-design-prompts.webp" target="_blank" rel="noopener">Design Prompts for Everyday Work Tasks</a>
+                  <span class="cert-date">Sep 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/T7EG8OW7RZ4K" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-start-writing-prompts.webp" target="_blank" rel="noopener">Start Writing Prompts like a Pro</a>
+                  <span class="cert-date">Sep 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/NV2LDANCSZYB" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal">
+              <summary>
+                <span class="cert-issuer">Google · Coursera</span>
+                <span class="cert-program">Google AI Professional Certificate</span>
+                <span class="cert-meta">Certificate + 7 courses · Jul – Aug 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row is-lead">
+                  <a class="cert-view" href="assets/certs/google-ai-professional.webp" target="_blank" rel="noopener">Google AI Professional Certificate <small>7 courses</small></a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/professional-cert/2PKA12G3RPYP" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-ai-app-building.webp" target="_blank" rel="noopener">AI for App Building</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/EHCAUNJMHVGB" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-ai-data-analysis.webp" target="_blank" rel="noopener">AI for Data Analysis</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/U57IWRFJ74J9" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-ai-content.webp" target="_blank" rel="noopener">AI for Content Creation</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/OXKBJGUHLLEI" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-ai-writing.webp" target="_blank" rel="noopener">AI for Writing and Communicating</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/DFGM75D5QSM5" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-ai-research.webp" target="_blank" rel="noopener">AI for Research and Insights</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/Q8285ZBY9MPS" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-ai-brainstorming.webp" target="_blank" rel="noopener">AI for Brainstorming and Planning</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/3AA8MPWGV4XE" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-ai-fundamentals.webp" target="_blank" rel="noopener">AI Fundamentals</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/WUXLTZL9H1HS" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal">
+              <summary>
+                <span class="cert-issuer">Anthropic</span>
+                <span class="cert-program">Claude &amp; AI Fluency</span>
+                <span class="cert-meta">6 certificates · Jul – Aug 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/anthropic-agent-skills.webp" target="_blank" rel="noopener">Introduction to Agent Skills</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://verify.skilljar.com/c/ff24fs3gbrdy" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/anthropic-subagents.webp" target="_blank" rel="noopener">Introduction to Subagents</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://verify.skilljar.com/c/xkswwi4gynui" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/anthropic-claude-api.webp" target="_blank" rel="noopener">Claude with the Anthropic API</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://verify.skilljar.com/c/rsdkputztyn4" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/anthropic-claude-code-101.webp" target="_blank" rel="noopener">Claude Code 101</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://verify.skilljar.com/c/xsmkxurv37cr" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/anthropic-ai-fluency-students.webp" target="_blank" rel="noopener">AI Fluency for Students</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://verify.skilljar.com/c/fc96rsitgdfs" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/anthropic-ai-fluency-framework.webp" target="_blank" rel="noopener">AI Fluency: Framework &amp; Foundations</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://verify.skilljar.com/c/9t3vd9d5ck3n" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal">
+              <summary>
+                <span class="cert-issuer">LangChain Academy</span>
+                <span class="cert-program">LangChain · Python</span>
+                <span class="cert-meta">2 certificates · Aug 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/langchain-foundation.webp" target="_blank" rel="noopener">Foundation: Introduction to LangChain — Python</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://academy.langchain.com/certificates/wzp14xclb1" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/langchain-essentials.webp" target="_blank" rel="noopener">Quickstart: LangChain Essentials — Python</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://academy.langchain.com/certificates/u0kiqumekm" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal">
+              <summary>
+                <span class="cert-issuer">Google · Coursera</span>
+                <span class="cert-program">Google AI Essentials</span>
+                <span class="cert-meta">4 certificates · Jul 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-use-ai-responsibly.webp" target="_blank" rel="noopener">Use AI Responsibly</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/NUONEURGX9PX" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-art-of-prompting.webp" target="_blank" rel="noopener">Discover the Art of Prompting</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/KL9HPRJ4I45U" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-maximize-productivity.webp" target="_blank" rel="noopener">Maximize Productivity With AI Tools</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/VKVVAZ0EYBFY" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/google-intro-to-ai.webp" target="_blank" rel="noopener">Introduction to AI</a>
+                  <span class="cert-date">Jul 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/N1K4MII2X4C0" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal">
+              <summary>
+                <span class="cert-issuer">Google Cloud · Coursera</span>
+                <span class="cert-program">Responsible AI</span>
+                <span class="cert-meta">1 certificate · Aug 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/googlecloud-responsible-ai.webp" target="_blank" rel="noopener">Introduction to Responsible AI</a>
+                  <span class="cert-date">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/DNOT7F2SDWJ7" target="_blank" rel="noopener noreferrer">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CONTACT ============ -->
+      <section class="section section-alt" id="contact">
+        <div class="container">
+          <header class="section-head">
+            <p class="section-kicker reveal"><span class="kicker-num">06</span>Contact</p>
+            <h2 class="section-title" data-split>Let's build <em>something.</em></h2>
+          </header>
+
+          <div class="contact-grid">
+            <div class="contact-info reveal">
+              <p>
+                Available for remote internships, junior AI and data roles, selected freelance
+                work, and thoughtful collaborations. Send a message here and I'll reply by email.
+              </p>
+              <ul class="contact-links">
+                <li>
+                  <a href="mailto:momoawad2004@gmail.com">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>
+                    momoawad2004@gmail.com
+                  </a>
+                </li>
+                <li>
+                  <a href="https://wa.me/972598630116" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.11.82.83-3.03-.2-.31a8.2 8.2 0 0 1-1.26-4.39c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.24-.74-.65-1.23-1.46-1.38-1.71-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.48-.4-.42-.55-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.75.59.25 1.05.4 1.41.52.6.19 1.14.16 1.57.1.47-.07 1.47-.6 1.68-1.18.2-.59.2-1.09.14-1.19-.06-.11-.22-.17-.47-.29z"/></svg>
+                    WhatsApp
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/aborezq" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.7 1.25 3.35.95.1-.74.4-1.25.72-1.53-2.55-.3-5.24-1.28-5.24-5.69 0-1.25.45-2.28 1.19-3.08-.12-.3-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.06.74.8 1.19 1.83 1.19 3.08 0 4.42-2.7 5.39-5.26 5.67.41.36.77 1.05.77 2.13v3.16c0 .31.2.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+                    github.com/aborezq
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/mohammed-r-awad-11a697411" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+                    LinkedIn
+                  </a>
+                </li>
+              </ul>
+              <p class="contact-clock js-only">
+                <span class="fact-label">My local time</span>
+                <time data-clock data-clock-zone>--:--</time>
+              </p>
+            </div>
+
+            <form class="contact-form reveal" id="contact-form"
+                  action="https://formspree.io/f/mkjnnpje" method="post">
+              <div class="form-field">
+                <label for="cf-name">Name</label>
+                <input type="text" id="cf-name" name="name" autocomplete="name" placeholder="Your name"
+                       minlength="2" maxlength="80" required aria-describedby="cf-name-error">
+                <p class="form-error" id="cf-name-error" aria-live="polite"></p>
+              </div>
+              <div class="form-field">
+                <label for="cf-email">Email</label>
+                <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com"
+                       maxlength="254" required aria-describedby="cf-email-error">
+                <p class="form-error" id="cf-email-error" aria-live="polite"></p>
+              </div>
+              <div class="form-field">
+                <label for="cf-message">Message</label>
+                <textarea id="cf-message" name="message" rows="5" placeholder="Tell me about your project…"
+                          minlength="10" maxlength="2000" required aria-describedby="cf-message-error"></textarea>
+                <p class="form-error" id="cf-message-error" aria-live="polite"></p>
+              </div>
+
+              <!-- Honeypot: hidden from people, irresistible to bots. A filled value
+                   means "spam", so the submit is dropped silently. Named _gotcha,
+                   which Formspree also filters server-side. -->
+              <div class="form-hp" aria-hidden="true">
+                <label for="cf-company">Company</label>
+                <input type="text" id="cf-company" name="_gotcha" tabindex="-1" autocomplete="off">
+              </div>
+
+              <button type="submit" class="btn btn-solid" id="cf-submit" data-magnetic><span>Send message</span></button>
+              <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="marquee marquee--footer" data-marquee data-speed="0.6" aria-hidden="true">
+          <div class="marquee-track">
+            <span class="is-outline">Mohammed R. Awad</span><i>✦</i>
+            <span>Open to remote work</span><i>✦</i>
+          </div>
+        </div>
+        <div class="container footer-inner">
+          <p>© <span id="year">2026</span> Mohammed R. Awad. All rights reserved.</p>
+          <p class="footer-made">Built by hand in Gaza — plain HTML, CSS &amp; JavaScript.</p>
+          <a href="#home" class="footer-top">Back to top ↑</a>
+        </div>
+      </footer>
+
     </div>
-  </footer>
+  </main>
 
   <button class="back-to-top" id="back-to-top" aria-label="Back to top" hidden>
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
   </button>
 
-  <script src="script.js"></script>
+  <!-- Certificate viewer. Native <dialog>: focus is trapped and Escape closes
+       it without any script of its own. Filled in by script.js §13. -->
+  <dialog class="lightbox" id="lightbox" aria-labelledby="lightbox-title">
+    <div class="lightbox-bar">
+      <p class="lightbox-title" id="lightbox-title"></p>
+      <a class="btn btn-solid btn-small" id="lightbox-verify" href="#" target="_blank" rel="noopener noreferrer"><span>Verify ↗</span></a>
+      <form method="dialog">
+        <button class="round-btn" aria-label="Close certificate viewer">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </form>
+    </div>
+    <img id="lightbox-img" alt="" width="1000" height="772">
+  </dialog>
+
+  <script src="script.js" defer></script>
+  <script src="lab.js" defer></script>
 </body>
 </html>
