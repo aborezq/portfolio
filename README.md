@@ -18,7 +18,8 @@ script.js         — language and theme, opening sequence, scroll & pointer
 i18n.js           — the Arabic for every string on the page (see Languages)
 lab.js            — the Lab: a k-nearest-neighbours classifier on a canvas
 assets/
-  profile.*       — portrait (jpg + webp)
+  profile-cutout.* — the portrait cut out of its backdrop (avif + webp)
+  profile.jpg     — the original photo: fallback for old browsers, search preview
   og-card.jpg     — social preview card
   Mohammed_Awad_CV.pdf — the CV behind "Download CV"
   nashrati/       — six screens of the Nashrati app (see below)
@@ -34,11 +35,15 @@ tests/            — Playwright smoke tests (dev only; nothing here is deployed
 - **English and Arabic** — the switch in the top bar turns the whole site
   Arabic and right-to-left (see Languages).
 
-- **Cover** — the display word layered through the portrait, a pointer-driven
-  depth and key light, and an opening count-up that plays once per visit. The
-  cover is sized to the screen, so the name and both buttons are on the first
-  screen from a 13" laptop to a phone; the rest of the page then slides up
-  over it.
+- **Cover** — a magazine cover: the display word runs behind the portrait,
+  which is cut out of its backdrop, so his head rises into the letters at
+  every screen size. A pointer-driven depth and key light, and an opening
+  count-up that plays once per visit. The cover is sized to the screen, so the
+  name and both buttons are on the first screen from a 13" laptop to a phone;
+  the rest of the page then slides up over it. To change the portrait, keep
+  the same framing (head and shoulders, the top of the head about a tenth of
+  the way down) with a transparent background, and replace both
+  `profile-cutout` files.
 - **Work** — Nashrati as the lead case study, then the other projects as a
   numbered list with category filters.
 - **Lab** — the question behind the pattern-recognition research, made

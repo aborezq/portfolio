@@ -213,7 +213,7 @@ lightMedia.addEventListener("change", (e) => {
 const hero = document.getElementById("home");
 const heroStage = document.getElementById("hero-stage");
 
-// PORTFOLIO, one masked letter at a time — both the filled and outlined layer.
+// PORTFOLIO, one masked letter at a time.
 // English only: Arabic letters must stay joined, so the Arabic word rises whole.
 const splitHeroLetters = () => {
   document.querySelectorAll(".hero-word-line").forEach((layer) => {
