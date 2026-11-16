@@ -170,6 +170,8 @@ window.I18N = {
     "nash.prev": "الشاشات السابقة",
     "nash.next": "الشاشات التالية",
     "work.more": "أعمال أخرى",
+    "work.coursework": "مشاريع دراسية سابقة",
+    "work.courseworkMeta": "Java والشبكات وأنظمة التحكم",
     "work.filterAria": "تصفية المشاريع حسب الفئة",
     "filter.all": "الكل",
     "filter.web": "الويب",

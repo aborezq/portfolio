@@ -20,14 +20,15 @@ lab.js            — the Lab: a k-nearest-neighbours classifier on a canvas
 assets/
   profile-cutout.* — the portrait cut out of its backdrop (avif + webp)
   profile.jpg     — the original photo: fallback for old browsers, search preview
-  og-card.jpg     — social preview card
-  Mohammed_Awad_CV.pdf — the CV behind "Download CV"
+  og-card.jpg     — the picture a shared link shows (built from _src/)
+  Mohammed_Awad_CV.pdf — the CV behind "Download CV" (built from _src/)
   nashrati/       — six screens of the Nashrati app (see below)
   certs/          — one image per certificate, for the viewer and the hover preview
   fonts/          — Anton, Inter, Instrument Serif; for Arabic, Tajawal, Noto Kufi
                     Arabic and Aref Ruqaa; LICENSE.txt
 robots.txt, sitemap.xml, CNAME
-tests/            — Playwright smoke tests (dev only; nothing here is deployed)
+_src/             — sources of the CV and the link preview (not published: see below)
+tests/            — Playwright smoke tests (dev only; the site never loads them)
 ```
 
 ## What's on the page
@@ -150,3 +151,20 @@ No tooling needed — open `index.html` in a browser, or serve the folder:
 ```bash
 python3 -m http.server 8000
 ```
+
+## CV and link preview
+
+`assets/Mohammed_Awad_CV.pdf` and `assets/og-card.jpg` are built from HTML in
+`_src/`, in the site's own fonts, so they stay in step with the page:
+
+```
+npm install && npx playwright install chromium   # once
+node _src/build.js
+```
+
+Edit `_src/cv.html` (A4, one column, real text, so applicant-tracking systems
+read it in order) or `_src/og-card.html` (1200 × 630), then rebuild. GitHub
+Pages does not publish folders whose names start with `_`. After changing the
+preview picture, bump the `?v=` on `og:image` and `twitter:image` in
+`index.html`, so apps that cached the old one fetch it again.
+
