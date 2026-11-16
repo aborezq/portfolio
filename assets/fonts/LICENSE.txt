@@ -6,10 +6,16 @@ Fonts bundled with this site — all under the SIL Open Font License 1.1 (below)
     Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
   instrument-serif-italic-latin.woff2  Instrument Serif Italic (Fontsource 5.3.0, Latin subset)
     Copyright 2022 The Instrument Serif Project Authors (https://github.com/Instrument/instrument-serif)
-  tajawal-wordmark-arabic.woff2        Tajawal ExtraBold, subset to the five letters of «نشرتي»
+  tajawal-wordmark-arabic.woff2        Tajawal ExtraBold, subset to the letters of «نشرتي» and «العربية»
+  tajawal-{400,500,700}-arabic.woff2   Tajawal (Fontsource 5.3.0, Arabic subset) — Arabic body text
     Copyright 2018 Boutros International. (http://www.boutrosfonts.com)
+  noto-kufi-arabic-800-arabic.woff2    Noto Kufi Arabic ExtraBold (Fontsource 5.3.0, Arabic subset) — Arabic headings
+    Copyright 2019-2022 Google LLC.
+  aref-ruqaa-700-arabic.woff2          Aref Ruqaa Bold (Fontsource 5.3.0, Arabic subset) — Arabic accent words
+    Copyright 2015-2021 The Aref Ruqaa Project Authors (https://github.com/alif-type/aref-ruqaa),
+    with Reserved Font Name EURM10 (not used here).
 
-None of these declares a Reserved Font Name.
+No other Reserved Font Name is declared.
 
 -----------------------------------------------------------
 SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
