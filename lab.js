@@ -24,6 +24,10 @@
   if (!ctx) return;
 
   const root = document.documentElement;
+  // Words come from i18n.js, in whichever language the page is in right now.
+  const t = (key, vars) => (window.I18N ? window.I18N.t(key, vars) : key);
+  // Latin from Inter, Arabic from Tajawal — the page's own body faces.
+  const face = (weight, size) => `${weight} ${size}px "Inter", "Tajawal", system-ui, sans-serif`;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
 
@@ -220,7 +224,16 @@
   };
 
   /* ---------- Geometry ---------- */
+  // The left margin is sized to the widest balance label ("200k", «200 ألف»).
   const PAD = { left: 46, right: 14, top: 16, bottom: 32 };
+  const fitLabels = () => {
+    ctx.font = face(500, 11);
+    let widest = 0;
+    for (let balance = 50000; balance <= 200000; balance += 50000) {
+      widest = Math.max(widest, ctx.measureText(t("lab.tick", { n: balance / 1000 })).width);
+    }
+    PAD.left = Math.max(46, Math.ceil(widest) + 18);
+  };
   const plot = () => ({
     x: PAD.left,
     y: PAD.top,
@@ -251,7 +264,7 @@
   };
 
   const pill = (text, x, y, area) => {
-    ctx.font = '600 12px "Inter", system-ui, sans-serif';
+    ctx.font = face(600, 12);
     const width = ctx.measureText(text).width + 20;
     const height = 26;
     const left = clamp(x - width / 2, area.x + 2, area.x + area.w - width - 2);
@@ -270,6 +283,7 @@
   const draw = () => {
     drawQueued = false;
     if (!current || !size.w) return;
+    fitLabels();
     const area = plot();
     ctx.setTransform(size.dpr, 0, 0, size.dpr, 0, 0);
     ctx.clearRect(0, 0, size.w, size.h);
@@ -298,7 +312,7 @@
     ctx.lineWidth = 1;
     ctx.strokeStyle = colors.border;
     ctx.fillStyle = colors.muted;
-    ctx.font = '500 11px "Inter", system-ui, sans-serif';
+    ctx.font = face(500, 11);
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     for (let age = 20; age <= 70; age += 10) {
@@ -317,16 +331,16 @@
       ctx.moveTo(area.x - 5, y);
       ctx.lineTo(area.x, y);
       ctx.stroke();
-      ctx.fillText(balance ? `${balance / 1000}k` : "0", area.x - 9, y);
+      ctx.fillText(balance ? t("lab.tick", { n: balance / 1000 }) : "0", area.x - 9, y);
     }
     ctx.strokeRect(area.x + 0.5, area.y + 0.5, area.w - 1, area.h - 1);
-    ctx.font = '600 10px "Inter", system-ui, sans-serif';
+    ctx.font = face(600, 10);
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
-    ctx.fillText("AGE →", area.x + area.w - 8, area.y + area.h - 7);
+    ctx.fillText(t("lab.axisX"), area.x + area.w - 8, area.y + area.h - 7);
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("↑ BALANCE ($)", area.x + 8, area.y + 8);
+    ctx.fillText(t("lab.axisY"), area.x + 8, area.y + 8);
 
     // Who gets asked: the k nearest to the pointer, in the current units.
     let asked = null;
@@ -393,7 +407,7 @@
       ctx.strokeStyle = colors.ink;
       ctx.stroke();
       pill(
-        `${asked.votes} of ${asked.neighbours.length} left → ${leaves ? "leaves" : "stays"}`,
+        t("lab.pill", { votes: asked.votes, n: asked.neighbours.length, verdict: t(leaves ? "lab.leaves" : "lab.stays") }),
         state.hover.x,
         state.hover.y - (state.hover.touch ? 44 : 16),
         area
@@ -438,9 +452,11 @@
     clearTimeout(announceTimer);
     announceTimer = setTimeout(() => {
       if (!statusEl) return;
-      statusEl.textContent =
-        `With ${state.k} neighbour${state.k === 1 ? "" : "s"}: ${Math.round(raw * 100)} percent accurate ` +
-        `in raw units, ${Math.round(std * 100)} percent once the features are standardized.`;
+      statusEl.textContent = t(state.k === 1 ? "lab.statusOne" : "lab.status", {
+        k: state.k,
+        raw: Math.round(raw * 100),
+        std: Math.round(std * 100),
+      });
     }, 600);
   };
 
@@ -514,9 +530,11 @@
   };
   const dismissHint = () => hintEl?.classList.add("is-gone");
   // On a touchscreen there is no hover: a sideways slide explores instead.
-  if (hintEl && !window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    hintEl.textContent = "Slide a finger sideways across the chart";
-  }
+  const hoverable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const writeHint = () => {
+    if (hintEl) hintEl.textContent = t(hoverable ? "lab.hintMouse" : "lab.hintTouch");
+  };
+  writeHint();
 
   canvas.dataset.cursor = "none"; // the page's pointer ring would sit on the reading
   canvas.addEventListener("pointermove", (e) => {
@@ -561,14 +579,17 @@
   else window.addEventListener("resize", resize);
   resize();
 
-  // Repaint in the other palette when the theme is switched.
+  // Repaint in the other palette when the theme is switched, and in the other
+  // language when that is: labels, the hint, and the spoken summary.
   new MutationObserver(() => {
     readColors();
+    writeHint();
     update({ fade: false });
-  }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }).observe(root, { attributes: true, attributeFilter: ["data-theme", "lang"] });
 
-  // The labels use Inter; redraw once it is in, so they are not left in a fallback.
+  // Redraw once the label faces are in, so they are not left in a fallback.
   if (document.fonts?.ready) document.fonts.ready.then(queueDraw);
+  document.fonts?.addEventListener?.("loadingdone", queueDraw);
 
   update({ fade: false });
 })();

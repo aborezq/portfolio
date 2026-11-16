@@ -13,8 +13,9 @@ self-hosted).
 ```
 index.html        — semantic, accessible markup
 style.css         — design tokens, layout, motion, light/dark themes
-script.js         — theme, opening sequence, scroll & pointer effects, filters,
-                    certificate viewer, contact form
+script.js         — language and theme, opening sequence, scroll & pointer
+                    effects, filters, certificate viewer, contact form
+i18n.js           — the Arabic for every string on the page (see Languages)
 lab.js            — the Lab: a k-nearest-neighbours classifier on a canvas
 assets/
   profile.*       — portrait (jpg + webp)
@@ -22,12 +23,16 @@ assets/
   Mohammed_Awad_CV.pdf — the CV behind "Download CV"
   nashrati/       — six screens of the Nashrati app (see below)
   certs/          — one image per certificate, for the viewer and the hover preview
-  fonts/          — Anton, Inter, Instrument Serif, a Tajawal subset; LICENSE.txt
+  fonts/          — Anton, Inter, Instrument Serif; for Arabic, Tajawal, Noto Kufi
+                    Arabic and Aref Ruqaa; LICENSE.txt
 robots.txt, sitemap.xml, CNAME
 tests/            — Playwright smoke tests (dev only; nothing here is deployed)
 ```
 
 ## What's on the page
+
+- **English and Arabic** — the switch in the top bar turns the whole site
+  Arabic and right-to-left (see Languages).
 
 - **Cover** — the display word layered through the portrait, a pointer-driven
   depth and key light, and an opening count-up that plays once per visit. The
@@ -58,10 +63,41 @@ which is private), so they show the real interface, not a mock-up:
   local change for the renders only, not committed to the app);
 - `assets/nashrati/splash.webp` — the launch screen, the same in both.
 
-English is shown by default; the switch under the strip swaps in the Arabic
-set. To refresh them, run that test in the app repository (and again with
+The strip shows the set for the site's language. To refresh them, run that test in the app repository (and again with
 `RENDER_DARK=1`), then crop and convert the chosen captures from
 `build/screens/` to 640px-wide WebP.
+
+## Languages
+
+The page is written in English in `index.html`. Every visible string — and
+every translatable `aria-label`, `alt` and `placeholder` — carries a key:
+
+```html
+<p class="hero-name" data-i18n="hero.name">Mohammed R. Awad</p>
+<img … alt="Portrait of …" data-i18n-attr="alt:hero.photoAlt">
+```
+
+`i18n.js` holds the Arabic for each key, plus the strings only the scripts
+write (form messages, the Lab's chart, menu labels) in both languages. To
+change a translation, edit it there; to add text to the page, give the new
+element a key and add its Arabic to `i18n.js` — the smoke tests fail if a key
+has no Arabic.
+
+How it behaves:
+
+- The switch names the language it leads to, in that language («العربية» /
+  English). The choice is remembered in `localStorage`, and the address carries
+  it (`?lang=ar`), so a shared link opens in Arabic.
+- An Arabic visit is resolved in the `<head>` before first paint (`lang="ar"`,
+  `dir="rtl"`), and the page stays hidden until the Arabic is in, so English
+  never flashes.
+- Switching keeps the reader in the same place on the page and cross-fades
+  where the browser supports View Transitions.
+- Layout uses logical properties, so the whole design mirrors; Arabic text
+  gets no letter-spacing (it breaks the joins) and more line height.
+- Arabic fonts are limited to Arabic characters (`unicode-range`), so the
+  English page never downloads them.
+- Certificate titles stay in English — they are the issuers' own names.
 
 ## Accessibility and robustness
 
@@ -94,7 +130,8 @@ python3 -c "import re,hashlib,base64;s=open('index.html',encoding='utf-8').read(
 ## Tests
 
 Dev-only Playwright smoke tests cover the console, theme, filters, the contact
-form and its CSP, certificates, the Nashrati screens switch and the Lab:
+form and its CSP, certificates, the Lab, and the language switch (including a
+check that every marked string has its Arabic):
 
 ```bash
 npm install

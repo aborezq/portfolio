@@ -4,14 +4,14 @@
 
    Contents
      0. Shared helpers and the two loops     9. Reveal on scroll
-     1. Theme                               10. Nashrati phone strip
+     1. Language, theme                     10. Nashrati phone strip
      2. Opening sequence                    11. Counters and the Gaza clock
      3. Split headings, scrubbed text       12. Project filtering
      4. Scroll-linked chrome and the cover  13. Certificate viewer and preview
      5. Marquees                            14. Contact form
      6. Pointer: ring, depth, light         15. Footer year
      7. Magnetic buttons
-     8. Typing effect, menu, active link
+     8. Typing effect, menu, active link    16. The language switch
 
    Everything decorative is an enhancement: it is skipped under
    prefers-reduced-motion and on touch where it needs a pointer, and the page
@@ -69,7 +69,66 @@ window.addEventListener("scroll", queueScroll, { passive: true });
 window.addEventListener("resize", queueScroll);
 
 /* --------------------------------------------------------------------------
-   1. Theme toggle — the inline script in <head> already resolved the theme
+   1. Language — the page is written in English and i18n.js carries the
+      Arabic. For an Arabic visitor the <head> script already turned the page
+      right-to-left before first paint, and hid it so English never flashes;
+      the Arabic goes in here, before anything below splits text into words.
+      Each section that renders text of its own adds a hook to langHooks,
+      run whenever the language changes (§16).
+   -------------------------------------------------------------------------- */
+const I18N = window.I18N;
+const t = (key, vars) => I18N.t(key, vars);
+let lang = rootEl.lang === "ar" ? "ar" : "en";
+const langHooks = [];
+
+// The English of everything translatable, read once as it was written.
+const i18nNodes = [...document.querySelectorAll("[data-i18n], [data-i18n-attr]")].map((el) => ({
+  el,
+  key: el.dataset.i18n || null,
+  html: el.dataset.i18n ? el.innerHTML : null,
+  attrs: (el.dataset.i18nAttr || "").split(",").filter(Boolean).map((pair) => {
+    const [name, key] = pair.split(":").map((part) => part.trim());
+    return { name, key, en: el.getAttribute(name) };
+  }),
+}));
+
+const translatePage = (next) => {
+  i18nNodes.forEach(({ el, key, html, attrs }) => {
+    if (key) {
+      const value = next === "ar" ? I18N.ar[key] : html;
+      if (value !== undefined) el.innerHTML = value;
+    }
+    attrs.forEach(({ name, key: attrKey, en }) => {
+      const value = next === "ar" ? I18N.ar[attrKey] : en;
+      if (value !== undefined && value !== null) el.setAttribute(name, value);
+    });
+  });
+  document.title = t("title");
+};
+
+// The switch names the language it leads to, in that language.
+const langToggle = document.getElementById("lang-toggle");
+const syncLangToggle = () => {
+  const other = lang === "ar" ? "en" : "ar";
+  langToggle.lang = other;
+  langToggle.textContent = other === "ar" ? "العربية" : "English";
+};
+
+const setLang = (next) => {
+  lang = next;
+  rootEl.lang = next;
+  rootEl.dir = next === "ar" ? "rtl" : "ltr";
+  translatePage(next);
+  syncLangToggle();
+  langHooks.forEach((hook) => hook(next));
+};
+
+if (lang === "ar") translatePage("ar");
+syncLangToggle();
+rootEl.classList.remove("i18n-pending");
+
+/* --------------------------------------------------------------------------
+   1b. Theme toggle — the inline script in <head> already resolved the theme
       before first paint, so this only mirrors it in the UI and handles clicks.
       An explicit click is persisted; merely following the OS setting is not.
    -------------------------------------------------------------------------- */
@@ -84,7 +143,7 @@ const syncTheme = (theme) => {
   currentTheme = theme;
   rootEl.dataset.theme = theme;
   const toLight = theme === "dark";
-  themeToggle.setAttribute("aria-label", `Switch to ${toLight ? "light" : "dark"} theme`);
+  themeToggle.setAttribute("aria-label", t(toLight ? "theme.toLight" : "theme.toDark"));
   themeToggle.setAttribute("aria-pressed", String(theme === "light"));
   // Tint the mobile browser chrome to match. Read --bg back off the root so the
   // palette stays owned by the stylesheet rather than duplicated here.
@@ -109,6 +168,7 @@ const storedTheme = () => {
 };
 
 syncTheme(currentTheme); // label the toggle to match what <head> already painted
+langHooks.push(() => syncTheme(currentTheme));
 
 themeToggle.addEventListener("click", () => {
   const next = currentTheme === "dark" ? "light" : "dark";
@@ -154,6 +214,7 @@ const hero = document.getElementById("home");
 const heroStage = document.getElementById("hero-stage");
 
 // PORTFOLIO, one masked letter at a time — both the filled and outlined layer.
+// English only: Arabic letters must stay joined, so the Arabic word rises whole.
 const splitHeroLetters = () => {
   document.querySelectorAll(".hero-word-line").forEach((layer) => {
     let index = 0;
@@ -180,14 +241,14 @@ if (rootEl.classList.contains("intro-pending")) {
   } catch {
     /* storage unavailable — it will simply play again next load */
   }
-  splitHeroLetters();
+  if (lang === "en") splitHeroLetters();
 
   const intro = document.createElement("div");
   intro.className = "intro";
   intro.setAttribute("aria-hidden", "true");
   intro.innerHTML = `
-    <div class="intro-top"><span>Mohammed R. Awad</span><span>Portfolio — ${new Date().getFullYear()}</span></div>
-    <div class="intro-count"><span>0</span><small>Gaza, Palestine</small></div>
+    <div class="intro-top"><span>${t("intro.name")}</span><span>${t("intro.label", { year: new Date().getFullYear() })}</span></div>
+    <div class="intro-count"><span>0</span><small>${t("intro.place")}</small></div>
     <div class="intro-bar"><i></i></div>`;
   document.body.append(intro);
 
@@ -252,32 +313,55 @@ const wrapWords = (el, makeWord) => {
 
 // Section titles: each word rises out of its own mask when the title arrives.
 const splitHeadings = [...document.querySelectorAll("[data-split]")];
-if (!prefersReducedMotion && hasObserver) {
-  splitHeadings.forEach((heading) => {
-    wrapWords(heading, (text, index) => {
-      const mask = document.createElement("span");
-      mask.className = "w";
-      const inner = document.createElement("span");
-      inner.className = "wi";
-      inner.style.setProperty("--i", index);
-      inner.textContent = text;
-      mask.append(inner);
-      return { outer: mask, inner };
-    });
+const splitting = !prefersReducedMotion && hasObserver;
+const splitHeading = (heading) =>
+  wrapWords(heading, (text, index) => {
+    const mask = document.createElement("span");
+    mask.className = "w";
+    const inner = document.createElement("span");
+    inner.className = "wi";
+    inner.style.setProperty("--i", index);
+    inner.textContent = text;
+    mask.append(inner);
+    return { outer: mask, inner };
   });
-}
+if (splitting) splitHeadings.forEach(splitHeading);
+
+// A new language arrives as plain text: split it again, and let the titles
+// on screen rise once more.
+langHooks.push(() => {
+  if (!splitting) return;
+  splitHeadings.forEach((heading) => {
+    splitHeading(heading);
+    if (!heading.classList.contains("is-visible")) return;
+    const box = heading.getBoundingClientRect();
+    if (box.bottom < 0 || box.top > window.innerHeight) return;
+    heading.classList.remove("is-visible");
+    void heading.offsetWidth; // restart the transition
+    heading.classList.add("is-visible");
+  });
+});
 
 // The About statement: words light up as the paragraph is scrolled through.
 if (!prefersReducedMotion) {
   document.querySelectorAll("[data-scrub]").forEach((paragraph) => {
-    const words = wrapWords(paragraph, (text) => {
-      const span = document.createElement("span");
-      span.className = "sw";
-      span.textContent = text;
-      return { outer: span, inner: span };
-    });
-    rootEl.classList.add("scrub-ready");
+    let words = [];
     let lit = -1;
+    const wrap = () => {
+      words = wrapWords(paragraph, (text) => {
+        const span = document.createElement("span");
+        span.className = "sw";
+        span.textContent = text;
+        return { outer: span, inner: span };
+      });
+      lit = -1;
+    };
+    wrap();
+    rootEl.classList.add("scrub-ready");
+    langHooks.push(() => {
+      wrap();
+      queueScroll();
+    });
     scrollTasks.push((y, viewport) => {
       const box = paragraph.getBoundingClientRect();
       if (box.bottom < -200 || box.top > viewport + 200) return;
@@ -391,9 +475,12 @@ document.querySelectorAll("[data-marquee]").forEach((marquee) => {
     }
   };
   build();
-  // Anton arriving changes every width in the row.
+  // A font arriving changes every width in the row: Anton at first, the
+  // Arabic face after a switch to Arabic.
   if (document.fonts?.ready) document.fonts.ready.then(build);
+  document.fonts?.addEventListener?.("loadingdone", build);
   window.addEventListener("resize", build);
+  langHooks.push(build);
 
   if (prefersReducedMotion) return; // a full, still row
 
@@ -535,23 +622,26 @@ document.querySelectorAll(".btn").forEach((btn) => {
    -------------------------------------------------------------------------- */
 
 // Typing effect — cycles through roles with type / pause / delete phases.
-const ROLES = ["Computer Engineer", "Team Leader", "Flutter Developer", "Problem Solver"];
 const typedEl = document.getElementById("typed");
+const roles = () => t("hero.roles");
 
 if (prefersReducedMotion) {
-  typedEl.textContent = ROLES[0];
+  typedEl.textContent = roles()[0];
+  langHooks.push(() => { typedEl.textContent = roles()[0]; });
 } else {
   let roleIndex = 0;
   let charIndex = 0;
   let deleting = false;
+  let timer = 0;
 
   const tick = () => {
     // Nothing to type for while the sheet covers the cover.
     if (hero.classList.contains("is-past")) {
-      setTimeout(tick, 600);
+      timer = setTimeout(tick, 600);
       return;
     }
-    const word = ROLES[roleIndex];
+    const list = roles();
+    const word = list[roleIndex % list.length];
     charIndex += deleting ? -1 : 1;
     typedEl.textContent = word.slice(0, charIndex);
 
@@ -561,12 +651,22 @@ if (prefersReducedMotion) {
       deleting = true;
     } else if (deleting && charIndex === 0) {
       deleting = false;
-      roleIndex = (roleIndex + 1) % ROLES.length;
+      roleIndex = (roleIndex + 1) % list.length;
       delay = 350;
     }
-    setTimeout(tick, delay);
+    timer = setTimeout(tick, delay);
   };
   tick();
+
+  // A new language starts the roles over, in that language.
+  langHooks.push(() => {
+    clearTimeout(timer);
+    roleIndex = 0;
+    charIndex = 0;
+    deleting = false;
+    typedEl.textContent = "";
+    timer = setTimeout(tick, 300);
+  });
 }
 
 // Menu — a full-screen sheet on narrow screens.
@@ -580,7 +680,7 @@ const setMenu = (open) => {
   navLinksList.classList.toggle("is-open", open);
   hamburger.classList.toggle("is-open", open);
   hamburger.setAttribute("aria-expanded", String(open));
-  hamburger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  hamburger.setAttribute("aria-label", t(open ? "menu.close" : "menu.open"));
   // The page behind is covered, so it must not scroll or take focus either.
   rootEl.classList.toggle("menu-open", open);
   mainEl.inert = open;
@@ -588,6 +688,7 @@ const setMenu = (open) => {
 };
 
 hamburger.addEventListener("click", () => setMenu(!menuOpen));
+langHooks.push(() => hamburger.setAttribute("aria-label", t(menuOpen ? "menu.close" : "menu.open")));
 
 // Close the menu when a link is chosen, Escape is pressed, or the screen
 // grows past the point where the menu exists.
@@ -695,30 +796,28 @@ if (phones) {
   if ("ResizeObserver" in window) new ResizeObserver(measureTravel).observe(phones);
   measureTravel();
 
-  // English or Arabic. Both sets are renders of the same screens; the launch
-  // screen is the same in either language, so it carries no data-shot. The
-  // new set is loaded first and swapped in together, so the strip never
-  // shows the two languages at once.
+  // The app screens follow the site's language. Both sets are renders of the
+  // same screens; the launch screen is the same in either language, so it
+  // carries no data-shot. On a switch the new set is loaded first and swapped
+  // in together, so the strip never shows two languages at once.
   const swappable = shots.filter((img) => img.dataset.shot);
-  swappable.forEach((img) => { img.dataset.alt = img.alt; });
+  const shotPath = (img, which) => `assets/nashrati/${which}/${img.dataset.shot}.webp`;
   let screensLang = "en";
-  const showScreens = (lang) => {
-    if (lang === screensLang) return;
-    screensLang = lang;
+  const showScreens = (which) => {
+    if (which === screensLang) return;
+    screensLang = which;
     phones.classList.add("is-swapping");
     const loads = swappable.map((img) => new Promise((resolve) => {
       const next = new Image();
-      const path = `assets/nashrati/${lang}/${img.dataset.shot}.webp`;
-      next.onload = next.onerror = () => resolve([img, next, path]);
-      next.src = path;
+      next.onload = next.onerror = () => resolve([img, next]);
+      next.src = shotPath(img, which);
     }));
     Promise.all(loads).then((pairs) => {
-      if (lang !== screensLang) return; // a newer choice has taken over
-      pairs.forEach(([img, next, path]) => {
+      if (which !== screensLang) return; // a newer choice has taken over
+      pairs.forEach(([img, next]) => {
         if (!next.naturalWidth) return; // keep what is there rather than a hole
         img.height = Math.round((img.width * next.naturalHeight) / next.naturalWidth);
-        img.src = path; // already in the cache, so it shows at once
-        img.alt = lang === "ar" ? `In Arabic — ${img.dataset.alt}` : img.dataset.alt;
+        img.src = shotPath(img, which); // already in the cache, so it shows at once
       });
       phones.classList.remove("is-swapping");
       requestAnimationFrame(() => {
@@ -727,10 +826,19 @@ if (phones) {
       });
     });
   };
-  document.querySelectorAll('input[name="screens-lang"]').forEach((input) => {
-    input.addEventListener("change", () => {
-      if (input.checked) showScreens(input.value);
+  // An Arabic visit asks for the Arabic set straight away: the images are lazy,
+  // so the English ones have not been fetched yet.
+  if (lang === "ar") {
+    screensLang = "ar";
+    swappable.forEach((img) => {
+      img.src = shotPath(img, "ar");
+      if (img.dataset.shot === "draft") img.height = 2009;
     });
+  }
+  langHooks.push((next) => {
+    showScreens(next);
+    phones.scrollLeft = 0; // the strip's start moves to the other side
+    syncBar();
   });
 
   if (!prefersReducedMotion) {
@@ -742,14 +850,17 @@ if (phones) {
     });
   }
 
+  // Right-to-left, scrollLeft runs from 0 down to negative numbers; its size
+  // is the distance travelled either way.
   const syncBar = () => {
     const total = phones.scrollWidth;
     const view = phones.clientWidth;
     if (!total) return;
+    const travelled = Math.abs(phones.scrollLeft);
     positionBar.style.setProperty("--w", `${((view / total) * 100).toFixed(2)}%`);
-    positionBar.style.setProperty("--l", `${((phones.scrollLeft / total) * 100).toFixed(2)}%`);
-    prevBtn.disabled = phones.scrollLeft < 4;
-    nextBtn.disabled = phones.scrollLeft > total - view - 4;
+    positionBar.style.setProperty("--l", `${((travelled / total) * 100).toFixed(2)}%`);
+    prevBtn.disabled = travelled < 4;
+    nextBtn.disabled = travelled > total - view - 4;
   };
   phones.addEventListener("scroll", syncBar, { passive: true });
   window.addEventListener("resize", syncBar);
@@ -758,8 +869,9 @@ if (phones) {
   const stepBy = (direction) => {
     const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
     const stride = track.firstElementChild.offsetWidth + gap;
+    const forward = rootEl.dir === "rtl" ? -1 : 1;
     phones.scrollBy({
-      left: direction * stride * (window.innerWidth > 900 ? 2 : 1),
+      left: direction * forward * stride * (window.innerWidth > 900 ? 2 : 1),
       behavior: prefersReducedMotion ? "auto" : "smooth",
     });
   };
@@ -895,14 +1007,8 @@ const lightbox = document.getElementById("lightbox");
 const certLinks = [...document.querySelectorAll(".cert-view")];
 let hidePreview = () => {};
 
-// The name without its small print ("12 hours", "7 courses").
-const certName = (link) =>
-  [...link.childNodes]
-    .filter((node) => node.nodeType === Node.TEXT_NODE)
-    .map((node) => node.textContent)
-    .join(" ")
-    .replace(/\s+/g, " ")
-    .trim();
+// The certificate's own title, without its small print ("12 hours").
+const certName = (link) => (link.querySelector(".cert-name")?.textContent || link.textContent).replace(/\s+/g, " ").trim();
 
 if (lightbox && typeof lightbox.showModal === "function") {
   const lightboxImg = document.getElementById("lightbox-img");
@@ -913,14 +1019,16 @@ if (lightbox && typeof lightbox.showModal === "function") {
     const verifyLink = link.closest(".cert-row").querySelector(".cert-link");
     const name = certName(link);
     link.setAttribute("aria-haspopup", "dialog");
-    verifyLink.setAttribute("aria-label", `Verify “${name}” with the issuer`);
+    const labelVerify = () => verifyLink.setAttribute("aria-label", t("cert.verifyAria", { name }));
+    labelVerify();
+    langHooks.push(labelVerify);
 
     link.addEventListener("click", (e) => {
       // Leave modified clicks alone: open-in-new-tab should still work.
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
       e.preventDefault();
       lightboxImg.src = link.href;
-      lightboxImg.alt = `Certificate: ${name}`;
+      lightboxImg.alt = t("cert.alt", { name });
       lightboxTitle.textContent = name;
       lightboxVerify.href = verifyLink.href;
       hidePreview();
@@ -1012,11 +1120,11 @@ const count = (n) => n.toLocaleString("en-US");
 
 const validators = {
   "cf-name": (v, el) =>
-    withinLength(v, el) ? "" : `Please enter a name between ${count(el.minLength)} and ${count(el.maxLength)} characters.`,
+    withinLength(v, el) ? "" : t("form.name", { min: count(el.minLength), max: count(el.maxLength) }),
   "cf-email": (v, el) =>
-    EMAIL_RE.test(v.trim()) && v.trim().length <= el.maxLength ? "" : "Please enter a valid email address.",
+    EMAIL_RE.test(v.trim()) && v.trim().length <= el.maxLength ? "" : t("form.email"),
   "cf-message": (v, el) =>
-    withinLength(v, el) ? "" : `Please write a message between ${count(el.minLength)} and ${count(el.maxLength)} characters.`,
+    withinLength(v, el) ? "" : t("form.message", { min: count(el.minLength), max: count(el.maxLength) }),
 };
 
 const validateField = (input) => {
@@ -1038,6 +1146,10 @@ Object.keys(validators).forEach((id) => {
   input.addEventListener("input", () => {
     if (input.classList.contains("is-invalid")) validateField(input);
   });
+  // Errors already on screen are re-said in the new language.
+  langHooks.push(() => {
+    if (input.classList.contains("is-invalid")) validateField(input);
+  });
 });
 
 const submitBtn = document.getElementById("cf-submit");
@@ -1052,19 +1164,15 @@ const setStatus = (text, state) => {
 
 const setSending = (sending) => {
   submitBtn.disabled = sending;
-  submitLabel.textContent = sending ? "Sending…" : "Send message";
+  submitLabel.textContent = t(sending ? "form.sending" : "form.send");
 };
 
 // Fallback for when no endpoint is configured: hand the message to the
 // visitor's mail client. Unreliable — mailto: does nothing at all when no mail
 // client is set up — so it is a stopgap, not the delivery path.
 const handOffToMailClient = () => {
-  const subject = "Portfolio message";
-  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
-  setStatus(
-    `Opening your email app… if nothing happened, send your message to ${CONTACT_EMAIL} directly.`,
-    "ok"
-  );
+  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(t("form.mailSubject"))}`;
+  setStatus(t("form.mailto", { email: CONTACT_EMAIL }), "ok");
 };
 
 form.addEventListener("submit", async (e) => {
@@ -1084,7 +1192,7 @@ form.addEventListener("submit", async (e) => {
   // bot has nothing to learn from, but send nothing.
   if (honeypot.value) {
     form.reset();
-    setStatus("Thanks — your message has been sent.", "ok");
+    setStatus(t("form.thanksBot"), "ok");
     return;
   }
 
@@ -1096,7 +1204,7 @@ form.addEventListener("submit", async (e) => {
   }
 
   setSending(true);
-  setStatus("Sending…", null);
+  setStatus(t("form.sending"), null);
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 12000);
 
@@ -1116,13 +1224,13 @@ form.addEventListener("submit", async (e) => {
       f.removeAttribute("aria-invalid");
       document.getElementById(`${f.id}-error`).textContent = "";
     });
-    setStatus(`Thanks, ${name} — your message is on its way. I'll reply to ${email}.`, "ok");
+    setStatus(t("form.thanks", { name, email }), "ok");
   } catch (err) {
     // Network down, endpoint misconfigured, CORS — never drop the message
     // silently; point the visitor at a channel that works.
     console.error("Contact form submit failed:", err);
-    const reason = err.name === "AbortError" ? "The request timed out." : "That didn't send.";
-    setStatus(`${reason} Please email me at ${CONTACT_EMAIL} or message me on WhatsApp.`, "error");
+    const reason = t(err.name === "AbortError" ? "form.timeout" : "form.failed");
+    setStatus(t("form.fallback", { reason, email: CONTACT_EMAIL }), "error");
   } finally {
     clearTimeout(timeoutId);
     setSending(false);
@@ -1133,6 +1241,58 @@ form.addEventListener("submit", async (e) => {
    15. Footer year
    -------------------------------------------------------------------------- */
 document.getElementById("year").textContent = new Date().getFullYear();
+
+/* --------------------------------------------------------------------------
+   16. The language switch — English or Arabic for the whole site. The choice
+       is remembered, and the address carries it (?lang=ar) so a shared link
+       opens in the same language. The reader stays where they were: the same
+       section, the same distance into it, though every height has changed.
+   -------------------------------------------------------------------------- */
+const readingPlace = () => {
+  const line = nav.offsetHeight + 8;
+  const section = [...document.querySelectorAll("main section[id]")].find((el) => {
+    if (el === hero) return false;
+    const box = el.getBoundingClientRect();
+    return box.top <= line && box.bottom > line;
+  });
+  if (!section) return null;
+  const box = section.getBoundingClientRect();
+  return { section, line, ratio: (line - box.top) / box.height };
+};
+const returnTo = (place) => {
+  if (!place) return;
+  const box = place.section.getBoundingClientRect();
+  window.scrollTo({ top: window.scrollY + box.top + place.ratio * box.height - place.line, behavior: "instant" });
+};
+
+langToggle.addEventListener("click", () => {
+  const next = lang === "ar" ? "en" : "ar";
+  try {
+    localStorage.setItem("preferred-lang", next);
+  } catch {
+    /* storage unavailable — the address still carries it */
+  }
+  const url = new URL(window.location.href);
+  if (next === "ar") url.searchParams.set("lang", "ar");
+  else url.searchParams.delete("lang");
+  history.replaceState(history.state, "", url);
+
+  const place = readingPlace();
+  const swap = () => {
+    setLang(next);
+    measureHero();
+    returnTo(place);
+    queueScroll();
+  };
+  if (prefersReducedMotion || typeof document.startViewTransition !== "function") {
+    swap();
+    return;
+  }
+  // A short cross-fade, rather than the page snapping into the other script.
+  rootEl.classList.add("lang-switching");
+  const transition = document.startViewTransition(swap);
+  transition.finished.finally(() => rootEl.classList.remove("lang-switching"));
+});
 
 // Everything is wired: settle the scroll-linked state for wherever we are.
 queueScroll();

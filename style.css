@@ -37,7 +37,62 @@
   font-display: swap;
   src: url("assets/fonts/instrument-serif-italic-latin.woff2") format("woff2");
 }
-/* Five Arabic letters — «نشرتي» in the Nashrati app's own typeface, Tajawal. */
+/* Arabic. Each face is limited to Arabic characters, so none of them is ever
+   downloaded for the English page — only when Arabic text is on screen.
+   Body: Tajawal, the Nashrati app's own typeface. */
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("assets/fonts/tajawal-400-arabic.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("assets/fonts/tajawal-500-arabic.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "Tajawal";
+  font-style: normal;
+  font-weight: 600 900;
+  font-display: swap;
+  src: url("assets/fonts/tajawal-700-arabic.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+/* Headings: Noto Kufi Arabic ExtraBold — as heavy as Anton, which has no
+   Arabic. One file answers every weight, so nothing is ever faked bold. */
+@font-face {
+  font-family: "Noto Kufi Display";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/noto-kufi-arabic-800-arabic.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+/* Accents: Aref Ruqaa calligraphy, in the role of the serif italic. Declared
+   italic as well, so the browser never slants Arabic letters itself. */
+@font-face {
+  font-family: "Aref Ruqaa Accent";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/aref-ruqaa-700-arabic.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "Aref Ruqaa Accent";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/aref-ruqaa-700-arabic.woff2") format("woff2");
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+/* Two words for the English page — «نشرتي» and «العربية» — in Tajawal, tiny. */
 @font-face {
   font-family: "Tajawal Wordmark";
   font-style: normal;
@@ -49,9 +104,10 @@
 
 /* ---------- Design tokens ---------- */
 :root {
-  --font-display: "Anton", "Arial Narrow", sans-serif;
-  --font-serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Latin first; Arabic characters fall through to the Arabic face. */
+  --font-display: "Anton", "Noto Kufi Display", "Arial Narrow", sans-serif;
+  --font-serif: "Instrument Serif", "Aref Ruqaa Accent", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Inter", "Tajawal", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-arabic: "Tajawal Wordmark", "Segoe UI", Tahoma, "Geeza Pro", sans-serif;
 
   --nav-h: 4.5rem;
@@ -60,7 +116,9 @@
   --sheet-radius: clamp(1.25rem, 3vw, 2.25rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dir: 1; /* which way "forward" moves: -1 right-to-left */
 }
+[dir="rtl"] { --dir: -1; }
 
 /* Dark (default) */
 [data-theme="dark"] {
@@ -178,7 +236,7 @@ html:not(.js) .js-only { display: none !important; }
 .skip-link {
   position: absolute;
   top: -100%;
-  left: 1rem;
+  inset-inline-start: 1rem;
   z-index: 400;
   padding: 0.6rem 1rem;
   background: var(--accent);
@@ -262,6 +320,7 @@ html:not(.js) .js-only { display: none !important; }
 }
 .round-btn:hover { border-color: var(--accent-strong); background: var(--accent-strong); color: var(--accent-ink); }
 .round-btn:disabled { opacity: 0.35; cursor: default; }
+[dir="rtl"] .phones-controls .round-btn svg { transform: scaleX(-1); }
 .round-btn:disabled:hover { border-color: var(--border); background: none; color: var(--text); }
 
 /* ---------- Sections ---------- */
@@ -435,6 +494,16 @@ html:not(.js) .js-only { display: none !important; }
   transform: scaleX(var(--p, 0));
 }
 
+/* An Arabic visit: hidden until script.js has put the Arabic in, so the
+   English never shows first (the <head> script lifts this after 4s regardless). */
+.i18n-pending body { visibility: hidden; }
+
+/* Switching language: a short cross-fade of the whole page. */
+:root.lang-switching::view-transition-old(root) { animation: lang-out 0.3s var(--ease) both; }
+:root.lang-switching::view-transition-new(root) { animation: lang-in 0.45s var(--ease) both; }
+@keyframes lang-out { to { opacity: 0; } }
+@keyframes lang-in { from { opacity: 0; } }
+
 /* Film grain. White specks on the dark palette, inverted to ink on paper. */
 .grain {
   position: fixed;
@@ -519,7 +588,7 @@ html:not(.js) .js-only { display: none !important; }
 .nav-link::after {
   content: "";
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   bottom: 0;
   width: 100%;
   height: 2px;
@@ -532,8 +601,36 @@ html:not(.js) .js-only { display: none !important; }
 .nav-link.is-active { color: var(--text); }
 .nav-link:hover::after,
 .nav-link.is-active::after { transform: scaleX(1); transform-origin: left; }
+[dir="rtl"] .nav-link::after { transform-origin: left; }
+[dir="rtl"] .nav-link:hover::after,
+[dir="rtl"] .nav-link.is-active::after { transform-origin: right; }
+[dir="rtl"] .nav-progress,
+[dir="rtl"] .intro-bar i { transform-origin: right; }
 
 .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+/* English / العربية — names the language it leads to, in that language. */
+.lang-toggle {
+  display: grid;
+  place-items: center;
+  height: 2.5rem;
+  min-width: 2.5rem;
+  padding-inline: 0.95rem;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transition: border-color 0.25s, color 0.25s, translate 0.6s var(--ease-expo);
+}
+.lang-toggle:hover { border-color: var(--accent-strong); color: var(--accent-strong); }
+.lang-toggle:lang(ar) {
+  font-family: var(--font-arabic);
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding-top: 0.15rem; /* Arabic sits high in its line box */
+}
 
 .theme-toggle {
   display: grid;
@@ -782,7 +879,7 @@ html:not(.js) .js-only { display: none !important; }
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.availability span {
+.availability .pulse {
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 50%;
@@ -825,7 +922,7 @@ html:not(.js) .js-only { display: none !important; }
   display: inline-block;
   width: 2px;
   height: 1.05em;
-  margin-left: 3px;
+  margin-inline-start: 3px;
   background: var(--accent-strong);
   vertical-align: text-bottom;
   animation: blink 1s steps(1) infinite;
@@ -848,6 +945,7 @@ html:not(.js) .js-only { display: none !important; }
 
 /* ---------- Marquee ---------- */
 .marquee {
+  direction: ltr; /* the ticker's arithmetic runs left-to-right; its words still read right */
   overflow: hidden;
   padding-block: clamp(1.1rem, 2.6vw, 2rem);
   border-bottom: 1px solid var(--border);
@@ -989,8 +1087,8 @@ html:not(.js) .js-only { display: none !important; }
   padding: 1.1rem 0 1.2rem;
   border-bottom: 1px solid var(--border);
 }
-.feature-stats > div:nth-child(odd) { padding-right: 1rem; }
-.feature-stats > div:nth-child(even) { padding-left: 1.25rem; border-left: 1px solid var(--border); }
+.feature-stats > div:nth-child(odd) { padding-inline-end: 1rem; }
+.feature-stats > div:nth-child(even) { padding-inline-start: 1.25rem; border-inline-start: 1px solid var(--border); }
 .feature-stats dt {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1090,13 +1188,13 @@ html:not(.js) .js-only { display: none !important; }
   align-items: baseline;
   gap: 0.6rem;
   margin-top: 1rem;
-  padding-left: 0.4rem;
+  padding-inline-start: 0.4rem;
   font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--muted);
 }
-.phone figcaption span {
+.phone figcaption .num {
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 1.05rem;
@@ -1105,39 +1203,24 @@ html:not(.js) .js-only { display: none !important; }
 
 .phones-bar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.25rem 2rem;
+  justify-content: flex-end;
 }
-.phones-note { max-width: 44ch; color: var(--muted); font-size: 0.9rem; }
-.phones-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
-
-/* English / العربية for the screens — the Lab's segmented control, smaller. */
-.seg--small .seg-options { padding: 0.2rem; }
-.seg--small label span { padding: 0.4rem 0.9rem; font-size: 0.82rem; }
-.screens-lang { margin-right: 0.6rem; }
-.screens-lang [lang="ar"] {
-  font-family: var(--font-arabic);
-  font-weight: 800;
-  font-size: 0.9rem;
-  line-height: 1.2;
-}
+.phones-controls { display: flex; align-items: center; gap: 0.6rem; }
 .phone-screen img { transition: opacity 0.3s var(--ease); }
 .phones.is-swapping .phone-screen img[data-shot] { opacity: 0.25; }
 .phones-progress {
   position: relative;
   width: clamp(5rem, 14vw, 10rem);
   height: 2px;
-  margin-right: 0.6rem;
+  margin-inline-end: 0.6rem;
   background: var(--border);
   overflow: hidden;
 }
 .phones-progress i {
   position: absolute;
-  inset: 0 auto 0 0;
+  inset-block: 0;
   width: var(--w, 30%);
-  left: var(--l, 0%);
+  inset-inline-start: var(--l, 0%);
   background: var(--accent-strong);
 }
 
@@ -1226,7 +1309,7 @@ html:not(.js) .js-only { display: none !important; }
   text-transform: uppercase;
   transition: transform 0.6s var(--ease-expo), color 0.3s;
 }
-.project-card:hover .project-title { transform: translateX(0.6rem); color: var(--accent-strong); }
+.project-card:hover .project-title { transform: translateX(calc(0.6rem * var(--dir))); color: var(--accent-strong); }
 .project-desc { max-width: 60ch; color: var(--muted); font-size: 0.96rem; }
 /* Case studies: the problem, my part, the approach, and what came of it. */
 .project-case-details {
@@ -1247,8 +1330,8 @@ html:not(.js) .js-only { display: none !important; }
   font-size: 0.93rem;
 }
 .project-result {
-  padding-left: 0.85rem;
-  border-left: 2px solid var(--accent-strong);
+  padding-inline-start: 0.85rem;
+  border-inline-start: 2px solid var(--accent-strong);
 }
 .project-result dt { color: var(--accent-strong); }
 .project-result dd { color: var(--text); }
@@ -1372,7 +1455,7 @@ html:not(.js) .js-only { display: none !important; }
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-.lab-readout small { margin-left: 0.1em; font-size: 0.45em; color: var(--muted); }
+.lab-readout small { margin-inline-start: 0.1em; font-size: 0.45em; color: var(--muted); }
 
 .lab-stage { min-width: 0; }
 .lab-canvas-wrap {
@@ -1551,7 +1634,7 @@ html:not(.js) .js-only { display: none !important; }
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
-.cert-group summary:hover .cert-program { transform: translateX(0.5rem); color: var(--accent-strong); }
+.cert-group summary:hover .cert-program { transform: translateX(calc(0.5rem * var(--dir))); color: var(--accent-strong); }
 
 /* A plus that folds into a minus. */
 .cert-chevron {
@@ -1610,9 +1693,9 @@ html:not(.js) .js-only { display: none !important; }
   font-weight: 500;
   transition: color 0.25s, transform 0.5s var(--ease-expo);
 }
-.cert-view:hover { color: var(--accent-strong); transform: translateX(0.4rem); }
+.cert-view:hover { color: var(--accent-strong); transform: translateX(calc(0.4rem * var(--dir))); }
 .cert-view small {
-  margin-left: 0.45rem;
+  margin-inline-start: 0.45rem;
   font-size: 0.78rem;
   font-weight: 400;
   color: var(--muted);
@@ -1649,7 +1732,7 @@ html:not(.js) .js-only { display: none !important; }
   color: var(--muted);
   transition: color 0.25s, transform 0.4s var(--ease-expo);
 }
-.contact-links a:hover { color: var(--accent-strong); transform: translateX(5px); }
+.contact-links a:hover { color: var(--accent-strong); transform: translateX(calc(5px * var(--dir))); }
 
 .contact-clock {
   margin-top: 2rem;
@@ -1713,7 +1796,7 @@ html:not(.js) .js-only { display: none !important; }
    are outright hidden, and this one is meant to be filled in. */
 .form-hp {
   position: absolute;
-  left: -9999px;
+  inset-inline-start: -9999px;
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -1737,7 +1820,7 @@ html:not(.js) .js-only { display: none !important; }
 
 .back-to-top {
   position: fixed;
-  right: 1.4rem;
+  inset-inline-end: 1.4rem;
   bottom: 1.4rem;
   z-index: 90;
   display: grid;
@@ -1867,7 +1950,8 @@ html:not(.js) .js-only { display: none !important; }
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.7rem 0.8rem 0.7rem 1.25rem;
+  padding-block: 0.7rem;
+  padding-inline: 1.25rem 0.8rem;
   border-bottom: 1px solid var(--border);
 }
 .lightbox-title {
@@ -1888,6 +1972,54 @@ html:not(.js) .js-only { display: none !important; }
 }
 
 /* ==========================================================================
+   11b. Arabic — the same design, set for Arabic script
+   ========================================================================== */
+
+/* No tracking anywhere: spacing letters apart breaks Arabic's joins. */
+html[lang="ar"] body,
+html[lang="ar"] body * { letter-spacing: normal !important; }
+
+html[lang="ar"] body { line-height: 1.85; }
+html[lang="ar"] :is(.about-lead, .feature-lede) { line-height: 1.6; }
+
+/* Arabic has tall ascenders and deep descenders: headings need room. */
+html[lang="ar"] :is(.section-title, .feature-title, .project-title, .exp-card h3, .skill-evidence h4,
+                    .cert-program, .work-heading, .feature-stats dd.is-text) { line-height: 1.45; }
+html[lang="ar"] .section-title { font-size: clamp(2.3rem, 6.4vw, 5rem); }
+html[lang="ar"] .section-title em { font-size: 1.12em; }
+html[lang="ar"] .project-title { font-size: clamp(1.55rem, 3.6vw, 2.6rem); }
+html[lang="ar"] .w { padding-block: 0.12em 0.42em; margin-block: -0.12em -0.42em; }
+
+/* Small labels: Arabic is unreadable at the Latin caps size. */
+html[lang="ar"] :is(.project-label, .fact-label, .exp-kind, .section-kicker, .feature-stats dt, .lab-readout dt,
+                    .seg legend, .lab-range label, .skills-heading, .cert-issuer, .project-case-details dt,
+                    .availability, .hero-loc, .cert-date, .intro-top) { font-size: 0.86rem; }
+
+/* The cover word: one line of two words on a wide screen. */
+html[lang="ar"] :is(.hero-word, .hero-word-outline) { line-height: 1.3; }
+@media (min-width: 901px) {
+  html[lang="ar"] .hw + .hw { margin-inline-start: 0.28em; }
+  html[lang="ar"] :is(.hero-word, .hero-word-outline) {
+    font-size: clamp(3rem, min(10.5vw, calc(var(--photo-h, 40rem) * 0.27)), 10rem);
+  }
+}
+@media (max-width: 900px) {
+  html[lang="ar"] :is(.hero-word, .hero-word-outline) { line-height: 1.12; }
+}
+@media (max-width: 700px) {
+  /* «أعمالي» is wider than FOLIO: sized so it clears the gutters. */
+  html[lang="ar"] :is(.hero-word, .hero-word-outline) {
+    font-size: clamp(3.8rem, min(25vw, calc(var(--photo-h, 26rem) * 0.25)), 8rem);
+  }
+}
+
+html[lang="ar"] .feature-stats dd.is-text { font-size: clamp(1.25rem, 2.3vw, 1.6rem); }
+html[lang="ar"] .cert-program { font-size: clamp(1.3rem, 2.6vw, 1.95rem); }
+
+/* The phone menu's masks would clip the dots under a final «ي». */
+html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 0.22em; }
+
+/* ==========================================================================
    12. Responsive — mobile-first upgrades, then the narrow-screen menu
    ========================================================================== */
 @media (min-width: 700px) {
@@ -1905,11 +2037,11 @@ html:not(.js) .js-only { display: none !important; }
 
   .cert-group summary { grid-template-columns: minmax(9rem, 1fr) 2.2fr minmax(11rem, 1.3fr) auto; gap: 1.25rem; }
   .cert-issuer, .cert-program, .cert-meta, .cert-chevron { grid-column: auto; grid-row: auto; }
-  .cert-meta { text-align: right; }
-  .cert-rows { padding-left: calc((100% - 3.75rem - 2.6rem) / 4.5 + 1.25rem); }
+  .cert-meta { text-align: end; }
+  .cert-rows { padding-inline-start: calc((100% - 3.75rem - 2.6rem) / 4.5 + 1.25rem); }
   .cert-row { grid-template-columns: minmax(0, 1fr) 6.5rem 5rem; }
   .cert-view { grid-column: auto; }
-  .cert-date, .cert-link { text-align: right; }
+  .cert-date, .cert-link { text-align: end; }
 }
 
 @media (min-width: 1100px) {
@@ -2050,9 +2182,7 @@ html:not(.js) .js-only { display: none !important; }
 }
 
 @media (max-width: 520px) {
-  /* The language switch takes its own row; position bar and arrows share the next. */
   .phones-controls { width: 100%; }
-  .screens-lang { flex-basis: 100%; margin: 0 0 0.35rem; }
   .phones-progress { flex: 1; width: auto; }
   .hero-actions { width: 100%; }
   .hero-actions .btn { flex: 1; padding-inline: 1rem; }
@@ -2077,7 +2207,7 @@ html:not(.js) .js-only { display: none !important; }
   .reveal-ready .reveal { opacity: 1; transform: none; }
   .wi { transform: none; }
   .scrub-ready .sw { opacity: 1; }
-  .availability span { animation: none; }
+  .availability .pulse { animation: none; }
   /* No pinned cover, no travel inside the phones. */
   .js .hero { position: relative; top: auto; }
   .hero-stage, .hero-meta, .hero-footer { opacity: 1; transform: none; }

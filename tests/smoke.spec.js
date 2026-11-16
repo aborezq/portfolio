@@ -167,23 +167,74 @@ test("a certificate opens in the viewer with its verify link, and Escape closes 
   await expect(viewer).toBeHidden();
 });
 
-test("Nashrati screens switch to Arabic and back to English", async ({ page }) => {
+const ARABIC = /[؀-ۿ]/;
+
+test("the language switch turns the whole site Arabic and back", async ({ page }) => {
+  const errors = [];
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  page.on("pageerror", (e) => errors.push(String(e)));
   await skipIntro(page);
   await page.goto(SITE);
+  const html = page.locator("html");
   const shots = page.locator(".phone-screen img[data-shot]");
-  await expect(shots).toHaveCount(5);
-  for (const src of await shots.evaluateAll((imgs) => imgs.map((i) => i.getAttribute("src")))) {
-    expect(src).toContain("/en/");
-  }
+  const aboutTitle = page.locator("#about .section-title");
+  const toggle = page.locator("#lang-toggle");
 
-  await page.locator('.screens-lang label:has(input[value="ar"])').click();
+  await expect(html).toHaveAttribute("lang", "en");
+  await expect(toggle).toHaveText("العربية");
+  await expect(shots).toHaveCount(5);
+
+  await toggle.click();
+  await expect(html).toHaveAttribute("lang", "ar");
+  await expect(html).toHaveAttribute("dir", "rtl");
+  await expect(aboutTitle).toHaveText(ARABIC);
+  await expect(toggle).toHaveText("English");
+  await expect(page).toHaveURL(/\?lang=ar/);
+  expect(await page.title()).toMatch(ARABIC);
+  // The app screens follow the site's language.
   await expect(shots.first()).toHaveAttribute("src", /\/ar\//);
   for (const src of await shots.evaluateAll((imgs) => imgs.map((i) => i.getAttribute("src")))) {
     expect(src).toContain("/ar/");
   }
+  // Messages the script writes are translated too.
+  await page.click("#cf-submit");
+  await expect(page.locator("#cf-email-error")).toHaveText(ARABIC);
 
-  await page.locator('.screens-lang label:has(input[value="en"])').click();
+  // Remembered across a reload.
+  await page.goto(SITE);
+  await expect(html).toHaveAttribute("lang", "ar");
+  await expect(aboutTitle).toHaveText(ARABIC);
+
+  await page.locator("#lang-toggle").click();
+  await expect(html).toHaveAttribute("lang", "en");
+  await expect(html).toHaveAttribute("dir", "ltr");
+  await expect(aboutTitle).toHaveText(/Built under pressure/);
   await expect(shots.last()).toHaveAttribute("src", /\/en\//);
+  await expect(page).not.toHaveURL(/lang=/);
+  expect(errors).toEqual([]);
+});
+
+test("a ?lang=ar link opens in Arabic, with every marked string translated", async ({ page }) => {
+  const errors = [];
+  page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  page.on("pageerror", (e) => errors.push(String(e)));
+  await skipIntro(page);
+  await page.goto(`${SITE}?lang=ar`);
+
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+  await expect(page.locator("html")).not.toHaveClass(/i18n-pending/);
+  const missing = await page.evaluate(() => {
+    const keys = new Set();
+    document.querySelectorAll("[data-i18n]").forEach((el) => keys.add(el.dataset.i18n));
+    document.querySelectorAll("[data-i18n-attr]").forEach((el) =>
+      el.dataset.i18nAttr.split(",").forEach((pair) => keys.add(pair.split(":")[1].trim()))
+    );
+    return [...keys].filter((key) => window.I18N.ar[key] === undefined);
+  });
+  expect(missing).toEqual([]);
+  // The Lab speaks Arabic as well.
+  await expect(page.locator("#lab-status")).toHaveText(ARABIC, { timeout: 5000 });
+  expect(errors).toEqual([]);
 });
 
 test("the Lab rescores when the features are standardized", async ({ page }) => {
