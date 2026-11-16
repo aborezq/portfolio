@@ -176,3 +176,7 @@ its cover, Nashrati card and section titles, in dark and light, come from
 node _src/readme.js ../aborezq/assets
 ```
 
+It also types the site's Arabic roles («أنا …») frame by frame into a GIF, since
+GitHub cannot run the site's script; that step needs Python 3 with Pillow and
+NumPy (`_src/readme_gif.py`).
+
