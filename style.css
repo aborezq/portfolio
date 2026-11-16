@@ -1033,7 +1033,15 @@ html:not(.js) .js-only { display: none !important; }
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
-.exp-card p:last-child { color: var(--muted); font-size: 0.95rem; }
+.exp-card p:last-of-type { color: var(--muted); font-size: 0.95rem; }
+.exp-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; margin-top: 1.1rem; }
+.exp-links a {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+  transition: opacity 0.2s;
+}
+.exp-links a:hover { opacity: 0.75; }
 
 /* ---------- Work: the Nashrati case study ---------- */
 .feature { padding-bottom: clamp(3.5rem, 8vw, 6rem); }
@@ -1352,6 +1360,16 @@ html:not(.js) .js-only { display: none !important; }
   opacity: 1;
   background: var(--accent-strong);
   color: var(--accent-ink);
+}
+/* A project shown without its code: said plainly, not as a dead link. */
+.project-private {
+  padding: 0.45rem 0.95rem;
+  border: 1px dashed var(--border);
+  border-radius: 99px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .projects-empty { color: var(--muted); margin-top: 1.5rem; }
@@ -2018,6 +2036,8 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
    ========================================================================== */
 @media (min-width: 700px) {
   .exp-grid { grid-template-columns: repeat(2, 1fr); }
+  /* The current role leads, across the row. */
+  .exp-card--now { grid-column: 1 / -1; }
   .contact-grid { grid-template-columns: 1fr 1.2fr; align-items: start; }
 
   .project-card {
@@ -2039,7 +2059,10 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
 }
 
 @media (min-width: 1100px) {
-  .exp-grid { grid-template-columns: repeat(4, 1fr); }
+  /* Five cards: the two leading roles wide on top, the other three below. */
+  .exp-grid { grid-template-columns: repeat(6, 1fr); }
+  .exp-card { grid-column: span 2; }
+  .exp-card:nth-child(-n + 2) { grid-column: span 3; }
 }
 
 @media (min-width: 901px) {
