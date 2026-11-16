@@ -397,8 +397,19 @@ scrollTasks.push((y, viewport) => {
   backToTop.inert = !showTop || menuOpen;
 });
 
-backToTop.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+const toTop = () => window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+backToTop.addEventListener("click", toTop);
+
+// Every link to #home — the logo, "Home" in the menu, "Back to top" in the
+// footer — goes to the very top. The cover is pinned (below), so to the
+// browser #home is always already on screen and a plain jump to it barely
+// moves. A click meant for a new tab or window is left to the browser.
+document.addEventListener("click", (e) => {
+  const link = e.target instanceof Element ? e.target.closest('a[href="#home"]') : null;
+  if (!link || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  toTop();
+  if (location.hash !== "#home") history.pushState(null, "", "#home");
 });
 
 /* The cover is sticky: the rest of the page slides up over it while it sinks
