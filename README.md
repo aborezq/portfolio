@@ -168,3 +168,11 @@ Pages does not publish folders whose names start with `_`. After changing the
 preview picture, bump the `?v=` on `og:image` and `twitter:image` in
 `index.html`, so apps that cached the old one fetch it again.
 
+The pictures of the GitHub profile README ([github.com/aborezq](https://github.com/aborezq)),
+its cover, Nashrati card and section titles, in dark and light, come from
+`_src/readme/` the same way:
+
+```
+node _src/readme.js ../aborezq/assets
+```
+
