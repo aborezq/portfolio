@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- A section title for the GitHub profile, in the site's type: the number and
+     label above, the title in Anton with its gold italic. Rendered on a
+     transparent background, so it sits on GitHub's own page colour.
+     ?num=01&label=About&title=Built under pressure,<br><em>driven by curiosity.</em>&theme=dark -->
+<title>README title</title>
+<style>
+  @font-face { font-family: "Anton"; font-weight: 400; src: url("../../assets/fonts/anton-latin.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400 700; src: url("../../assets/fonts/inter-latin.woff2") format("woff2"); }
+  @font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; src: url("../../assets/fonts/instrument-serif-italic-latin.woff2") format("woff2"); }
+
+  /* Colours chosen against GitHub's backgrounds (#0d1117 dark, #ffffff light). */
+  :root { --ink: #e8dcc0; --muted: #a39c8d; --gold: #d9b36a; }
+  :root.light { --ink: #1f1a12; --muted: #6d6455; --gold: #80520d; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  .block { display: inline-block; padding: 10px 8px 18px; }
+  .kicker { display: flex; align-items: baseline; gap: 16px; margin-bottom: 14px; font-family: "Inter", sans-serif; font-size: 17px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .kicker b { font-family: "Instrument Serif", serif; font-style: italic; font-weight: 400; font-size: 34px; line-height: 1; letter-spacing: 0; color: var(--gold); }
+  h2 { font-family: "Anton", sans-serif; font-weight: 400; font-size: 92px; line-height: 0.98; letter-spacing: 0.005em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+  h2 em { font-family: "Instrument Serif", serif; font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: -0.01em; text-transform: none; color: var(--gold); }
+</style>
+</head>
+<body>
+  <div class="block"><p class="kicker"><b id="num"></b><span id="label"></span></p><h2 id="title"></h2></div>
+  <script>
+    const q = new URLSearchParams(location.search);
+    if (q.get("theme") === "light") document.documentElement.classList.add("light");
+    document.getElementById("num").textContent = q.get("num") || "";
+    document.getElementById("label").textContent = q.get("label") || "";
+    document.getElementById("title").innerHTML = q.get("title") || "";
+  </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Nashrati, as the GitHub profile shows it: 1600 × 800, the site's lead
+     project in one picture. ?theme=light for GitHub's light mode. -->
+<title>README Nashrati</title>
+<style>
+  @font-face { font-family: "Anton"; font-weight: 400; src: url("../../assets/fonts/anton-latin.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400 700; src: url("../../assets/fonts/inter-latin.woff2") format("woff2"); }
+  @font-face { font-family: "Tajawal Wordmark"; font-weight: 800; src: url("../../assets/fonts/tajawal-wordmark-arabic.woff2") format("woff2"); }
+
+  :root { --bg: #0b0a08; --surface: #171410; --text: #f1ece1; --muted: #a39c8d; --gold: #d9b36a; --word: #e8dcc0; --line: rgb(241 236 225 / 0.16); --shadow: rgb(0 0 0 / 0.5); }
+  :root.light { --bg: #f6f1e7; --surface: #fffdf8; --text: #201c14; --muted: #6d6455; --gold: #80520d; --word: #1f1a12; --line: rgb(32 28 20 / 0.16); --shadow: rgb(60 40 10 / 0.22); }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1600px; height: 800px; overflow: hidden; }
+  body {
+    position: relative;
+    font-family: "Inter", sans-serif;
+    color: var(--text);
+    background: radial-gradient(700px 520px at 78% 50%, rgb(217 179 106 / 0.14), transparent 70%), var(--bg);
+  }
+
+  .left { position: absolute; left: 84px; top: 0; bottom: 0; width: 700px; display: flex; flex-direction: column; justify-content: center; }
+  .label { font-size: 18px; font-weight: 700; letter-spacing: 0.14em; color: var(--gold); }
+  h1 {
+    display: flex; align-items: baseline; gap: 0.28em; margin-top: 18px;
+    font-family: "Anton", sans-serif; font-weight: 400; font-size: 112px; line-height: 0.95; letter-spacing: 0.005em; color: var(--word);
+  }
+  h1 .ar { padding-bottom: 0.24em; font-family: "Tajawal Wordmark", sans-serif; font-weight: 800; font-size: 0.78em; line-height: 1.25; color: var(--gold); }
+  .lede { margin-top: 10px; font-size: 28px; line-height: 1.45; }
+  .stats { display: grid; grid-template-columns: auto auto; gap: 22px 56px; justify-content: start; margin-top: 34px; }
+  .stats dt { font-size: 14px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .stats dd { margin-top: 4px; font-family: "Anton", sans-serif; font-size: 40px; line-height: 1.05; color: var(--word); }
+
+  .phones { position: absolute; right: 64px; top: 0; bottom: 0; display: flex; gap: 26px; align-items: center; }
+  .phone {
+    width: 212px; aspect-ratio: 640 / 1316; overflow: hidden;
+    border: 2px solid var(--line); border-radius: 32px;
+    background: var(--surface); box-shadow: 0 30px 60px var(--shadow);
+  }
+  .phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .phone:nth-child(odd) { transform: translateY(34px); }
+  .phone:nth-child(2) { transform: translateY(-34px); }
+</style>
+</head>
+<body>
+  <div class="left">
+    <p class="label">LEAD PROJECT · TEAM LEADER · MOBILE &amp; AI</p>
+    <h1><span class="ar" lang="ar" dir="rtl">نشرتي</span> NASHRATI</h1>
+    <p class="lede">AI-assisted news drafting for field reporters: record an interview, get back the transcript, the people, places and dates, and a draft to review.</p>
+    <dl class="stats">
+      <div><dt>My role</dt><dd>Team leader</dd></div>
+      <div><dt>Built</dt><dd>Aug – Oct 2026</dd></div>
+      <div><dt>Automated tests</dt><dd>1,500+</dd></div>
+      <div><dt>Languages</dt><dd>Arabic + English</dd></div>
+    </dl>
+  </div>
+  <div class="phones">
+    <div class="phone"><img src="../../assets/nashrati/en/reports.webp" alt=""></div>
+    <div class="phone"><img src="../../assets/nashrati/en/record.webp" alt=""></div>
+    <div class="phone"><img src="../../assets/nashrati/en/draft.webp" alt=""></div>
+  </div>
+  <script>if (new URLSearchParams(location.search).get("theme") === "light") document.documentElement.classList.add("light");</script>
+</body>
+</html>
