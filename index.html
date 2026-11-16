@@ -181,18 +181,21 @@
       <div class="hero-stage" id="hero-stage">
         <!-- The display word is decoration; the real heading text is the name,
              so that search engines index it (they read heading text, not an
-             aria-label) and screen readers announce something useful. The word
-             is two halves so a narrow screen can stack them: PORT / FOLIO. -->
+             aria-label) and screen readers announce something useful. In
+             Arabic the two halves are two words, so they stay separate. -->
         <h1 class="hero-word">
           <span class="sr-only" data-i18n="hero.h1">Mohammed R. Awad — AI, Data Analytics and Machine Learning</span>
           <span class="hero-word-line" aria-hidden="true"><span class="hw" data-i18n="hero.w1">PORT</span><span class="hw" data-i18n="hero.w2">FOLIO</span></span>
         </h1>
+        <!-- The portrait is cut out of its studio backdrop, so the word behind
+             it is hidden only where he stands. A browser that reads neither
+             AVIF nor WebP gets the original photo. -->
         <picture class="hero-picture">
-          <source srcset="assets/profile.webp" type="image/webp">
+          <source srcset="assets/profile-cutout.avif" type="image/avif">
+          <source srcset="assets/profile-cutout.webp" type="image/webp">
           <img class="hero-photo" src="assets/profile.jpg"
                alt="Portrait of Mohammed R. Awad" data-i18n-attr="alt:hero.photoAlt" width="900" height="1353" fetchpriority="high">
         </picture>
-        <span class="hero-word-outline" aria-hidden="true"><span class="hero-word-line"><span class="hw" data-i18n="hero.w1">PORT</span><span class="hw" data-i18n="hero.w2">FOLIO</span></span></span>
       </div>
 
       <div class="hero-footer container">

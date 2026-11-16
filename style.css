@@ -670,9 +670,13 @@ html:not(.js) .js-only { display: none !important; }
 .hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ==========================================================================
-   5. Hero — the cover: a giant display word layered through the portrait
+   5. Hero — the cover: a giant display word behind a cut-out portrait
    ========================================================================== */
 .hero {
+  /* Portrait height; each screen size below fits it to the space it has,
+     less --word-room: the strip above the portrait the word rises into. */
+  --word-room: 1.25rem;
+  --photo-h: min(74vh, 40rem);
   position: relative;
   isolation: isolate;
   min-height: 100svh;
@@ -743,48 +747,43 @@ html:not(.js) .js-only { display: none !important; }
 .hero-arrow { flex: none; color: var(--accent); transition: transform 0.4s var(--ease-expo); }
 .hero-arrow:hover { transform: translateY(8px); }
 
-/* The stage stacks three layers in one grid cell:
-   1. filled word  →  2. photo  →  3. outlined word (over the face) */
+/* The stage: a masthead behind a cover portrait. The portrait is cut out of
+   its backdrop, so the word behind it is hidden only where he stands — the
+   head rises into the bottom of the letters, the way a cover star overlaps
+   the magazine's name. The portrait sits on the stage floor; the word is
+   placed from that floor, so the two stay locked together at every size. */
 .hero-stage {
   flex: 1;
   display: grid;
   place-items: end center;
   position: relative;
-  min-height: 0;
+  min-height: calc(var(--photo-h) + var(--word-room));
   opacity: calc(1 - var(--hero-p, 0) * 1.25);
   transform: scale(calc(1 - var(--hero-p, 0) * 0.07));
   transform-origin: 50% 35%;
 }
 .hero-stage > * { grid-area: 1 / 1; }
 
-.hero-word,
-.hero-word-outline {
+.hero-word {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 1;
+  /* The tops of the capitals sit just above the portrait's frame, whatever
+     the size; --cap-top is how far above the bottom of the line they are. */
+  --cap-top: 0.91em;
+  bottom: calc(var(--photo-h) * 1.02 - var(--cap-top));
+  color: var(--accent);
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(3.4rem, 14.5vw, 13.5rem);
+  font-size: clamp(3.4rem, min(15vw, calc(var(--photo-h) * 0.38)), 22rem);
   line-height: 0.95;
   letter-spacing: 0.01em;
   text-align: center;
-  align-self: center;
   user-select: none;
   white-space: nowrap;
   /* Depth: the word drifts against the pointer, the portrait with it. */
   transform: translate3d(calc(var(--px, 0) * -1.2rem), calc(var(--py, 0) * -0.7rem), 0);
 }
-.hero-word { color: var(--accent); z-index: 1; }
-
-.hero-word-outline {
-  z-index: 3;
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--accent);
-  pointer-events: none;
-  /* Only reveal the outline in the middle band, where it crosses the photo */
-  -webkit-mask-image: linear-gradient(90deg, transparent 30%, #000 42%, #000 60%, transparent 72%);
-          mask-image: linear-gradient(90deg, transparent 30%, #000 42%, #000 60%, transparent 72%);
-}
-/* The portrait stays dark in both themes, so on paper the outline turns
-   paper-coloured to stay visible where it crosses the face. */
-[data-theme="light"] .hero-word-outline { -webkit-text-stroke-color: var(--bg); }
 
 /* The entrance runs on this inner line, never on the layer itself: a running
    animation would override the layer's pointer-driven transform. */
@@ -808,8 +807,7 @@ html:not(.js) .js-only { display: none !important; }
 }
 .intro-pending .ch { transform: translateY(110%); }
 
-/* Keep the responsive <picture> in the same grid cell as both word layers.
-   The portrait then sits above the filled word and below the outlined word. */
+/* The portrait, in front of the word. */
 .hero-picture {
   z-index: 2;
   align-self: end;
@@ -820,34 +818,33 @@ html:not(.js) .js-only { display: none !important; }
 
 .hero-photo {
   display: block;
-  height: min(74vh, 640px);
+  height: var(--photo-h);
   width: auto;
-  object-fit: contain;
-  /* The portrait's dark backdrop melts into the page; fade the hard edges */
-  -webkit-mask-image: radial-gradient(58% 82% at 50% 44%, #000 46%, transparent 86%);
-          mask-image: radial-gradient(58% 82% at 50% 44%, #000 46%, transparent 86%);
+  /* The frame cut him off at the waist and the arms: the body dissolves into
+     the page instead of ending on a line. */
+  -webkit-mask-image:
+    linear-gradient(to bottom, #000 56%, transparent 97%),
+    linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(to bottom, #000 56%, transparent 97%),
+    linear-gradient(to right, transparent, #000 11%, #000 89%, transparent);
+          mask-composite: intersect;
+  /* Not tiled: a repeat would paint the next tile's opaque top along the
+     bottom edge whenever the portrait sits between two pixels. */
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  /* A soft shadow on the word behind him: it reads as depth, not as a cut. */
+  filter: drop-shadow(0 0.9rem 1.6rem rgb(0 0 0 / 0.55));
   animation: hero-rise 1.5s var(--ease-expo) backwards 0.15s;
 }
+[data-theme="light"] .hero-photo { filter: drop-shadow(0 0.9rem 1.6rem rgb(60 40 10 / 0.28)); }
 
 /* While the opening sequence is still up, nothing has started yet. Dropping
    .intro-pending is what lets each of these animations begin. */
 .intro-pending .hero-photo,
 .intro-pending .hero-meta,
 .intro-pending .hero-footer { animation: none; opacity: 0; }
-
-/* The studio backdrop is near-black. On the dark page it disappears by
-   itself; on paper every edge has to fade out completely, top and bottom
-   included, or the photo's rectangle shows. */
-[data-theme="light"] .hero-photo {
-  -webkit-mask-image:
-    linear-gradient(to bottom, transparent 0%, #000 22%, #000 68%, transparent 100%),
-    radial-gradient(52% 72% at 50% 44%, #000 48%, transparent 90%);
-  -webkit-mask-composite: source-in;
-          mask-image:
-    linear-gradient(to bottom, transparent 0%, #000 22%, #000 68%, transparent 100%),
-    radial-gradient(52% 72% at 50% 44%, #000 48%, transparent 90%);
-          mask-composite: intersect;
-}
 
 @keyframes hero-rise {
   from { opacity: 0; transform: translateY(3rem) scale(1.05); }
@@ -1995,22 +1992,19 @@ html[lang="ar"] :is(.project-label, .fact-label, .exp-kind, .section-kicker, .fe
                     .seg legend, .lab-range label, .skills-heading, .cert-issuer, .project-case-details dt,
                     .availability, .hero-loc, .cert-date, .intro-top) { font-size: 0.86rem; }
 
-/* The cover word: one line of two words on a wide screen. */
-html[lang="ar"] :is(.hero-word, .hero-word-outline) { line-height: 1.3; }
-@media (min-width: 901px) {
-  html[lang="ar"] .hw + .hw { margin-inline-start: 0.28em; }
-  html[lang="ar"] :is(.hero-word, .hero-word-outline) {
-    font-size: clamp(3rem, min(10.5vw, calc(var(--photo-h, 40rem) * 0.27)), 10rem);
-  }
+/* The cover word: «معرض أعمالي», two words on one line at every size, as wide
+   as PORTFOLIO is. The hamza on «أ» stands higher than Anton's capitals. */
+html[lang="ar"] .hero-word {
+  --cap-top: 1.15em;
+  line-height: 1.3;
+  font-size: clamp(2.6rem, min(10vw, calc(var(--photo-h) * 0.26)), 15rem);
 }
-@media (max-width: 900px) {
-  html[lang="ar"] :is(.hero-word, .hero-word-outline) { line-height: 1.12; }
+html[lang="ar"] .hw + .hw { margin-inline-start: 0.28em; }
+@media (min-width: 701px) and (max-width: 900px) {
+  html[lang="ar"] .hero-word { font-size: min(11vw, calc(var(--photo-h) * 0.18)); }
 }
 @media (max-width: 700px) {
-  /* «أعمالي» is wider than FOLIO: sized so it clears the gutters. */
-  html[lang="ar"] :is(.hero-word, .hero-word-outline) {
-    font-size: clamp(3.8rem, min(25vw, calc(var(--photo-h, 26rem) * 0.25)), 8rem);
-  }
+  html[lang="ar"] .hero-word { font-size: min(13.2vw, calc(var(--photo-h) * 0.18)); }
 }
 
 html[lang="ar"] .feature-stats dd.is-text { font-size: clamp(1.25rem, 2.3vw, 1.6rem); }
@@ -2053,10 +2047,7 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
      and the name block leave (--hero-chrome, measured by script.js §4), and
      the word scales with the portrait so the composition holds on a short
      laptop screen as on a tall monitor. */
-  .hero { --photo-h: clamp(16rem, calc(100svh - var(--hero-chrome, 23rem)), 40rem); }
-  .hero-photo { height: var(--photo-h); }
-  .hero-word,
-  .hero-word-outline { font-size: clamp(3.4rem, min(14.5vw, calc(var(--photo-h) * 0.39)), 13.5rem); }
+  .hero { --photo-h: clamp(16rem, calc(100svh - var(--hero-chrome, 23rem) - var(--word-room)), 56rem); }
 
   .section-head { grid-template-columns: minmax(9rem, 1fr) 4fr; gap: 1.5rem; align-items: start; }
   .section-kicker { padding-top: 0.6rem; }
@@ -2137,42 +2128,20 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
   .hero-actions { justify-content: flex-start; }
 }
 
-/* Phones and portrait tablets: the cover word stacks — PORT over FOLIO — so it
-   can stay enormous, low on the portrait across the chest, clear of the face. */
-@media (max-width: 900px) {
-  .hw { display: block; }
-  .hero-word,
-  .hero-word-outline {
-    font-size: clamp(5.5rem, 32vw, 10rem);
-    line-height: 0.86;
-    align-self: end;
-    margin-bottom: 1.5rem;
-  }
-  .hero-word-outline {
-    -webkit-mask-image: linear-gradient(90deg, transparent 6%, #000 30%, #000 70%, transparent 94%);
-            mask-image: linear-gradient(90deg, transparent 6%, #000 30%, #000 70%, transparent 94%);
-  }
-}
-
 /* Portrait tablets have the height to spare: the portrait fills it, and the
-   word grows with it. */
+   word spans most of the width above it. */
 @media (min-width: 701px) and (max-width: 900px) {
-  .hero { --photo-h: clamp(18rem, calc(100svh - var(--hero-chrome, 26rem)), 40rem); }
-  .hero-photo { height: var(--photo-h); }
-  .hero-word,
-  .hero-word-outline {
-    font-size: clamp(5.5rem, calc(var(--photo-h) * 0.3), 13rem);
-    margin-bottom: 2.5rem;
-  }
+  .hero { --photo-h: clamp(18rem, calc(100svh - var(--hero-chrome, 26rem) - var(--word-room)), 50rem); }
+  .hero-word { font-size: min(19vw, calc(var(--photo-h) * 0.3)); }
 }
 
-/* Phones: the same fit, so name and buttons are on the first screen — with a
-   floor, so a short phone keeps a portrait worth the name (it scrolls a little). */
+/* Phones: a portrait screen is a magazine cover — the word runs edge to edge
+   along the top, the portrait fills the rest, and the name and buttons are
+   on the first screen. A short phone keeps a portrait worth the name (it
+   scrolls a little). */
 @media (max-width: 700px) {
-  .hero { --photo-h: clamp(17rem, max(100svh - var(--hero-chrome, 28rem), 46svh), 30rem); }
-  .hero-photo { height: var(--photo-h); }
-  .hero-word,
-  .hero-word-outline { font-size: clamp(4.5rem, min(32vw, calc(var(--photo-h) * 0.3)), 10rem); }
+  .hero { --photo-h: clamp(17rem, max(100svh - var(--hero-chrome, 28rem) - var(--word-room), 46svh), 30rem); }
+  .hero-word { font-size: min(23vw, calc(var(--photo-h) * 0.3)); }
 }
 
 @media (max-width: 700px) {
