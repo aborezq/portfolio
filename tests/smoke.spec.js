@@ -254,3 +254,21 @@ test("the Lab rescores when the features are standardized", async ({ page }) => 
   ]);
   expect(Number(s2)).toBeGreaterThan(Number(r));
 });
+
+test("Home, the logo and Back to top all return to the very top", async ({ page }) => {
+  await skipIntro(page);
+  await page.goto(SITE);
+  // The cover is pinned, so to the browser #home is always on screen: a plain
+  // jump to it barely moves. Each of these links must still reach the top.
+  for (const link of ['.nav-links a[href="#home"]', ".nav-logo", ".footer-top"]) {
+    await page.evaluate(() => {
+      const work = document.getElementById("projects").getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: work + 400, behavior: "instant" });
+    });
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+    await page.locator(link).scrollIntoViewIfNeeded();
+    await page.locator(link).click();
+    await expect.poll(() => page.evaluate(() => window.scrollY), { timeout: 5000 }).toBe(0);
+  }
+  await expect(page.locator('.nav-links a[href="#home"]')).toHaveClass(/is-active/);
+});

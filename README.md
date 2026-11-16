@@ -1,8 +1,8 @@
 # Mohammed R. Awad — Portfolio
 
-Personal portfolio website of **Mohammed R. Awad** — Computer Engineering
-student (Intelligent Systems) at Al-Aqsa University, Gaza, Palestine, working
-in **AI, Data Analytics and Machine Learning**.
+Personal portfolio website of **Mohammed R. Awad** — a senior in Intelligent
+Systems and Computer Engineering at Al-Aqsa University, Gaza, Palestine,
+working in **AI, Data Analytics and Machine Learning**.
 
 Built entirely with **vanilla HTML, CSS and JavaScript** — no frameworks, no
 build step, and no external asset requests on page load (fonts and images are
