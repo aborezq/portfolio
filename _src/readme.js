@@ -48,6 +48,37 @@ const titles = [
       }
       await page.close();
     }
+
+    // The Arabic typed line, frame by frame with the site's own timing
+    // (script.js §8): type 90 ms a letter, hold 1.8 s with the caret
+    // blinking, delete 45 ms a letter, 350 ms before the next role.
+    const page = await browser.newPage({ viewport: { width: 520, height: 44 }, deviceScaleFactor: 2 });
+    await page.goto(source("roles-ar.html", { theme }), { waitUntil: "load" });
+    await page.evaluate(() => document.fonts.ready);
+    const roles = await page.evaluate(() => window.ROLES);
+    const framesDir = fs.mkdtempSync(path.join(require("os").tmpdir(), "roles-ar-"));
+    const plan = [];
+    const frame = async (text, caretOn, ms) => {
+      await page.evaluate(([t, c]) => window.show(t, c), [text, caretOn]);
+      const name = `frame-${String(plan.length).padStart(3, "0")}.png`;
+      await page.screenshot({ path: path.join(framesDir, name) });
+      plan.push([name, ms]);
+    };
+    for (const word of roles) {
+      for (let i = 1; i <= word.length; i++) await frame(word.slice(0, i), true, 90);
+      for (const [on, ms] of [[false, 500], [true, 500], [false, 500], [true, 300]]) await frame(word, on, ms);
+      for (let i = word.length - 1; i >= 0; i--) await frame(word.slice(0, i), true, 45);
+      await frame("", true, 350);
+    }
+    const colours = await page.evaluate(() => {
+      const css = getComputedStyle(document.documentElement);
+      return { bg: css.getPropertyValue("--bg").trim(), inks: [css.getPropertyValue("--gold").trim(), css.getPropertyValue("--muted").trim()] };
+    });
+    fs.writeFileSync(path.join(framesDir, "frames.json"), JSON.stringify({ ...colours, frames: plan }));
+    await page.close();
+    const gif = path.join(out, `roles-ar-${theme}.gif`);
+    const made = require("child_process").spawnSync("python3", [path.join(__dirname, "readme_gif.py"), framesDir, gif], { stdio: "inherit" });
+    if (made.status !== 0) console.log(`roles-ar-${theme}.gif needs Python 3 with Pillow; frames are in ${framesDir}`);
   }
 
   await browser.close();

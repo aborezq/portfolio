@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<!-- The site's Arabic typed line («أنا …»), for the GitHub profile, which
+     cannot run the site's script: _src/readme.js steps through it frame by
+     frame and _src/readme_gif.py makes a GIF. 520 × 44, drawn at 2×, on
+     GitHub's own page colour. ?theme=light for GitHub's light mode. -->
+<title>README Arabic roles</title>
+<style>
+  @font-face { font-family: "Tajawal"; font-weight: 500; src: url("../../assets/fonts/tajawal-500-arabic.woff2") format("woff2"); }
+
+  :root { --bg: #0d1117; --muted: #a39c8d; --gold: #d9b36a; }
+  :root.light { --bg: #ffffff; --muted: #6d6455; --gold: #80520d; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 520px; height: 44px; overflow: hidden; background: var(--bg); }
+  body { display: flex; align-items: center; justify-content: center; font-family: "Tajawal", sans-serif; font-weight: 500; font-size: 22px; }
+  /* As wide as the longest line, «أنا» at its right edge: the role grows to
+     the left as it types and nothing shifts, as on the site. */
+  .line { white-space: nowrap; text-align: start; }
+  .iam { color: var(--muted); }
+  .role { color: var(--gold); }
+  .caret { display: inline-block; width: 2px; height: 1.05em; margin-inline-start: 3px; background: var(--gold); vertical-align: text-bottom; }
+  .caret.off { visibility: hidden; }
+</style>
+</head>
+<body>
+  <p class="line" id="line"><span class="iam">أنا</span> <span class="role" id="role"></span><span class="caret" id="caret"></span></p>
+  <script>
+    if (new URLSearchParams(location.search).get("theme") === "light") document.documentElement.classList.add("light");
+    // The site's Arabic roles (i18n.js, hero.roles).
+    window.ROLES = ["مهندس حاسوب", "قائد فريق", "مهندس ذكاء اصطناعي", "أحلّ المشكلات"];
+    // Fix the line's width to its longest state, so the start edge never moves.
+    const line = document.getElementById("line"), role = document.getElementById("role");
+    let widest = 0;
+    for (const r of window.ROLES) { role.textContent = r; widest = Math.max(widest, line.getBoundingClientRect().width); }
+    line.style.width = Math.ceil(widest) + "px";
+    role.textContent = "";
+    window.show = (text, caretOn) => {
+      role.textContent = text;
+      document.getElementById("caret").classList.toggle("off", !caretOn);
+    };
+  </script>
+</body>
+</html>
