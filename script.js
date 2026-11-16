@@ -986,6 +986,7 @@ if (clocks.length) {
 const filterButtons = document.querySelectorAll(".filter-btn");
 const projectCards = document.querySelectorAll(".project-card");
 const emptyNote = document.getElementById("projects-empty");
+const coursework = document.getElementById("coursework");
 
 filterButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -1004,6 +1005,14 @@ filterButtons.forEach((btn) => {
       if (match) visible++;
     });
     emptyNote.hidden = visible > 0;
+
+    // Earlier coursework is folded at the end of the list: a filter that
+    // matches a project in it opens it, one that matches none hides the fold.
+    if (coursework) {
+      const shown = coursework.querySelector(".project-card:not(.is-hidden)");
+      coursework.closest(".work-more-item").classList.toggle("is-hidden", !shown);
+      if (shown && filter !== "all") coursework.open = true;
+    }
   });
 });
 

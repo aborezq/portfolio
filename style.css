@@ -1289,6 +1289,36 @@ html:not(.js) .js-only { display: none !important; }
   border-bottom: 1px solid var(--border);
 }
 .project-card.is-hidden { display: none; }
+
+/* Earlier coursework: one folded row at the end of the list, drawn like a
+   certificate group. Its rows sit in a nested list without a counter of its
+   own, so they carry on the list's numbering. */
+.work-more-item { border-bottom: 1px solid var(--border); }
+.work-more-item.is-hidden { display: none; }
+.work-more summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.2rem 1rem;
+  padding-block: 1.4rem;
+  cursor: pointer;
+  list-style: none;
+}
+.work-more summary::-webkit-details-marker { display: none; }
+.work-more-title {
+  grid-column: 1;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.9vw, 2rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  transition: transform 0.6s var(--ease-expo), color 0.3s;
+}
+.work-more-meta { grid-column: 1; font-size: 0.84rem; color: var(--muted); }
+.work-more summary:hover .work-more-title { transform: translateX(calc(0.5rem * var(--dir))); color: var(--accent-strong); }
+.work-more .cert-chevron { grid-column: 2; grid-row: 1 / span 2; }
+.work-list-more { border-top: 1px solid var(--border); }
+.work-list-more > .project-card:last-child { border-bottom: 0; }
 /* Hover: a wash rises from the rule below the row. */
 .project-card::before {
   content: "";
@@ -1683,9 +1713,9 @@ html:not(.js) .js-only { display: none !important; }
   transition: rotate 0.6s var(--ease-expo);
 }
 .cert-chevron::after { rotate: 90deg; }
-.cert-group[open] .cert-chevron { rotate: 180deg; }
-.cert-group[open] .cert-chevron::after { rotate: 0deg; }
-.cert-group summary:hover .cert-chevron {
+:is(.cert-group, .work-more)[open] .cert-chevron { rotate: 180deg; }
+:is(.cert-group, .work-more)[open] .cert-chevron::after { rotate: 0deg; }
+:is(.cert-group, .work-more) summary:hover .cert-chevron {
   border-color: var(--accent-strong);
   background: var(--accent-strong);
   color: var(--accent-ink);
@@ -1694,12 +1724,12 @@ html:not(.js) .js-only { display: none !important; }
 /* Where the browser can animate to height: auto, the panel eases open. */
 @supports (interpolate-size: allow-keywords) {
   :root { interpolate-size: allow-keywords; }
-  .cert-group::details-content {
+  :is(.cert-group, .work-more)::details-content {
     height: 0;
     overflow: clip;
     transition: height 0.6s var(--ease-expo), content-visibility 0.6s allow-discrete;
   }
-  .cert-group[open]::details-content { height: auto; }
+  :is(.cert-group, .work-more)[open]::details-content { height: auto; }
 }
 
 .cert-rows { padding-bottom: 1.25rem; }
