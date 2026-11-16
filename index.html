@@ -89,7 +89,8 @@
   <link rel="stylesheet" href="style.css">
 
   <!-- Structured data for a name search. sameAs is the part that matters: it
-       ties this page to the GitHub and LinkedIn profiles as one identity. -->
+       ties this page to the GitHub, LinkedIn and Google Developer Groups profiles
+       as one identity. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -103,6 +104,15 @@
     "affiliation": {
       "@type": "CollegeOrUniversity",
       "name": "Al-Aqsa University"
+    },
+    "memberOf": {
+      "@type": "OrganizationRole",
+      "roleName": "Marketing & Media Lead",
+      "memberOf": {
+        "@type": "Organization",
+        "name": "GDG on Campus Al-Aqsa University",
+        "url": "https://gdg.community.dev/gdg-on-campus-al-aqsa-university-gaza-state-of-palestine/"
+      }
     },
     "address": {
       "@type": "PostalAddress",
@@ -120,7 +130,8 @@
     ],
     "sameAs": [
       "https://github.com/aborezq",
-      "https://www.linkedin.com/in/mohammed-r-awad-11a697411"
+      "https://www.linkedin.com/in/mohammed-r-awad-11a697411",
+      "https://gdg.community.dev/u/mmfu3p/"
     ]
   }
   </script>
@@ -266,6 +277,7 @@
                 <li><span class="fact-label" data-i18n="fact.location">Location</span> <span data-i18n="fact.locationV">Gaza, Palestine</span></li>
                 <li><span class="fact-label" data-i18n="fact.degree">Degree</span> <span data-i18n="fact.degreeV">B.Sc. Intelligent Systems and Computer Engineering — final year</span></li>
                 <li><span class="fact-label" data-i18n="fact.uni">University</span> <span data-i18n="fact.uniV">Al-Aqsa University</span></li>
+                <li><span class="fact-label" data-i18n="fact.community">Community</span> <span data-i18n="fact.communityV">Marketing &amp; Media Lead, GDG on Campus Al-Aqsa University</span></li>
                 <li><span class="fact-label" data-i18n="fact.focus">Focus</span> <span data-i18n="fact.focusV">AI · Data Analytics · Machine Learning</span></li>
                 <li class="js-only"><span class="fact-label" data-i18n="fact.time">Local time</span> <time data-clock data-clock-zone>--:--</time></li>
               </ul>
@@ -273,6 +285,19 @@
           </div>
 
           <div class="exp-grid">
+            <article class="exp-card exp-card--now reveal">
+              <p class="exp-kind" data-i18n="exp.k0">Now · Community</p>
+              <h3>Google Developer Groups</h3>
+              <p data-i18n="exp.p0">
+                Marketing &amp; Media Lead at GDG on Campus Al-Aqsa University, Google's developer
+                community for university students. I make sure its events and workshops reach
+                the students they're for.
+              </p>
+              <div class="exp-links">
+                <a href="https://gdg.community.dev/gdg-on-campus-al-aqsa-university-gaza-state-of-palestine/" target="_blank" rel="noopener noreferrer" data-i18n="exp.chapter">The chapter ↗</a>
+                <a href="https://gdg.community.dev/u/mmfu3p/" target="_blank" rel="noopener noreferrer" data-i18n="exp.profile">My GDG profile ↗</a>
+              </div>
+            </article>
             <article class="exp-card reveal">
               <p class="exp-kind" data-i18n="exp.k1">Team leader</p>
               <h3 data-i18n="exp.t1">Nashrati</h3>
@@ -448,6 +473,26 @@
           </div>
 
           <ol class="work-list" id="projects-grid">
+
+            <li class="project-card reveal" data-category="web systems">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <p class="project-label" data-i18n="pmw.label">Featured · Automation</p>
+                <h4 class="project-title">Moodle Watcher</h4>
+                <dl class="project-case-details">
+                  <div><dt data-i18n="case.problem">Problem</dt><dd data-i18n="pmw.d1">New files, assignments and quizzes appear on the university's Moodle without notice, spread across every course, and deadlines are easy to miss.</dd></div>
+                  <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="pmw.d2">Designed and built the whole system: the Moodle scanner, the Telegram bot, the scheduling and the tests.</dd></div>
+                  <div><dt data-i18n="case.approach">Approach</dt><dd data-i18n="pmw.d3">A Python scanner checks every enrolled course. A Telegram bot on Cloudflare Workers answers commands and starts scans on GitHub Actions, and deadlines sync to Google Calendar with reminders.</dd></div>
+                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="pmw.d4"><strong>Alerts within 20 minutes</strong> of a new post, deadline reminders, a <strong>channel for classmates</strong> and <strong>68 automated tests</strong>.</dd></div>
+                </dl>
+                <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
+                  <li>Python</li><li>BeautifulSoup</li><li>Telegram Bot API</li><li>Cloudflare Workers</li><li>GitHub Actions</li><li>Google Calendar API</li>
+                </ul>
+              </div>
+              <div class="project-links">
+                <span class="project-private" data-i18n="link.private">Code is private</span>
+              </div>
+            </li>
 
             <li class="project-card reveal" data-category="ml">
               <span class="work-index" aria-hidden="true"></span>
