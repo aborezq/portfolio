@@ -19,7 +19,7 @@ const source = (name) => "file://" + path.join(__dirname, name);
   const cv = await browser.newPage();
   await cv.goto(source("cv.html"), { waitUntil: "load" });
   await cv.evaluate(() => document.fonts.ready);
-  await cv.pdf({ path: path.join(root, "assets/Mohammed_Awad_CV.pdf"), preferCSSPageSize: true, printBackground: true });
+  await cv.pdf({ path: path.join(root, "assets/Mohammed_Awad_CV.pdf"), preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
 
   const card = await browser.newPage({ viewport: { width: 1200, height: 630 } });
   await card.goto(source("og-card.html"), { waitUntil: "load" });

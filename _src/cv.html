@@ -47,7 +47,7 @@
     color: var(--accent);
     font-size: 9pt;
     font-weight: 700;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     break-after: avoid;
   }
@@ -60,6 +60,7 @@
   .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12pt; }
   .title { font-weight: 700; font-size: 9.1pt; }
   .title .kind { font-weight: 400; color: var(--muted); }
+  .title a { text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 0.6pt; text-underline-offset: 1.6pt; }
   .when { flex: none; color: var(--muted); font-size: 8.7pt; font-variant-numeric: tabular-nums; }
   .where { color: var(--muted); font-size: 8.7pt; font-style: italic; }
 
@@ -79,17 +80,18 @@
   <header>
     <h1>MOHAMMED REZEQ AWAD<span class="dot">.</span></h1>
     <p class="headline">AI &amp; Machine Learning <span class="sep">|</span> Data Analysis <span class="sep">|</span> Mobile &amp; Software Development</p>
-    <p class="contact">Deir Balah, Gaza Strip, Palestine <span class="sep">•</span> +972 598630116 <span class="sep">•</span> <a href="mailto:momoawad2004@gmail.com">momoawad2004@gmail.com</a> <span class="sep">•</span> <a href="https://mohammedawad.online/">mohammedawad.online</a></p>
+    <p class="contact">Deir al-Balah, Gaza Strip, Palestine <span class="sep">•</span> +972 59 863 0116 <span class="sep">•</span> <a href="mailto:momoawad2004@gmail.com">momoawad2004@gmail.com</a> <span class="sep">•</span> <a href="https://mohammedawad.online/">mohammedawad.online</a></p>
     <p class="contact"><a href="https://www.linkedin.com/in/mohammed-r-awad-11a697411">linkedin.com/in/mohammed-r-awad-11a697411</a> <span class="sep">•</span> <a href="https://github.com/aborezq">github.com/aborezq</a></p>
   </header>
 
   <h2>Professional Summary</h2>
-  <p>Senior in Intelligent Systems &amp; Computer Engineering at Al-Aqsa University, with hands-on experience building
-    end-to-end machine learning pipelines, web applications, and Flutter mobile apps. Team leader of Nashrati, an
-    AI-assisted news-drafting platform, where I also built the mobile app, and Marketing &amp; Media Lead at GDG on Campus
-    Al-Aqsa University. Comfortable across the full workflow, from preparing real datasets to tuning models and shipping
-    working software, with a strong foundation in data structures and object-oriented design. Learns fast, builds
-    consistently, and turns ideas into products that solve real problems.</p>
+  <p>Senior in Intelligent Systems &amp; Computer Engineering at Al-Aqsa University (graduating July 2027), with hands-on
+    experience building end-to-end machine learning pipelines, web applications, and Flutter mobile apps. Seeking remote
+    internships and junior roles in AI, data, and machine learning. Team Leader of Nashrati, an AI-assisted news-drafting
+    platform, and developer of its Flutter mobile app; Marketing &amp; Media Lead, GDG on Campus Al-Aqsa University.
+    Comfortable across the full workflow, from preparing real datasets to tuning models and shipping working software,
+    grounded in data structures and object-oriented design. A fast learner who turns ideas into products that solve real
+    problems.</p>
 
   <h2>Education</h2>
   <div class="entry">
@@ -102,7 +104,7 @@
   </div>
   <div class="entry">
     <div class="row"><span class="title">General Secondary Certificate, Scientific Stream</span><span class="when">2022</span></div>
-    <p class="where">GPA: 89.4</p>
+    <p class="where">Average: 89.4%</p>
   </div>
 
   <h2>Technical Skills</h2>
@@ -110,7 +112,7 @@
     <dt>Languages</dt><dd>Python, Java, JavaScript, Dart, SQL</dd>
     <dt>AI / Machine Learning</dt><dd>scikit-learn, XGBoost, TensorFlow/Keras, pandas, NumPy, Matplotlib, LangChain, Jupyter/Colab</dd>
     <dt>ML Techniques</dt><dd>Classification, feature engineering, class imbalance handling, hyperparameter tuning, cross-validation,
-      model evaluation (ROC AUC, F1, precision/recall)</dd>
+      model evaluation (ROC-AUC, F1, precision/recall)</dd>
     <dt>Mobile Development</dt><dd>Flutter, Clean Architecture, BLoC/Cubit, offline-first sync, SQLite, SharedPreferences</dd>
     <dt>Web Development</dt><dd>HTML5, CSS3, JavaScript, responsive design, Arabic/English RTL internationalization</dd>
     <dt>Automation &amp; Cloud</dt><dd>GitHub Actions, Cloudflare Workers, Telegram Bot API, Google Calendar API, web scraping (Requests, BeautifulSoup)</dd>
@@ -120,19 +122,11 @@
 
   <h2>Experience</h2>
   <div class="entry">
-    <div class="row"><span class="title">Marketing &amp; Media Lead, Google Developer Groups (GDG) on Campus Al-Aqsa University</span><span class="when">2026 – Present</span></div>
-    <p class="where">Gaza, Palestine</p>
-    <ul>
-      <li>Lead marketing and media for the university chapter of Google Developer Groups, bringing its events and workshops
-        to students.</li>
-    </ul>
-  </div>
-  <div class="entry">
-    <div class="row"><span class="title">Team Leader, Nashrati — Taqat Academy</span><span class="when">Jul 2026 – Present</span></div>
+    <div class="row"><span class="title">Team Leader, Nashrati — TAQAT Academy</span><span class="when">Jul 2026 – Present</span></div>
     <p class="where">Gaza, Palestine</p>
     <ul>
       <li>Lead the development team building Nashrati, an AI-assisted news-drafting platform: a reporter records an interview,
-        and it returns a transcript, the people, places and dates, and a structured draft for an editor to review.</li>
+        and it returns a transcript, the people, places, and dates it mentions, and a structured draft for an editor to review.</li>
       <li>Own product scoping and technical architecture across four areas: Flutter mobile app, Laravel backend,
         Python/FastAPI AI services, and React editor dashboard.</li>
       <li>Built the Flutter mobile app myself (Aug – Oct 2026): Clean Architecture with BLoC/Cubit, offline-first sync,
@@ -142,11 +136,19 @@
     </ul>
   </div>
   <div class="entry">
-    <div class="row"><span class="title">Freelance AI Specialist</span><span class="when">2024 – Present</span></div>
+    <div class="row"><span class="title">Marketing &amp; Media Lead, Google Developer Groups (GDG) on Campus Al-Aqsa University</span><span class="when">2026 – Present</span></div>
+    <p class="where">Gaza, Palestine</p>
+    <ul>
+      <li>Lead marketing and media for the university chapter of Google Developer Groups, bringing its events and workshops
+        to students.</li>
+    </ul>
+  </div>
+  <div class="entry">
+    <div class="row"><span class="title">AI Design Visualization (Freelance)</span><span class="when">2024 – Present</span></div>
     <p class="where">Self-employed</p>
     <ul>
-      <li>Produce AI-generated visual concepts for interior design, used by clients for decoration in homes, cafés, halls,
-        and event spaces.</li>
+      <li>Produce AI-generated visual concepts for interior design, used by clients for decoration in homes, cafés, wedding
+        halls, and event spaces.</li>
       <li>Translate client briefs into precise prompts, iterating on style, lighting, and layout to deliver usable design
         references.</li>
     </ul>
@@ -160,23 +162,23 @@
         of any new file, assignment, or quiz.</li>
       <li>A Telegram bot on Cloudflare Workers answers commands and starts scans on GitHub Actions, so it runs with no server;
         assignment and quiz deadlines sync to Google Calendar with reminders.</li>
-      <li>Shares new course material with classmates through a Telegram channel; covered by 68 unit tests.</li>
+      <li>Shares new course material with classmates through a Telegram channel; covered by 68 automated tests.</li>
     </ul>
   </div>
   <div class="entry">
-    <div class="row"><span class="title">Bank Customer Churn Prediction <span class="kind">— Machine Learning</span></span><span class="when">2026</span></div>
+    <div class="row"><span class="title"><a href="https://github.com/aborezq/Bank-Customer-Churn-Prediction">Bank Customer Churn Prediction</a> <span class="kind">— Machine Learning</span></span><span class="when">2026</span></div>
     <ul>
       <li>Built an end-to-end ML pipeline on a 10,000-customer dataset (~20% churn) to predict which customers are likely to leave.</li>
-      <li>Engineered features with one-hot encoding and standard scaling, using a stratified, leakage-free
+      <li>Preprocessed features with one-hot encoding and standard scaling, on a stratified 60/20/20
         train/validation/test split.</li>
       <li>Addressed class imbalance through class weighting to prioritize recall, then trained and compared Logistic
         Regression, Random Forest, XGBoost, and a Keras neural network.</li>
-      <li>Tuned XGBoost with randomized search and 5-fold cross-validation, achieving ~0.86 ROC AUC and ~0.72 recall on
-        unseen test data.</li>
+      <li>Tuned XGBoost with randomized search and 5-fold cross-validation, achieving 0.855 ROC-AUC and 72.5% recall on
+        the held-out test set.</li>
     </ul>
   </div>
   <div class="entry">
-    <div class="row"><span class="title">Gaza Aid Portal <span class="kind">— Full-Stack Web Application</span></span><span class="when">2025</span></div>
+    <div class="row"><span class="title"><a href="https://aborezq.github.io/Mohammed_Awad_Gaza_Aid/">Gaza Aid Portal</a> <span class="kind">— Full-Stack Web Application</span></span><span class="when">2025</span></div>
     <ul>
       <li>Developed a bilingual (English/Arabic) platform allowing people to register once for humanitarian aid from
         multiple NGOs and track their request status.</li>
@@ -187,16 +189,16 @@
     </ul>
   </div>
   <div class="entry">
-    <div class="row"><span class="title">Pattern Recognition Study <span class="kind">— "When Feature Scaling Changes the Optimal Classifier"</span></span><span class="when">2026</span></div>
+    <div class="row"><span class="title"><a href="https://github.com/aborezq/Pattern-Recognition-Research">Pattern Recognition Research</a> <span class="kind">— "When Feature Scaling Changes the Optimal Classifier"</span></span><span class="when">2026</span></div>
     <ul>
       <li>Investigated how preprocessing can reorder classifier performance, combining mathematical analysis with
         controlled experiments.</li>
-      <li>Demonstrated a ranking inversion: the best model on raw data was scale-invariant (~0.95), while after scaling
-        SVM and k-NN rose from ~0.70 to ~0.98 accuracy.</li>
+      <li>Demonstrated a ranking inversion: the best model on raw data was scale-invariant (0.95), while after scaling
+        SVM rose from 0.70 to 0.98 accuracy and k-NN from 0.71 to 0.97.</li>
     </ul>
   </div>
   <div class="entry">
-    <div class="row"><span class="title">Library Management System <span class="kind">— Java and Custom Data Structures</span></span><span class="when">2025</span></div>
+    <div class="row"><span class="title"><a href="https://github.com/aborezq/Library_System">Library Management System</a> <span class="kind">— Java and Custom Data Structures</span></span><span class="when">2025</span></div>
     <ul>
       <li>Implemented generic stack, queue, linked list, and dynamic array from scratch instead of using Java's built-in
         collections.</li>
@@ -207,7 +209,7 @@
     </ul>
   </div>
   <div class="entry">
-    <div class="row"><span class="title">IT Company Management System <span class="kind">— Java and OOP</span></span><span class="when">2023</span></div>
+    <div class="row"><span class="title"><a href="https://github.com/aborezq/IT-Company">IT Company Management System</a> <span class="kind">— Java and OOP</span></span><span class="when">2023</span></div>
     <ul>
       <li>Designed a class hierarchy using inheritance, abstraction, and polymorphism to manage managers, engineers,
         customers, and projects.</li>
@@ -216,9 +218,9 @@
     </ul>
   </div>
   <div class="entry">
-    <div class="row"><span class="title">Machine Learning Research Paper <span class="kind">— Al-Aqsa University</span></span><span class="when">2026</span></div>
+    <div class="row"><span class="title"><a href="https://github.com/aborezq/ML_Research">Machine Learning Survey</a> <span class="kind">— Al-Aqsa University</span></span><span class="when">2026</span></div>
     <ul>
-      <li>Co-authored a paper surveying ML paradigms, landmark architectures, cross-industry applications, and AI ethics
+      <li>Wrote a survey paper on ML paradigms, landmark architectures, cross-industry applications, and AI ethics
         (fairness, privacy, transparency, accountability), plus the 2026 shift toward efficient specialized architectures,
         Explainable AI, and Edge AI.</li>
     </ul>
@@ -236,8 +238,9 @@
   <ul>
     <li><strong>Google AI Professional Certificate</strong>, Google / Coursera, 2026 (7 courses: AI Fundamentals, Brainstorming &amp;
       Planning, Research &amp; Insights, Writing &amp; Communicating, Content Creation, Data Analysis, App Building)</li>
-    <li><strong>IBM Data Analytics</strong>, IBM / Coursera, 2026 (6 courses: data analytics, Excel, dashboards with Excel and Cognos,
-      Python for data science with a project, and databases and SQL)</li>
+    <li>6 courses from the <strong>IBM Data Analyst Professional Certificate</strong>, IBM / Coursera, 2026: Introduction to Data
+      Analytics; Excel Basics for Data Analysis; Data Visualization and Dashboards with Excel and Cognos; Python for Data
+      Science, AI &amp; Development; Python Project for Data Science; Databases and SQL for Data Science with Python</li>
     <li><strong>Anthropic</strong>, 2026: Claude with the Anthropic API; Claude Code 101; Introduction to Agent Skills; Introduction to
       Subagents; AI Fluency: Framework &amp; Foundations; AI Fluency for Students</li>
     <li><strong>TAQAT</strong>, 2026: CodeMap 2026, a 144-hour program in software architecture, code organization, and development

@@ -335,6 +335,9 @@
     }
     ctx.strokeRect(area.x + 0.5, area.y + 0.5, area.w - 1, area.h - 1);
     ctx.font = face(600, 10);
+    // The axis titles sit on the gold wash, where the muted grey falls below
+    // 4.5:1; the tick labels outside the plot keep it.
+    ctx.fillStyle = colors.text;
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
     ctx.fillText(t("lab.axisX"), area.x + area.w - 8, area.y + area.h - 7);
@@ -461,7 +464,7 @@
   };
 
   /* ---------- Recompute ---------- */
-  const update = ({ fade = true } = {}) => {
+  const update = ({ fade = true, speak = true } = {}) => {
     const scales = { raw: scaleFor(state.points, "raw"), std: scaleFor(state.points, "std") };
     const scores = {
       raw: leaveOneOut(state.points, state.k, scales.raw),
@@ -479,6 +482,11 @@
     document.querySelectorAll(".lab-readout > div").forEach((box) => {
       box.classList.toggle("is-active", box.dataset.mode === state.mode);
     });
+    // Only what the visitor does in the Lab is spoken; a page load, a theme or a
+    // language switch refreshes the sentence silently. The region is switched
+    // on here, well before announce() writes the text 600 ms later, so screen
+    // readers have noticed it is live by then.
+    statusEl?.setAttribute("aria-live", speak ? "polite" : "off");
     announce(scores.raw.accuracy, scores.std.accuracy);
     queueDraw();
   };
@@ -563,6 +571,43 @@
     update();
   });
 
+  /* ---------- Keyboard ---------- */
+  // The same probe a hover shows, driven by the keys: the arrows move it (12px,
+  // or 40 with Shift), Enter or Space adds a customer of the chosen class under
+  // it, Escape puts it away. With no probe yet, it starts in the middle of the
+  // plot (so a first Enter adds a customer there). The chart is not mirrored in
+  // Arabic, so the arrows hold either way. Keys it does not use are left to the
+  // browser (Tab, page scrolling), and so is anything held with Alt, Ctrl or Cmd
+  // (Alt+Left is Back); Shift stays, for the larger step.
+  canvas.addEventListener("keydown", (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return; // leave browser and OS shortcuts alone
+    const area = plot();
+    const centre = { x: area.x + area.w / 2, y: area.y + area.h / 2, touch: false };
+    const step = e.shiftKey ? 40 : 12;
+    const move = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+    if (move) {
+      const at = state.hover || centre;
+      state.hover = {
+        x: clamp(at.x + move[0], area.x, area.x + area.w),
+        y: clamp(at.y + move[1], area.y, area.y + area.h),
+        touch: false,
+      };
+      dismissHint();
+      queueDraw();
+    } else if (e.key === "Enter" || e.key === " ") {
+      if (!state.hover) state.hover = centre;
+      const { x, y } = state.hover;
+      state.points = [...state.points, { age: toAge(x, area), balance: toBalance(y, area), left: state.addClass }];
+      update();
+      dismissHint();
+    } else if (e.key === "Escape" && state.hover) {
+      clearHover();
+    } else return;
+    e.preventDefault();
+  });
+  // Leaving the chart by keyboard takes the probe with it, as leaving by mouse does.
+  canvas.addEventListener("blur", clearHover);
+
   /* ---------- Sizing, theme, start ---------- */
   const resize = () => {
     const box = canvas.getBoundingClientRect();
@@ -584,12 +629,12 @@
   new MutationObserver(() => {
     readColors();
     writeHint();
-    update({ fade: false });
+    update({ fade: false, speak: false });
   }).observe(root, { attributes: true, attributeFilter: ["data-theme", "lang"] });
 
   // Redraw once the label faces are in, so they are not left in a fallback.
   if (document.fonts?.ready) document.fonts.ready.then(queueDraw);
   document.fonts?.addEventListener?.("loadingdone", queueDraw);
 
-  update({ fade: false });
+  update({ fade: false, speak: false });
 })();
