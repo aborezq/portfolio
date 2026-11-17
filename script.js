@@ -51,6 +51,10 @@ const wake = () => {
   if (!frameId) frameId = requestAnimationFrame(runFrame);
 };
 
+// Safari before 14 has only the old MediaQueryList.addListener.
+const onMediaChange = (query, handler) =>
+  typeof query.addEventListener === "function" ? query.addEventListener("change", handler) : query.addListener(handler);
+
 /* Scroll loop — one passive listener, the work deferred to the next frame. */
 const scrollTasks = [];
 let scrollQueued = false;
@@ -200,7 +204,7 @@ themeToggle.addEventListener("click", () => {
 });
 
 // No explicit choice saved? Keep following the OS as the visitor changes it.
-lightMedia.addEventListener("change", (e) => {
+onMediaChange(lightMedia, (e) => {
   const saved = storedTheme();
   if (saved !== "light" && saved !== "dark") syncTheme(e.matches ? "light" : "dark");
 });
@@ -363,10 +367,30 @@ if (!prefersReducedMotion) {
       wrap();
       queueScroll();
     });
+    // A jump to #about (the nav, the cover's arrow, a deep link) can land with
+    // the statement low on a short screen, its last line still dim: after a
+    // jump, show all of it until it has left the screen. A link to the hash
+    // already in the address fires no hashchange, hence the click as well.
+    let jump = location.hash === "#about" ? 1 : 0; // 1 on the way, 2 arrived
+    window.addEventListener("hashchange", () => {
+      if (location.hash === "#about") jump = jump || 1;
+      else if (jump === 1) jump = 0; // left for elsewhere before arriving
+    });
+    document.addEventListener("click", (e) => {
+      const link = e.target instanceof Element ? e.target.closest('a[href="#about"]') : null;
+      if (!link || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      jump = jump || 1;
+    });
     scrollTasks.push((y, viewport) => {
       const box = paragraph.getBoundingClientRect();
-      if (box.bottom < -200 || box.top > viewport + 200) return;
-      const progress = clamp((viewport * 0.86 - box.top) / (box.height + viewport * 0.36), 0, 1);
+      if (box.bottom < -200 || box.top > viewport + 200) {
+        if (jump === 2) jump = 0;
+        return;
+      }
+      if (jump) jump = 2;
+      // Scrolled into view, words light just behind the screen's lower edge,
+      // never more than a tenth of the screen behind it.
+      const progress = jump ? 1 : clamp((viewport - box.top) / (box.height + viewport * 0.1), 0, 1);
       const count = Math.round(progress * words.length * 1.04);
       if (count === lit) return;
       lit = count;
@@ -399,7 +423,12 @@ scrollTasks.push((y, viewport) => {
 });
 
 const toTop = () => window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-backToTop.addEventListener("click", toTop);
+backToTop.addEventListener("click", () => {
+  toTop();
+  // The button turns inert once the page is back at the top, which would drop
+  // the keyboard's place to <body>; land it on the logo, as the footer link does.
+  document.querySelector(".nav-logo").focus({ preventScroll: true });
+});
 
 // Every link to #home — the logo, "Home" in the menu, "Back to top" in the
 // footer — goes to the very top. The cover is pinned (below), so to the
@@ -411,6 +440,9 @@ document.addEventListener("click", (e) => {
   e.preventDefault();
   toTop();
   if (location.hash !== "#home") history.pushState(null, "", "#home");
+  // A followed #home link would also have moved the keyboard's place to the
+  // top; preventDefault() cancels that, so do it here for the footer's link.
+  if (!link.closest(".nav")) document.querySelector(".nav-logo").focus({ preventScroll: true });
 });
 
 /* The cover is sticky: the rest of the page slides up over it while it sinks
@@ -647,8 +679,8 @@ if (prefersReducedMotion) {
   let timer = 0;
 
   const tick = () => {
-    // Nothing to type for while the sheet covers the cover.
-    if (hero.classList.contains("is-past")) {
+    // Nothing to type for while the curtain or the sheet covers the cover.
+    if (hero.classList.contains("is-past") || rootEl.classList.contains("intro-pending")) {
       timer = setTimeout(tick, 600);
       return;
     }
@@ -723,7 +755,7 @@ document.addEventListener("keydown", (e) => {
     hamburger.focus();
   }
 });
-window.matchMedia("(min-width: 901px)").addEventListener("change", (e) => {
+onMediaChange(window.matchMedia("(min-width: 901px)"), (e) => {
   if (e.matches && menuOpen) setMenu(false);
 });
 
@@ -842,7 +874,8 @@ if (phones) {
       if (which !== screensLang) return; // a newer choice has taken over
       pairs.forEach(([img, next]) => {
         if (!next.naturalWidth) return; // keep what is there rather than a hole
-        img.height = Math.round((img.width * next.naturalHeight) / next.naturalWidth);
+        img.width = next.naturalWidth;   // the hint the layout uses until it loads
+        img.height = next.naturalHeight;
         img.src = shotPath(img, which); // already in the cache, so it shows at once
       });
       phones.classList.remove("is-swapping");
@@ -979,11 +1012,15 @@ if (clocks.length) {
     const timeFormat = new Intl.DateTimeFormat("en-GB", {
       hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Gaza",
     });
-    const zoneFormat = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Gaza", timeZoneName: "shortOffset" });
+    // The "GMT+2" label needs timeZoneName: "shortOffset" (Safari 15.4+); without it, the time alone.
+    let zoneFormat = null;
+    try {
+      zoneFormat = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Gaza", timeZoneName: "shortOffset" });
+    } catch { /* no offset label */ }
     const showTime = () => {
       const now = new Date();
       const time = timeFormat.format(now);
-      const zone = zoneFormat.formatToParts(now).find((part) => part.type === "timeZoneName")?.value || "";
+      const zone = zoneFormat?.formatToParts(now).find((part) => part.type === "timeZoneName")?.value || "";
       clocks.forEach((clock) => {
         clock.textContent = clock.hasAttribute("data-clock-zone") && zone ? `${time} · ${zone}` : time;
         clock.dateTime = now.toISOString();
@@ -1076,6 +1113,12 @@ if (lightbox && typeof lightbox.showModal === "function") {
       lightboxVerify.href = verifyLink.href;
       hidePreview();
       lightbox.showModal();
+      // The page behind stays put (style.css): otherwise a wheel or swipe over
+      // the viewer scrolls it, and closing hands focus back to a link that is
+      // no longer on screen. Where the scrollbar takes room of its own, the
+      // room stays while it is gone, so the page doesn't shift sideways.
+      rootEl.classList.toggle("viewer-gutter", window.innerWidth > rootEl.clientWidth);
+      rootEl.classList.add("viewer-open");
     });
   });
 
@@ -1083,6 +1126,8 @@ if (lightbox && typeof lightbox.showModal === "function") {
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) lightbox.close();
   });
+  // Escape, the close button and a backdrop click all end in "close".
+  lightbox.addEventListener("close", () => rootEl.classList.remove("viewer-open", "viewer-gutter"));
 }
 
 if (pointerEffects && certLinks.length) {
@@ -1116,7 +1161,8 @@ if (pointerEffects && certLinks.length) {
     at.y = lerp(at.y, target.y, 0.16);
     preview.style.setProperty("--x", `${at.x.toFixed(1)}px`);
     preview.style.setProperty("--y", `${at.y.toFixed(1)}px`);
-    return true;
+    // Settled beside a still pointer: rest until it moves again.
+    return Math.abs(at.x - target.x) + Math.abs(at.y - target.y) > 0.2;
   });
 
   hidePreview = () => {
@@ -1210,23 +1256,34 @@ const submitBtn = document.getElementById("cf-submit");
 const submitLabel = submitBtn.querySelector("span") || submitBtn;
 const honeypot = document.getElementById("cf-company");
 
-const setStatus = (text, state) => {
-  formStatus.textContent = text;
+// The message on screen is kept as keys, so a language switch can re-say it.
+let statusShown = null;
+const renderStatus = () => {
+  const { key = "", vars = {}, reasonKey = "", state = null } = statusShown || {};
+  formStatus.textContent = key ? t(key, reasonKey ? { ...vars, reason: t(reasonKey) } : vars) : "";
   formStatus.classList.toggle("is-ok", state === "ok");
   formStatus.classList.toggle("is-error", state === "error");
+};
+const setStatus = (key, state = null, vars = {}, reasonKey = "") => {
+  statusShown = key ? { key, state, vars, reasonKey } : null;
+  renderStatus();
 };
 
 const setSending = (sending) => {
   submitBtn.disabled = sending;
   submitLabel.textContent = t(sending ? "form.sending" : "form.send");
 };
+langHooks.push(() => {
+  renderStatus();
+  setSending(submitBtn.disabled); // translatePage just reset the label to "Send"
+});
 
 // Fallback for when no endpoint is configured: hand the message to the
 // visitor's mail client. Unreliable — mailto: does nothing at all when no mail
 // client is set up — so it is a stopgap, not the delivery path.
 const handOffToMailClient = () => {
   window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(t("form.mailSubject"))}`;
-  setStatus(t("form.mailto", { email: CONTACT_EMAIL }), "ok");
+  setStatus("form.mailto", "ok", { email: CONTACT_EMAIL });
 };
 
 form.addEventListener("submit", async (e) => {
@@ -1238,7 +1295,7 @@ form.addEventListener("submit", async (e) => {
 
   if (firstInvalid) {
     firstInvalid.focus();
-    setStatus("", null);
+    setStatus(null);
     return;
   }
 
@@ -1246,7 +1303,7 @@ form.addEventListener("submit", async (e) => {
   // bot has nothing to learn from, but send nothing.
   if (honeypot.value) {
     form.reset();
-    setStatus(t("form.thanksBot"), "ok");
+    setStatus("form.thanksBot", "ok");
     return;
   }
 
@@ -1258,7 +1315,7 @@ form.addEventListener("submit", async (e) => {
   }
 
   setSending(true);
-  setStatus(t("form.sending"), null);
+  setStatus("form.sending");
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 12000);
 
@@ -1278,13 +1335,12 @@ form.addEventListener("submit", async (e) => {
       f.removeAttribute("aria-invalid");
       document.getElementById(`${f.id}-error`).textContent = "";
     });
-    setStatus(t("form.thanks", { name, email }), "ok");
+    setStatus("form.thanks", "ok", { name, email });
   } catch (err) {
     // Network down, endpoint misconfigured, CORS — never drop the message
     // silently; point the visitor at a channel that works.
     console.error("Contact form submit failed:", err);
-    const reason = t(err.name === "AbortError" ? "form.timeout" : "form.failed");
-    setStatus(t("form.fallback", { reason, email: CONTACT_EMAIL }), "error");
+    setStatus("form.fallback", "error", { email: CONTACT_EMAIL }, err.name === "AbortError" ? "form.timeout" : "form.failed");
   } finally {
     clearTimeout(timeoutId);
     setSending(false);
@@ -1319,6 +1375,7 @@ const returnTo = (place) => {
   window.scrollTo({ top: window.scrollY + box.top + place.ratio * box.height - place.line, behavior: "instant" });
 };
 
+let langTransition = null; // the cross-fade in progress, if any
 langToggle.addEventListener("click", () => {
   const next = lang === "ar" ? "en" : "ar";
   try {
@@ -1345,7 +1402,12 @@ langToggle.addEventListener("click", () => {
   // A short cross-fade, rather than the page snapping into the other script.
   rootEl.classList.add("lang-switching");
   const transition = document.startViewTransition(swap);
-  transition.finished.finally(() => rootEl.classList.remove("lang-switching"));
+  langTransition = transition;
+  transition.ready.catch(() => { /* skipped by a newer switch — the language changes either way */ });
+  transition.finished.finally(() => {
+    // A skipped switch must not end the cross-fade of the one that replaced it.
+    if (langTransition === transition) rootEl.classList.remove("lang-switching");
+  });
 });
 
 // Everything is wired: settle the scroll-linked state for wherever we are.

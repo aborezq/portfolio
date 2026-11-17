@@ -4,7 +4,7 @@ Personal portfolio website of **Mohammed R. Awad** — a senior in Intelligent
 Systems and Computer Engineering at Al-Aqsa University, Gaza, Palestine,
 working in **AI, Data Analytics and Machine Learning**.
 
-Built entirely with **vanilla HTML, CSS and JavaScript** — no frameworks, no
+Built entirely with **vanilla HTML, CSS, and JavaScript** — no frameworks, no
 build step, and no external asset requests on page load (fonts and images are
 self-hosted).
 
@@ -27,6 +27,7 @@ assets/
   fonts/          — Anton, Inter, Instrument Serif; for Arabic, Tajawal, Noto Kufi
                     Arabic and Aref Ruqaa; LICENSE.txt
 404.html          — GitHub Pages' page for a missing address (English + Arabic)
+404-theme.js      — puts that page in the visitor's theme (light or dark)
 favicon.svg       — the site icon: the "M" of the nav logo, in Anton
 favicon.ico, apple-touch-icon.png, icon-192.png, icon-512.png
                   — the same icon as PNG/ICO, for search results and home screens
@@ -47,11 +48,15 @@ tests/            — Playwright smoke tests (dev only; the site never loads the
   which is cut out of its backdrop, so his head rises into the letters at
   every screen size. A pointer-driven depth and key light, and an opening
   count-up that plays once per visit. The cover is sized to the screen, so the
-  name and both buttons are on the first screen from a 13" laptop to a phone;
-  the rest of the page then slides up over it. To change the portrait, keep
-  the same framing (head and shoulders, the top of the head about a tenth of
-  the way down) with a transparent background, and replace both
-  `profile-cutout` files.
+  name and both buttons are on the first screen from a 13" laptop to a phone
+  held upright: on a phone the portrait gives up height first, and on the
+  smallest (320 × 568) the typed line steps aside as well. (Checked in English
+  and Arabic at 1280 × 720 and 1440 × 900, and at phone sizes from 320 × 568 to
+  430 × 739; a shorter window, such as an iPhone SE with Safari's bars showing
+  at 375 × 548, scrolls by up to 15px.) The rest of the page then slides up
+  over it. To change the portrait, keep the same framing (head and shoulders,
+  the top of the head about a tenth of the way down) with a transparent
+  background, and replace both `profile-cutout` files.
 - **Work** — Nashrati as the lead case study, then the other projects as a
   numbered list with category filters.
 - **Lab** — the question behind the pattern-recognition research, made
@@ -110,7 +115,8 @@ How it behaves:
 - Layout uses logical properties, so the whole design mirrors; Arabic text
   gets no letter-spacing (it breaks the joins) and more line height.
 - Arabic fonts are limited to Arabic characters (`unicode-range`), so the
-  English page never downloads them.
+  English page downloads only a 2.4 KB Tajawal subset for the two Arabic words
+  it shows («العربية» and «نشرتي»).
 - Certificate titles stay in English — they are the issuers' own names.
 
 ## Accessibility and robustness
@@ -121,8 +127,8 @@ How it behaves:
 - The pointer ring, magnetic buttons and hover previews only exist for a mouse
   or trackpad; the system cursor is never hidden.
 - Skip link, landmarks, visible focus, `aria-live` for the form and the Lab,
-  keyboard-operable phone strip and Lab, and a native `<dialog>` viewer that
-  returns focus on Escape.
+  keyboard-operable phone strip and Lab, and a native `<dialog>` certificate
+  viewer that holds the page still behind it and returns focus on Escape.
 - Light/dark theme follows `prefers-color-scheme`, remembers an explicit
   choice, and is resolved before first paint so nothing flashes.
 

@@ -335,6 +335,9 @@
     }
     ctx.strokeRect(area.x + 0.5, area.y + 0.5, area.w - 1, area.h - 1);
     ctx.font = face(600, 10);
+    // The axis titles sit on the gold wash, where the muted grey falls below
+    // 4.5:1; the tick labels outside the plot keep it.
+    ctx.fillStyle = colors.text;
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
     ctx.fillText(t("lab.axisX"), area.x + area.w - 8, area.y + area.h - 7);
