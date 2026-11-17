@@ -572,6 +572,7 @@ html:not(.js) .js-only { display: none !important; }
   font-family: var(--font-display);
   font-size: 1.35rem;
   letter-spacing: 0.04em;
+  white-space: nowrap; /* one line at 320 too; §12 tightens the actions to make room */
 }
 
 .nav-links { display: flex; gap: clamp(1rem, 2.2vw, 1.9rem); }
@@ -1046,6 +1047,9 @@ html:not(.js) .js-only { display: none !important; }
   height: auto;
 }
 .exp-logo--mark { top: 1.2rem; width: auto; height: 2.5rem; }
+/* Keep the label clear of the corner logo (3.4rem wide + a gap). */
+.exp-card--now .exp-kind,
+.exp-card--logo .exp-kind { padding-inline-end: 4rem; }
 .exp-logo--on-light { display: none; }
 [data-theme="light"] .exp-logo--on-dark { display: none; }
 [data-theme="light"] .exp-logo--on-light { display: block; }
@@ -1097,6 +1101,8 @@ html:not(.js) .js-only { display: none !important; }
   color: var(--muted);
 }
 .feature-role strong { color: var(--text); font-weight: 600; }
+/* Under the copy, not in a list row's links column: start-aligned, full width. */
+.feature-copy .project-links { justify-content: flex-start; max-width: none; padding-top: 0; margin-top: 1.5rem; }
 
 .feature-stats {
   display: grid;
@@ -1535,6 +1541,8 @@ html:not(.js) .js-only { display: none !important; }
   cursor: crosshair;
   touch-action: pan-y; /* a sideways drag explores; a vertical one still scrolls */
 }
+/* The wrap's overflow: hidden would clip the global ring: draw it inside. */
+#lab-canvas:focus-visible { outline-offset: -3px; border-radius: var(--radius); }
 .lab-hint {
   position: absolute;
   left: 50%;
@@ -1781,6 +1789,9 @@ html:not(.js) .js-only { display: none !important; }
    10. Contact, footer
    ========================================================================== */
 .contact-grid { display: grid; gap: 2.75rem; }
+/* Grid items default to min-width: auto; at 320 the fields' intrinsic width
+   would push both columns past the screen edge. */
+.contact-grid > * { min-width: 0; }
 .contact-info > p:first-child { max-width: 46ch; margin-bottom: 1.75rem; font-size: 1.06rem; }
 
 .contact-links { display: grid; gap: 0.9rem; }
@@ -1823,6 +1834,8 @@ html:not(.js) .js-only { display: none !important; }
 }
 .form-field input,
 .form-field textarea {
+  width: 100%;
+  min-width: 0;
   font: inherit;
   color: var(--text);
   background: var(--bg);
@@ -1832,11 +1845,14 @@ html:not(.js) .js-only { display: none !important; }
   transition: border-color 0.25s, box-shadow 0.25s;
   resize: vertical;
 }
+/* Each line takes its direction from its own text, so English typed on the
+   Arabic page (or Arabic on the English page) keeps its punctuation in place. */
+#cf-name, #cf-message { unicode-bidi: plaintext; }
 .form-field input::placeholder,
 .form-field textarea::placeholder { color: var(--muted); opacity: 0.7; }
 .form-field input:focus,
 .form-field textarea:focus {
-  outline: none;
+  outline: 2px solid transparent; /* invisible here; forced colors paint it */
   border-color: var(--accent-strong);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-strong) 22%, transparent);
 }
@@ -1913,6 +1929,9 @@ html:not(.js) .js-only { display: none !important; }
               visibility 0s 0s;
 }
 .back-to-top:hover { background: var(--accent-strong); }
+
+/* Keep a focused control clear of the floating back-to-top button. */
+.sheet :is(a, button, input, textarea, summary, [tabindex]) { scroll-margin-bottom: 5rem; }
 
 /* ==========================================================================
    11. Floating layers — all created by script.js, fine pointers only
@@ -2022,6 +2041,9 @@ html:not(.js) .js-only { display: none !important; }
   white-space: nowrap;
   font-weight: 600;
 }
+/* Certificate names are English (dir="ltr" on the title), so a long one is
+   cut at its end, not its start; on the Arabic page it still sits on the right. */
+[dir="rtl"] .lightbox-title { text-align: end; }
 .lightbox img {
   width: 100%;
   height: auto;
@@ -2075,6 +2097,15 @@ html[lang="ar"] .cert-program { font-size: clamp(1.3rem, 2.6vw, 1.95rem); }
 
 /* The phone menu's masks would clip the dots under a final «ي». */
 html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 0.22em; }
+
+/* Stroked Arabic shows a seam at every join (each glyph is outlined on its own).
+   Paint the stroke under a fill of the page color, so the joins close up;
+   both marquees sit on .sheet, whose background is var(--bg). */
+html[lang="ar"] .marquee .is-outline {
+  color: var(--bg);
+  -webkit-text-stroke: 2px var(--accent); /* half sits under the fill: 1px shows */
+  paint-order: stroke fill;
+}
 
 /* ==========================================================================
    12. Responsive — mobile-first upgrades, then the narrow-screen menu
@@ -2150,12 +2181,17 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
      rise into place one after another. */
   .nav-links {
     position: fixed;
-    inset: 0;
+    /* The list starts under the bar, so links that scroll never slide
+       behind the logo. */
+    inset: var(--nav-h) 0 0;
     z-index: -1;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* the auto margins below center the list while it fits */
     gap: 0.15rem;
-    padding: calc(var(--nav-h) + 1rem) var(--gutter) 2.5rem;
+    padding: 1rem var(--gutter) 2.5rem;
+    /* A landscape phone, or 400% zoom, scrolls the list. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--bg);
     clip-path: inset(0 0 100% 0);
     /* Wiped away is not gone from the keyboard: without this the links stay
@@ -2169,11 +2205,14 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
     visibility: visible;
     transition: clip-path 0.7s var(--ease-expo), visibility 0s 0s;
   }
-  .nav-links li { overflow: hidden; }
+  .nav-links li { overflow: hidden; flex-shrink: 0; }
+  .nav-links li:first-child { margin-top: auto; }
+  .nav-links li:last-child { margin-bottom: auto; }
   .nav-links .nav-link {
     padding-block: 0.12em;
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 11.5vw, 4.2rem);
+    font-size: clamp(2.5rem, 11.5vw, 4.2rem); /* fallback without svh */
+    font-size: clamp(1.9rem, min(11.5vw, 8.5svh), 4.2rem); /* short screens get smaller words */
     font-weight: 400;
     line-height: 1.08;
     text-transform: uppercase;
@@ -2191,6 +2230,8 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
     transition-delay: calc(var(--i, 0) * 55ms + 0.18s);
   }
   html.menu-open { overflow: hidden; }
+  /* The bar over the open menu is as solid as the menu itself. */
+  html.menu-open .nav::before { opacity: 1; background: var(--bg); border-bottom-color: transparent; }
 
   .hero-footer { flex-direction: column; align-items: flex-start; padding-block: 1.25rem; }
   .hero-actions { justify-content: flex-start; }
@@ -2230,6 +2271,12 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
   .footer-inner { flex-direction: column; align-items: flex-start; }
 }
 
+/* The smallest phones: the bar's buttons close up so the logo keeps one line. */
+@media (max-width: 380px) {
+  .nav-actions { gap: 0.4rem; }
+  .lang-toggle { padding-inline: 0.7rem; }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -2249,4 +2296,12 @@ html[lang="ar"] .nav-links .nav-link { line-height: 1.35; padding-block: 0.02em 
   .js .hero { position: relative; top: auto; }
   .hero-stage, .hero-meta, .hero-footer { opacity: 1; transform: none; }
   .phone-screen img { transform: none; }
+}
+
+/* ---------- Forced colors (Windows contrast themes) ---------- */
+/* Background-only states vanish under a system palette: paint them in
+   Highlight so the active filter and the Lab's choices stay visible. */
+@media (forced-colors: active) {
+  .filter-btn.is-active,
+  .seg input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; border-color: Highlight; }
 }

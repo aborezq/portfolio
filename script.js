@@ -143,8 +143,9 @@ const syncTheme = (theme) => {
   currentTheme = theme;
   rootEl.dataset.theme = theme;
   const toLight = theme === "dark";
+  // The label names the action ("Switch to light theme"), so the button carries
+  // no pressed state as well: the two together would contradict each other.
   themeToggle.setAttribute("aria-label", t(toLight ? "theme.toLight" : "theme.toDark"));
-  themeToggle.setAttribute("aria-pressed", String(theme === "light"));
   // Tint the mobile browser chrome to match. Read --bg back off the root so the
   // palette stays owned by the stylesheet rather than duplicated here.
   themeColorMeta.content = getComputedStyle(rootEl).getPropertyValue("--bg").trim();
@@ -701,6 +702,16 @@ const setMenu = (open) => {
 hamburger.addEventListener("click", () => setMenu(!menuOpen));
 langHooks.push(() => hamburger.setAttribute("aria-label", t(menuOpen ? "menu.close" : "menu.open")));
 
+// The links come before the button in the DOM, and the page behind is inert,
+// so a Tab from the open menu's button would leave the page. Send it into the
+// list instead. Shift+Tab and Escape behave as usual, so nothing is trapped.
+hamburger.addEventListener("keydown", (e) => {
+  if (e.key === "Tab" && !e.shiftKey && menuOpen) {
+    e.preventDefault();
+    navLinks[0].focus();
+  }
+});
+
 // Close the menu when a link is chosen, Escape is pressed, or the screen
 // grows past the point where the menu exists.
 navLinksList.addEventListener("click", (e) => {
@@ -791,7 +802,11 @@ if (phones) {
   const prevBtn = document.getElementById("phones-prev");
   const nextBtn = document.getElementById("phones-next");
   const shots = [...phones.querySelectorAll(".phone-screen img")];
-  phones.dataset.cursor = "Drag";
+  // The pointer ring's label over the strip, in the page's language. The ring
+  // reads it on every pointerover, so rewriting it on a switch is enough.
+  const labelDrag = () => { phones.dataset.cursor = t("cursor.drag"); };
+  labelDrag();
+  langHooks.push(labelDrag);
 
   // How far each capture can travel: its height beyond the frame's.
   const measureTravel = () => {
@@ -870,8 +885,13 @@ if (phones) {
     const travelled = Math.abs(phones.scrollLeft);
     positionBar.style.setProperty("--w", `${((view / total) * 100).toFixed(2)}%`);
     positionBar.style.setProperty("--l", `${((travelled / total) * 100).toFixed(2)}%`);
+    const focused = document.activeElement;
     prevBtn.disabled = travelled < 4;
     nextBtn.disabled = travelled > total - view - 4;
+    // A button that disables itself under the keyboard drops focus to <body>.
+    // Hand it to the other button, or to the strip itself if both are off.
+    if (focused === nextBtn && nextBtn.disabled) (prevBtn.disabled ? phones : prevBtn).focus();
+    else if (focused === prevBtn && prevBtn.disabled) (nextBtn.disabled ? phones : nextBtn).focus();
   };
   phones.addEventListener("scroll", syncBar, { passive: true });
   window.addEventListener("resize", syncBar);
@@ -1047,6 +1067,9 @@ if (lightbox && typeof lightbox.showModal === "function") {
       // Leave modified clicks alone: open-in-new-tab should still work.
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
       e.preventDefault();
+      // Clear the last certificate first: until the new one arrives the
+      // viewer would otherwise show it under this one's title.
+      lightboxImg.removeAttribute("src");
       lightboxImg.src = link.href;
       lightboxImg.alt = t("cert.alt", { name });
       lightboxTitle.textContent = name;
@@ -1101,12 +1124,23 @@ if (pointerEffects && certLinks.length) {
     preview.classList.remove("is-on");
   };
 
+  // The preview covers the rows around it, so it must be dismissible without
+  // moving the pointer (WCAG 1.4.13): Escape puts it away until the next row.
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && showing) hidePreview();
+  });
+
   certLinks.forEach((link) => {
     const row = link.closest(".cert-row");
     row.dataset.cursor = "none"; // the certificate takes the ring's place
     row.addEventListener("pointerenter", (e) => {
       if (e.pointerType === "touch") return;
-      if (previewImg.getAttribute("src") !== link.getAttribute("href")) previewImg.src = link.getAttribute("href");
+      // A new certificate clears the old one first, so it never shows under
+      // the wrong row while its own image is still on the way.
+      if (previewImg.getAttribute("src") !== link.getAttribute("href")) {
+        previewImg.removeAttribute("src");
+        previewImg.src = link.getAttribute("href");
+      }
       size = { w: preview.offsetWidth, h: preview.offsetHeight };
       if (!showing) Object.assign(at, aim()); // appear where it belongs, not fly in
       showing = true;

@@ -9,9 +9,9 @@
        the opening sequence in production only (tests/smoke.spec.js catches it).
        frame-ancestors is omitted deliberately: it is ignored in meta form and
        GitHub Pages cannot send headers. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-oMWjEVqsN34Lrklv/V7rDxrxj3CQmjR1WRDfSfRqPgI='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://formspree.io; form-action https://formspree.io; base-uri 'none'; object-src 'none'">
-  <meta name="description" content="Mohammed R. Awad — senior in Intelligent Systems and Computer Engineering at Al-Aqsa University, Gaza, Palestine. Portfolio of AI, data-analytics, machine-learning and mobile projects.">
-  <title>Mohammed R. Awad — Computer Engineer</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-oeIWqeDP0ZYH5tgURiaHIZWSuZDVYkAHXzc92naQBag='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://formspree.io; form-action https://formspree.io; base-uri 'none'; object-src 'none'">
+  <meta name="description" content="Mohammed R. Awad — senior in Intelligent Systems and Computer Engineering at Al-Aqsa University, Gaza. Open to remote internships and junior AI, data, and ML roles.">
+  <title>Mohammed R. Awad — AI, Data Analytics &amp; Machine Learning</title>
 
   <!-- Tints the mobile browser chrome. Seeded with the dark palette's --bg;
        script.js §1 rewrites it whenever the theme resolves or is toggled, so
@@ -26,19 +26,23 @@
   <meta property="og:site_name" content="Mohammed R. Awad">
   <meta property="og:url" content="https://mohammedawad.online/">
   <meta property="og:title" content="Mohammed R. Awad — AI, Data Analytics &amp; Machine Learning">
-  <meta property="og:description" content="Senior in Intelligent Systems and Computer Engineering from Gaza, Palestine, building AI-powered tools and data-analysis projects.">
-  <meta property="og:image" content="https://mohammedawad.online/assets/og-card.jpg?v=2">
+  <meta property="og:description" content="Senior in Intelligent Systems and Computer Engineering from Gaza, Palestine, open to remote internships and junior AI and data roles. Team leader of Nashrati, an AI-assisted news-drafting platform.">
+  <meta property="og:image" content="https://mohammedawad.online/assets/og-card.jpg?v=3">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Mohammed R. Awad — AI, Data Analytics and Machine Learning. Senior, Intelligent Systems and Computer Engineering; Marketing and Media Lead, GDG on Campus Al-Aqsa">
+  <meta property="og:image:alt" content="Mohammed R. Awad — AI, Data Analytics and Machine Learning. Senior, Intelligent Systems and Computer Engineering; Team Leader, Nashrati; Marketing and Media Lead, GDG on Campus Al-Aqsa">
   <meta property="og:locale" content="en_US">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mohammed R. Awad — AI, Data Analytics &amp; Machine Learning">
-  <meta name="twitter:description" content="Senior in Intelligent Systems and Computer Engineering from Gaza, Palestine, building AI-powered tools and data-analysis projects.">
-  <meta name="twitter:image" content="https://mohammedawad.online/assets/og-card.jpg?v=2">
+  <meta name="twitter:description" content="Senior in Intelligent Systems and Computer Engineering from Gaza, Palestine, open to remote internships and junior AI and data roles. Team leader of Nashrati, an AI-assisted news-drafting platform.">
+  <meta name="twitter:image" content="https://mohammedawad.online/assets/og-card.jpg?v=3">
+  <meta name="twitter:image:alt" content="Mohammed R. Awad — AI, Data Analytics and Machine Learning. Senior, Intelligent Systems and Computer Engineering; Team Leader, Nashrati; Marketing and Media Lead, GDG on Campus Al-Aqsa">
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0a08'/%3E%3Ctext x='16' y='23' font-family='Arial Black,sans-serif' font-size='17' font-weight='900' fill='%23e8dcc0' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
 
   <link rel="preload" href="assets/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -75,6 +79,17 @@
         root.dir = "rtl";
         root.classList.add("i18n-pending");
         setTimeout(() => root.classList.remove("i18n-pending"), 4000);
+        // The Arabic faces are otherwise found only once the page is laid out;
+        // fetched now, the first layout already sets the Arabic in them.
+        for (const face of ["tajawal-400", "tajawal-500", "tajawal-700", "noto-kufi-arabic-800"]) {
+          const link = document.createElement("link");
+          link.rel = "preload";
+          link.as = "font";
+          link.type = "font/woff2";
+          link.crossOrigin = "anonymous";
+          link.href = `assets/fonts/${face}-arabic.woff2`;
+          document.head.append(link);
+        }
       }
 
       let seen = true;
@@ -147,7 +162,7 @@
   <header class="nav" id="nav">
     <div class="nav-progress" aria-hidden="true"></div>
     <nav class="nav-inner container" aria-label="Primary" data-i18n-attr="aria-label:nav.aria">
-      <a href="#home" class="nav-logo" aria-label="Home — Mohammed R. Awad" data-i18n-attr="aria-label:nav.logoAria" data-magnetic>
+      <a href="#home" class="nav-logo" aria-label="MR. AWAD — Mohammed R. Awad, home" data-i18n-attr="aria-label:nav.logoAria" data-magnetic>
         MR<span class="accent">.</span> AWAD
       </a>
 
@@ -164,7 +179,7 @@
       <div class="nav-actions">
         <button class="lang-toggle js-only" id="lang-toggle" type="button" lang="ar" data-magnetic>العربية</button>
 
-        <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" aria-pressed="false" data-magnetic>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" data-magnetic>
           <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
           <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
         </button>
@@ -211,10 +226,12 @@
 
       <div class="hero-footer container">
         <div class="hero-id">
-          <p class="availability"><span class="pulse" aria-hidden="true"></span> <span data-i18n="hero.available">Available for remote opportunities</span></p>
+          <p class="availability"><span class="pulse" aria-hidden="true"></span> <span data-i18n="hero.available">Open to remote internships &amp; junior roles</span></p>
           <p class="hero-name" data-i18n="hero.name">Mohammed R. Awad</p>
           <p class="hero-value" data-i18n="hero.value">Computer Engineering senior building <span class="nowrap">machine-learning</span> systems and useful data products.</p>
-          <p class="hero-typed"><span data-i18n="hero.iam">I&nbsp;am</span> <span id="typed" class="accent"></span><span class="caret" aria-hidden="true"></span></p>
+          <!-- The typing effect is decoration: screen readers would catch it
+               mid-word, so they get the whole list as one sentence instead. -->
+          <p class="hero-typed"><span aria-hidden="true"><span data-i18n="hero.iam">I&nbsp;am</span> <span id="typed" class="accent"></span><span class="caret"></span></span><span class="sr-only" data-i18n="hero.rolesSr">I am a Computer Engineer, a Team Leader, an AI Engineer, and a Problem Solver.</span></p>
         </div>
         <div class="hero-actions">
           <a href="#projects" class="btn btn-solid" data-magnetic><span data-i18n="hero.explore">Explore projects</span></a>
@@ -275,11 +292,11 @@
             <aside class="about-facts reveal" aria-label="Quick facts" data-i18n-attr="aria-label:about.factsAria">
               <ul>
                 <li><span class="fact-label" data-i18n="fact.location">Location</span> <span data-i18n="fact.locationV">Gaza, Palestine</span></li>
-                <li><span class="fact-label" data-i18n="fact.degree">Degree</span> <span data-i18n="fact.degreeV">B.Sc. Intelligent Systems and Computer Engineering — final year</span></li>
+                <li><span class="fact-label" data-i18n="fact.degree">Degree</span> <span data-i18n="fact.degreeV">B.Sc. Intelligent Systems and Computer Engineering — final year, graduating July&nbsp;2027</span></li>
                 <li><span class="fact-label" data-i18n="fact.uni">University</span> <span data-i18n="fact.uniV">Al-Aqsa University</span></li>
                 <li><span class="fact-label" data-i18n="fact.community">Community</span> <span data-i18n="fact.communityV">Marketing &amp; Media Lead, GDG on Campus Al-Aqsa University</span></li>
                 <li><span class="fact-label" data-i18n="fact.focus">Focus</span> <span data-i18n="fact.focusV">AI · Data Analytics · Machine Learning</span></li>
-                <li class="js-only"><span class="fact-label" data-i18n="fact.time">Local time</span> <time data-clock data-clock-zone>--:--</time></li>
+                <li><span class="fact-label" data-i18n="fact.langs">Languages</span> <span data-i18n="fact.langsV">Arabic (native) · English (advanced)</span></li>
               </ul>
             </aside>
           </div>
@@ -295,7 +312,7 @@
                 <path fill="#e94436" d="M71.752 56.563c-8.621 4.898-17.247 9.787-25.86 14.7c-5.037 2.874-10.02 5.846-15.083 8.672c-10.203 5.695-22.325 2.357-28.11-7.674c-5.521-9.572-2.348-21.982 7.478-27.718C34.202 30.52 58.289 16.599 82.463 2.833c7.414-4.221 15.106-3.69 21.962 1.357c7.236 5.327 9.605 12.823 7.98 21.61c-1.008 2.127-1.61 4.62-3.12 6.295c-2.454 2.725-5.244 5.334-8.35 7.25c-9.612 5.927-19.44 11.505-29.183 17.218"/>
                 <path fill="#4385f3" d="M61.867 62.057c8.553 5.016 17.1 10.043 25.661 15.045c5.007 2.926 10.072 5.755 15.051 8.726c10.034 5.99 13.205 18.156 7.41 28.181c-5.53 9.568-17.863 13.026-27.744 7.383c-24.157-13.795-48.256-27.693-72.264-41.746C2.618 75.336-.768 68.409.175 59.948c.995-8.931 6.302-14.73 14.725-17.717c2.345-.189 4.805-.915 7.011-.445c3.587.764 7.242 1.875 10.454 3.607c9.939 5.36 19.683 11.082 29.502 16.664"/>
               </svg>
-              <p class="exp-kind" data-i18n="exp.k0">Now · Community</p>
+              <p class="exp-kind" data-i18n="exp.k0">Community · <span class="nowrap">2026 – now</span></p>
               <h3>Google Developer Groups</h3>
               <p data-i18n="exp.p0">
                 Marketing &amp; Media Lead at GDG on Campus Al-Aqsa University, Google's developer
@@ -303,8 +320,8 @@
                 the students they're for.
               </p>
               <div class="exp-links">
-                <a href="https://gdg.community.dev/gdg-on-campus-al-aqsa-university-gaza-state-of-palestine/" target="_blank" rel="noopener noreferrer" data-i18n="exp.chapter">The chapter ↗</a>
-                <a href="https://gdg.community.dev/u/mmfu3p/" target="_blank" rel="noopener noreferrer" data-i18n="exp.profile">My GDG profile ↗</a>
+                <a href="https://gdg.community.dev/gdg-on-campus-al-aqsa-university-gaza-state-of-palestine/" target="_blank" rel="noopener noreferrer" data-i18n="exp.chapter">The chapter <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+                <a href="https://gdg.community.dev/u/mmfu3p/" target="_blank" rel="noopener noreferrer" data-i18n="exp.profile">My GDG profile <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
               </div>
             </article>
             <article class="exp-card exp-card--logo reveal">
@@ -312,21 +329,21 @@
                    its version for light; the page shows the one for its theme. -->
               <img class="exp-logo exp-logo--mark exp-logo--on-dark" src="assets/nashrati/logo-dark.webp" alt="" width="54" height="48" loading="lazy" decoding="async">
               <img class="exp-logo exp-logo--mark exp-logo--on-light" src="assets/nashrati/logo-light.webp" alt="" width="54" height="48" loading="lazy" decoding="async">
-              <p class="exp-kind" data-i18n="exp.k1">Team leader</p>
+              <p class="exp-kind" data-i18n="exp.k1">Team leader · Jul <span class="nowrap">2026 – now</span></p>
               <h3 data-i18n="exp.t1">Nashrati</h3>
               <p data-i18n="exp.p1">
                 I lead the team behind Nashrati, an AI newsroom platform with a Laravel API,
-                a React dashboard, Python AI services and a Flutter app — and I built the
+                a React dashboard, Python AI services, and a Flutter app — and I built the
                 mobile app myself.
               </p>
             </article>
             <article class="exp-card reveal">
-              <p class="exp-kind" data-i18n="exp.k2">Freelance</p>
+              <p class="exp-kind" data-i18n="exp.k2">Freelance · 2024 – now</p>
               <h3 data-i18n="exp.t2">AI Design Visualization</h3>
               <p data-i18n="exp.p2">
                 I run a small freelance service using generative-AI image tools to produce
-                interior-design visualizations for real clients — wedding halls and cafés —
-                turning rough ideas into photorealistic concepts they can act on.
+                interior-design visualizations for clients — homes, cafés, wedding halls, and
+                event spaces — turning rough ideas into photorealistic concepts they can act on.
               </p>
             </article>
             <article class="exp-card reveal">
@@ -338,10 +355,10 @@
               </p>
             </article>
             <article class="exp-card reveal">
-              <p class="exp-kind" data-i18n="exp.k4">Training</p>
+              <p class="exp-kind" data-i18n="exp.k4">Training · Nov 2026</p>
               <h3 data-i18n="exp.t4">TAQAT — CodeMap 2026</h3>
               <p data-i18n="exp.p4">
-                A 144-hour program in software architecture, code organization and
+                A 144-hour program in software architecture, code organization, and
                 development workflow, completed in November 2026.
               </p>
             </article>
@@ -368,30 +385,36 @@
               <h3 class="feature-title reveal" id="nashrati-title"><span class="ar" lang="ar" dir="rtl">نشرتي</span> Nashrati</h3>
               <p class="feature-lede reveal" data-i18n="nash.lede">
                 AI-assisted news drafting for field reporters. Record an interview where the
-                story is happening; Nashrati transcribes it, pulls out the people, places and
+                story is happening; Nashrati transcribes it, pulls out the people, places, and
                 dates, and hands back a structured draft for a journalist or an editor to
                 review before anything is published.
               </p>
               <p class="feature-role reveal" data-i18n="nash.role">
                 Nashrati is a team platform in four parts — a Laravel API, a React dashboard,
-                Python AI services and a Flutter mobile app. <strong>I led the team as its
-                team leader</strong>, and built the mobile app myself: its architecture,
-                offline sync, audio capture, and its Arabic and English interface.
+                Python AI services, and a Flutter mobile app — built at TAQAT Academy.
+                <strong>As team leader I own the product scope and the architecture across all
+                four parts</strong>, coordinate the team through a <span class="nowrap">12-week</span> build cycle, and have
+                presented the product to mentors, including at the program's ideas showcase.
+                I also built the mobile app myself: its architecture, offline sync, audio
+                capture, and its Arabic and English interface.
               </p>
+              <div class="project-links reveal">
+                <span class="project-private" data-i18n="link.private">Code is private</span>
+              </div>
             </div>
 
             <div class="feature-side">
               <dl class="feature-stats reveal">
                 <div><dt data-i18n="nash.roleT">My role</dt><dd class="is-text" data-i18n="nash.roleV">Team leader</dd></div>
                 <div><dt data-i18n="nash.builtT">Built</dt><dd class="is-text" data-i18n="nash.builtV">Aug – Oct 2026</dd></div>
-                <div><dt data-i18n="nash.testsT">Automated tests</dt><dd><span data-count="1500">1,500</span>+</dd></div>
+                <div><dt data-i18n="nash.testsT">Mobile-app tests</dt><dd><span data-count="1500">1,500</span>+</dd></div>
                 <div><dt data-i18n="nash.langT">Languages</dt><dd class="is-text" data-i18n="nash.langV">Arabic + English</dd></div>
               </dl>
               <ul class="feature-points reveal">
                 <li data-i18n="nash.p1"><strong>Field capture.</strong> Record or import audio — even lift it out of a video — and keep recording with the app in the background.</li>
                 <li data-i18n="nash.p2"><strong>Offline-first.</strong> Drafts and tasks keep working without a connection, then sync when it returns.</li>
-                <li data-i18n="nash.p3"><strong>AI you can check.</strong> Transcript, extracted entities and a clearly labelled AI suggestion, beside the journalist's own words.</li>
-                <li data-i18n="nash.p4"><strong>Two workflows.</strong> Reporter to editor approval for newsrooms; post, export and publish to Telegram for freelancers.</li>
+                <li data-i18n="nash.p3"><strong>AI you can check.</strong> Transcript, extracted entities, and a clearly labeled AI suggestion, beside the journalist's own words.</li>
+                <li data-i18n="nash.p4"><strong>Two workflows.</strong> Reporter-to-editor approval for newsrooms; post, export, and publish to Telegram for freelancers.</li>
               </ul>
               <ul class="project-tags reveal" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
                 <li>Flutter</li><li>Dart</li><li data-i18n="tag.clean">Clean Architecture</li><li>BLoC / Cubit</li><li>REST API</li><li data-i18n="tag.offline">Offline sync</li><li data-i18n="tag.arEn">Arabic RTL + English</li>
@@ -442,7 +465,7 @@
                   <figure>
                     <div class="phone-frame"><div class="phone-screen" data-tone="dark">
                       <img src="assets/nashrati/en/tasks.webp" data-shot="tasks" width="640" height="1316" loading="lazy" decoding="async"
-                           alt="Tasks screen in dark mode: counters for waiting, urgent and completed work, followed by task cards with retry and open-report actions." data-i18n-attr="alt:alt.tasks">
+                           alt="Tasks screen in dark mode: counters for waiting, urgent, and completed work, followed by task cards with retry and open-report actions." data-i18n-attr="alt:alt.tasks">
                     </div></div>
                     <figcaption><span class="num">05</span><span data-i18n="shot.tasks">What still needs me</span></figcaption>
                   </figure>
@@ -451,7 +474,7 @@
                   <figure>
                     <div class="phone-frame"><div class="phone-screen">
                       <img src="assets/nashrati/en/notifications.webp" data-shot="notifications" width="640" height="1280" loading="lazy" decoding="async"
-                           alt="Notification centre: processing finished, processing failed, a newly assigned task, a revision request and an approval, each linking to its report." data-i18n-attr="alt:alt.notifications">
+                           alt="Notification center: processing finished, processing failed, a newly assigned task, a revision request, and an approval, each linking to its report." data-i18n-attr="alt:alt.notifications">
                     </div></div>
                     <figcaption><span class="num">06</span><span data-i18n="shot.notifications">Notifications</span></figcaption>
                   </figure>
@@ -494,9 +517,9 @@
                 <h4 class="project-title">Moodle Watcher</h4>
                 <dl class="project-case-details">
                   <div><dt data-i18n="case.problem">Problem</dt><dd data-i18n="pmw.d1">New files, assignments and quizzes appear on the university's Moodle without notice, spread across every course, and deadlines are easy to miss.</dd></div>
-                  <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="pmw.d2">Designed and built the whole system: the Moodle scanner, the Telegram bot, the scheduling and the tests.</dd></div>
+                  <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="pmw.d2">Designed and built the whole system: the Moodle scanner, the Telegram bot, the scheduling, and the tests.</dd></div>
                   <div><dt data-i18n="case.approach">Approach</dt><dd data-i18n="pmw.d3">A Python scanner checks every enrolled course. A Telegram bot on Cloudflare Workers answers commands and starts scans on GitHub Actions, and deadlines sync to Google Calendar with reminders.</dd></div>
-                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="pmw.d4"><strong>Alerts within 20 minutes</strong> of a new post, deadline reminders, a <strong>channel for classmates</strong> and <strong>68 automated tests</strong>.</dd></div>
+                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="pmw.d4"><strong>Alerts within 20 minutes</strong> of a new post, deadline reminders, a <strong>channel for classmates</strong>, and <strong>68 automated tests</strong>.</dd></div>
                 </dl>
                 <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
                   <li>Python</li><li>BeautifulSoup</li><li>Telegram Bot API</li><li>Cloudflare Workers</li><li>GitHub Actions</li><li>Google Calendar API</li>
@@ -516,14 +539,14 @@
                   <div><dt data-i18n="case.problem">Problem</dt><dd data-i18n="p1.d1">Identify customers at risk of leaving while handling an imbalanced churn class.</dd></div>
                   <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="p1.d2">Built the complete notebook workflow, from data quality checks and EDA to model evaluation and interpretation.</dd></div>
                   <div><dt data-i18n="case.approach">Approach</dt><dd data-i18n="p1.d3">Compared Logistic Regression, Random Forest, tuned XGBoost, and an MLP using stratified train, validation, and test splits.</dd></div>
-                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="p1.d4"><strong>0.855 ROC-AUC</strong> and <strong>72.5% recall</strong> on the held-out test set with tuned XGBoost.</dd></div>
+                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="p1.d4"><strong>0.855 ROC-AUC</strong> and <strong>72.5% recall</strong> on the held-out test set with tuned XGBoost — 10,000 customers, about 20% of whom left.</dd></div>
                 </dl>
                 <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
                   <li>Python</li><li>pandas</li><li>scikit-learn</li><li>XGBoost</li>
                 </ul>
               </div>
               <div class="project-links">
-                <a class="project-link--primary" href="https://github.com/aborezq/Bank-Customer-Churn-Prediction/blob/main/Churn_Project_Ai.ipynb" target="_blank" rel="noopener noreferrer" data-i18n="link.notebook">View notebook ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/Bank-Customer-Churn-Prediction/blob/main/Churn_Project_Ai.ipynb" target="_blank" rel="noopener noreferrer" data-i18n="link.notebook">View notebook <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
                 <a href="https://github.com/aborezq/Bank-Customer-Churn-Prediction" target="_blank" rel="noopener noreferrer" aria-label="Customer Churn Prediction source code on GitHub" data-i18n-attr="aria-label:aria.churn" data-i18n="link.source">Source code ↗</a>
               </div>
             </li>
@@ -531,20 +554,20 @@
             <li class="project-card reveal" data-category="web">
               <span class="work-index" aria-hidden="true"></span>
               <div class="project-body">
-                <p class="project-label" data-i18n="p2.label">Featured · Web Product</p>
-                <h4 class="project-title">Gaza Aid</h4>
+                <p class="project-label" data-i18n="p2.label">Featured · Web · Course project</p>
+                <h4 class="project-title" data-i18n="p2.title">Gaza Aid Portal</h4>
                 <dl class="project-case-details">
                   <div><dt data-i18n="case.problem">Problem</dt><dd data-i18n="p2.d1">Make humanitarian resources, reporting, registration, and request-status tools easier to find in one interface.</dd></div>
-                  <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="p2.d2">Designed and built the complete multi-page experience, including responsive navigation, forms, and Arabic-first content.</dd></div>
+                  <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="p2.d2">Designed and built the complete multi-page experience, including responsive navigation, forms, and an English/Arabic switch that flips the layout to right-to-left.</dd></div>
                   <div><dt data-i18n="case.approach">Approach</dt><dd data-i18n="p2.d3">Created a lightweight front end with semantic HTML, custom CSS, and vanilla JavaScript, plus PHP form endpoints.</dd></div>
-                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="p2.d4"><strong>5 focused user flows</strong> delivered across the home, registration, reporting, status, and contact pages.</dd></div>
+                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="p2.d4"><strong>3 core flows</strong> (register once, check status by ID or phone, report a problem) in <strong>English and Arabic</strong>, with client- and server-side validation.</dd></div>
                 </dl>
                 <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
                   <li>HTML</li><li>CSS</li><li>JavaScript</li><li>PHP</li>
                 </ul>
               </div>
               <div class="project-links">
-                <a class="project-link--primary" href="https://aborezq.github.io/Mohammed_Awad_Gaza_Aid/" target="_blank" rel="noopener noreferrer" aria-label="Open the live Gaza Aid website" data-i18n-attr="aria-label:aria.gazaLive" data-i18n="link.demo">Live demo ↗</a>
+                <a class="project-link--primary" href="https://aborezq.github.io/Mohammed_Awad_Gaza_Aid/" target="_blank" rel="noopener noreferrer" aria-label="Live demo: the Gaza Aid website" data-i18n-attr="aria-label:aria.gazaLive" data-i18n="link.demo">Live demo ↗</a>
                 <a href="https://github.com/aborezq/Mohammed_Awad_Gaza_Aid" target="_blank" rel="noopener noreferrer" aria-label="Source code of Gaza Aid on GitHub" data-i18n-attr="aria-label:aria.gazaCode" data-i18n="link.code">Code ↗</a>
               </div>
             </li>
@@ -557,34 +580,35 @@
                 <dl class="project-case-details">
                   <div><dt data-i18n="case.problem">Problem</dt><dd data-i18n="p3.d1">Understand when feature scaling changes which classifier is the best choice for a pattern-recognition task.</dd></div>
                   <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="p3.d2">Framed the research question, compared algorithm sensitivity, and organized the findings into a focused technical report.</dd></div>
-                  <div><dt data-i18n="case.approach">Approach</dt><dd data-i18n="p3.d3">Analyzed distance-based, margin-based, probabilistic, tree-based, and neural classifiers through the lens of feature scale.</dd></div>
-                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="p3.d4"><strong>5 classifier families</strong> mapped to practical scaling decisions in a documented analytical study.</dd></div>
+                  <div><dt data-i18n="case.approach">Approach</dt><dd data-i18n="p3.d3">Analyzed distance-based (k-NN), margin-based (SVM), linear (logistic regression), tree-based, and probabilistic (naive Bayes) classifiers on raw, min-max, and z-score features.</dd></div>
+                  <div class="project-result"><dt data-i18n="case.result">Result</dt><dd data-i18n="p3.d4"><strong>A ranking inversion:</strong> on a controlled synthetic dataset, a scale-invariant model wins on raw data (naive Bayes, 0.95); once the features are standardized, <strong>SVM climbs from 0.70 to 0.98</strong> and k-NN from 0.71 to 0.97, overtaking it.</dd></div>
                 </dl>
                 <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
                   <li data-i18n="tag.pattern">Pattern Recognition</li><li data-i18n="tag.scaling">Feature Scaling</li><li data-i18n="tag.research">Research</li>
                 </ul>
               </div>
               <div class="project-links">
-                <a class="project-link--primary" href="https://github.com/aborezq/Pattern-Recognition-Research/blob/main/Pattern_Recognition_Research.pdf" target="_blank" rel="noopener noreferrer" data-i18n="link.paper">Read paper ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/Pattern-Recognition-Research/blob/main/Pattern_Recognition_Research.pdf" target="_blank" rel="noopener noreferrer" data-i18n="link.paper">Read paper <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
                 <a href="https://github.com/aborezq/Pattern-Recognition-Research" target="_blank" rel="noopener noreferrer" aria-label="Pattern Recognition Research repository on GitHub" data-i18n-attr="aria-label:aria.prRepo" data-i18n="link.repo">Repository ↗</a>
-                <a href="#lab" aria-label="Try the idea behind this research in the Lab section" data-i18n-attr="aria-label:aria.prLab" data-i18n="link.lab">Try it in the Lab ↓</a>
+                <a href="#lab" aria-label="Try it in the Lab: the idea behind this research" data-i18n-attr="aria-label:aria.prLab" data-i18n="link.lab">Try it in the Lab ↓</a>
               </div>
             </li>
 
             <li class="project-card reveal" data-category="ml">
               <span class="work-index" aria-hidden="true"></span>
               <div class="project-body">
-                <h4 class="project-title" data-i18n="p4.title">ML Research</h4>
+                <h4 class="project-title" data-i18n="p4.title">Machine Learning Survey</h4>
                 <p class="project-desc" data-i18n="p4.desc">
-                  A growing collection of machine-learning work: Python, data science,
-                  deep learning, and data-analysis experiments and notes.
+                  A survey paper for my Artificial Intelligence course: ML paradigms, landmark
+                  architectures, real-world applications, and AI ethics, with the
+                  churn-prediction pipeline as its practical part.
                 </p>
                 <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
                   <li>Python</li><li data-i18n="tag.ds">Data Science</li><li data-i18n="tag.dl">Deep Learning</li>
                 </ul>
               </div>
               <div class="project-links">
-                <a class="project-link--primary" href="https://github.com/aborezq/ML_Research/blob/main/Machine_Learning_Research.pdf" target="_blank" rel="noopener noreferrer" data-i18n="link.paper">Read paper ↗</a>
+                <a class="project-link--primary" href="https://github.com/aborezq/ML_Research/blob/main/Machine_Learning_Research.pdf" target="_blank" rel="noopener noreferrer" data-i18n="link.paper">Read paper <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
                 <a href="https://github.com/aborezq/ML_Research" target="_blank" rel="noopener noreferrer" aria-label="ML Research repository on GitHub" data-i18n-attr="aria-label:aria.mlRepo" data-i18n="link.repo">Repository ↗</a>
               </div>
             </li>
@@ -595,7 +619,7 @@
               <details class="work-more" id="coursework">
                 <summary>
                   <span class="work-more-title" data-i18n="work.coursework">Earlier coursework</span>
-                  <span class="work-more-meta" data-i18n="work.courseworkMeta">Java, networks and control systems</span>
+                  <span class="work-more-meta" data-i18n="work.courseworkMeta">Java, networks, and control systems</span>
                   <span class="cert-chevron" aria-hidden="true"></span>
                 </summary>
                 <ol class="work-list-more">
@@ -638,8 +662,9 @@
                   <div class="project-body">
                     <h4 class="project-title" data-i18n="p7.title">Library System</h4>
                     <p class="project-desc" data-i18n="p7.desc">
-                      Library management system built in Java with a clean
-                      object-oriented structure for books, members, and loans.
+                      Java library system built on my own generic stack, queue, linked list,
+                      and dynamic array (no built-in collections), with role-based access for
+                      students, employees, and librarians.
                     </p>
                     <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
                       <li>Java</li><li data-i18n="tag.oop">OOP</li>
@@ -687,7 +712,7 @@
             <div class="lab-copy">
               <p class="lab-lede reveal" data-i18n="lab.lede">
                 The question behind my pattern-recognition research, as something you can play
-                with. A <strong>k-nearest-neighbours</strong> classifier decides whether a bank
+                with. A <strong>k-nearest-neighbors</strong> classifier decides whether a bank
                 customer stays or leaves by asking the customers most like them. But
                 <em>“most like”</em> depends on units: measured raw, a balance in the tens of
                 thousands drowns out an age in the tens.
@@ -703,7 +728,7 @@
                 </fieldset>
 
                 <div class="lab-range">
-                  <label for="lab-k"><span data-i18n="lab.k">Neighbours asked,</span> <i>k</i> = <output id="lab-k-out" for="lab-k">5</output></label>
+                  <label for="lab-k"><span data-i18n="lab.k">Neighbors asked,</span> <span dir="ltr"><i>k</i> = <output id="lab-k-out" for="lab-k">5</output></span></label>
                   <input type="range" id="lab-k" min="1" max="15" step="2" value="5">
                 </div>
 
@@ -731,13 +756,13 @@
                   <dd><span id="lab-acc-std">–</span><small>%</small></dd>
                 </div>
               </dl>
-              <p class="sr-only" id="lab-status" role="status" aria-live="polite"></p>
+              <p class="sr-only" id="lab-status" aria-live="off"></p>
             </div>
 
             <figure class="lab-stage reveal">
               <div class="lab-canvas-wrap">
-                <canvas id="lab-canvas" role="img"
-                        aria-label="Scatter plot of synthetic bank customers by age and account balance, shaded by what a k-nearest-neighbours classifier predicts. The accuracy for each way of measuring distance is listed beside the chart." data-i18n-attr="aria-label:lab.canvasAria"></canvas>
+                <canvas id="lab-canvas" role="img" tabindex="0"
+                        aria-label="Scatter plot of synthetic bank customers by age and account balance, shaded by what a k-nearest-neighbors classifier predicts. The accuracy for each way of measuring distance is listed beside the chart. Arrow keys move a probe across the chart; Enter adds a customer there." data-i18n-attr="aria-label:lab.canvasAria"></canvas>
                 <p class="lab-hint js-only" id="lab-hint" aria-hidden="true">Move across the chart to see who gets asked</p>
               </div>
               <figcaption class="lab-legend">
@@ -766,7 +791,7 @@
           </header>
 
           <div class="skills-grid">
-            <div class="skills-proof reveal" aria-label="Core strengths demonstrated through projects" data-i18n-attr="aria-label:skills.proofAria">
+            <div class="skills-proof reveal">
               <h3 class="skills-heading" data-i18n="skills.core">Core strengths</h3>
               <ol class="skill-evidence">
                 <li>
@@ -774,7 +799,7 @@
                   <div>
                     <h4 data-i18n="sk1.t">Machine Learning &amp; Analytics</h4>
                     <p data-i18n="sk1.p">EDA, preprocessing, classifier comparison, interpretation, and research-driven evaluation.</p>
-                    <a href="#projects-grid" data-i18n="sk1.a">Shown in churn prediction and pattern-recognition work ↑</a>
+                    <a href="#projects-grid" data-i18n="sk1.a">Shown in churn prediction and pattern-recognition work <span aria-hidden="true">↑</span></a>
                   </div>
                 </li>
                 <li>
@@ -782,7 +807,7 @@
                   <div>
                     <h4 data-i18n="sk2.t">AI Agents &amp; Applied GenAI</h4>
                     <p data-i18n="sk2.p">LangChain foundations, Claude API workflows, agent skills, subagents, and responsible AI practice.</p>
-                    <a href="#certificates" data-i18n="sk2.a">Backed by verified credentials ↓</a>
+                    <a href="#certificates" data-i18n="sk2.a">Backed by verified credentials <span aria-hidden="true">↓</span></a>
                   </div>
                 </li>
                 <li>
@@ -790,7 +815,7 @@
                   <div>
                     <h4 data-i18n="sk3.t">Mobile Product Delivery</h4>
                     <p data-i18n="sk3.p">Led the Nashrati team and built its Flutter app on Clean Architecture: offline-first sync, audio capture, Arabic and English, and 1,500+ automated tests.</p>
-                    <a href="#nashrati" data-i18n="sk3.a">Shown in Nashrati ↑</a>
+                    <a href="#nashrati" data-i18n="sk3.a">Shown in Nashrati <span aria-hidden="true">↑</span></a>
                   </div>
                 </li>
                 <li>
@@ -798,7 +823,7 @@
                   <div>
                     <h4 data-i18n="sk4.t">Web Product Delivery</h4>
                     <p data-i18n="sk4.p">Responsive, accessible interfaces built with semantic HTML, modern CSS, and vanilla JavaScript.</p>
-                    <a href="#projects-grid" data-i18n="sk4.a">Shown in Gaza Aid and this portfolio ↑</a>
+                    <a href="#projects-grid" data-i18n="sk4.a">Shown in Gaza Aid and this portfolio <span aria-hidden="true">↑</span></a>
                   </div>
                 </li>
               </ol>
@@ -866,9 +891,10 @@
           </header>
 
           <p class="cert-summary reveal" data-i18n="certs.summary">
-            <strong><span data-count="32">32</span> credentials</strong> from Google, IBM, Anthropic,
-            LangChain and TAQAT. Open any one to see the certificate itself; every row links to
-            the issuer's own verification page.
+            <strong><span data-count="32">32</span> verifiable certificates</strong>, led by the
+            Google AI Professional Certificate, IBM's data-analytics courses, Anthropic's Claude
+            API and agent courses, and TAQAT's 144-hour CodeMap program. Open any one to see it;
+            every row links to the issuer's verification page.
           </p>
 
           <!-- One <details> per program, newest first. Each certificate name
@@ -1079,6 +1105,22 @@
 
             <details class="cert-group reveal">
               <summary>
+                <span class="cert-issuer">Google Cloud · Coursera</span>
+                <span class="cert-program" data-i18n="cg8.p">Responsible AI</span>
+                <span class="cert-meta" data-i18n="cg8.m">1 certificate · Aug 2026</span>
+                <span class="cert-chevron" aria-hidden="true"></span>
+              </summary>
+              <ul class="cert-rows">
+                <li class="cert-row">
+                  <a class="cert-view" href="assets/certs/googlecloud-responsible-ai.webp" target="_blank" rel="noopener"><bdi class="cert-name" lang="en">Introduction to Responsible AI</bdi></a>
+                  <span class="cert-date" data-i18n="date.aug">Aug 2026</span>
+                  <a class="cert-link" href="https://coursera.org/verify/DNOT7F2SDWJ7" target="_blank" rel="noopener noreferrer" data-i18n="cert.verify">Verify ↗</a>
+                </li>
+              </ul>
+            </details>
+
+            <details class="cert-group reveal">
+              <summary>
                 <span class="cert-issuer">Google · Coursera</span>
                 <span class="cert-program" data-i18n="cg7.p">Google AI Essentials</span>
                 <span class="cert-meta" data-i18n="cg7.m">4 certificates · Jul 2026</span>
@@ -1108,22 +1150,6 @@
               </ul>
             </details>
 
-            <details class="cert-group reveal">
-              <summary>
-                <span class="cert-issuer">Google Cloud · Coursera</span>
-                <span class="cert-program" data-i18n="cg8.p">Responsible AI</span>
-                <span class="cert-meta" data-i18n="cg8.m">1 certificate · Aug 2026</span>
-                <span class="cert-chevron" aria-hidden="true"></span>
-              </summary>
-              <ul class="cert-rows">
-                <li class="cert-row">
-                  <a class="cert-view" href="assets/certs/googlecloud-responsible-ai.webp" target="_blank" rel="noopener"><bdi class="cert-name" lang="en">Introduction to Responsible AI</bdi></a>
-                  <span class="cert-date" data-i18n="date.aug">Aug 2026</span>
-                  <a class="cert-link" href="https://coursera.org/verify/DNOT7F2SDWJ7" target="_blank" rel="noopener noreferrer" data-i18n="cert.verify">Verify ↗</a>
-                </li>
-              </ul>
-            </details>
-
           </div>
         </div>
       </section>
@@ -1143,6 +1169,12 @@
                 work, and thoughtful collaborations. Send a message here and I'll reply by email.
               </p>
               <ul class="contact-links">
+                <li>
+                  <a href="assets/Mohammed_Awad_CV.pdf" download="Mohammed_Awad_CV.pdf">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+                    <span data-i18n="contact.cv">Download my CV (PDF)</span>
+                  </a>
+                </li>
                 <li>
                   <a href="mailto:momoawad2004@gmail.com">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6L22 7"/></svg>
@@ -1190,7 +1222,7 @@
               </div>
               <div class="form-field">
                 <label for="cf-message" data-i18n="form.msgL">Message</label>
-                <textarea id="cf-message" name="message" rows="5" placeholder="Tell me about your project…" data-i18n-attr="placeholder:form.msgPh"
+                <textarea id="cf-message" name="message" rows="5" placeholder="Tell me about the role or project…" data-i18n-attr="placeholder:form.msgPh"
                           minlength="10" maxlength="2000" required aria-describedby="cf-message-error"></textarea>
                 <p class="form-error" id="cf-message-error" aria-live="polite"></p>
               </div>
@@ -1219,7 +1251,7 @@
         </div>
         <div class="container footer-inner">
           <p>© <span id="year">2026</span> <span data-i18n="footer.rights">Mohammed R. Awad. All rights reserved.</span></p>
-          <a href="#home" class="footer-top" data-i18n="footer.top">Back to top ↑</a>
+          <a href="#home" class="footer-top" data-i18n="footer.top">Back to top <span aria-hidden="true">↑</span></a>
         </div>
       </footer>
 
@@ -1234,8 +1266,10 @@
        it without any script of its own. Filled in by script.js §13. -->
   <dialog class="lightbox" id="lightbox" aria-labelledby="lightbox-title">
     <div class="lightbox-bar">
-      <p class="lightbox-title" id="lightbox-title"></p>
-      <a class="btn btn-solid btn-small" id="lightbox-verify" href="#" target="_blank" rel="noopener noreferrer"><span data-i18n="cert.verify">Verify ↗</span></a>
+      <p class="lightbox-title" id="lightbox-title" dir="ltr" lang="en"></p>
+      <!-- The new-tab note is a <small>, not a <span>: `.btn span` is
+           position: relative, which would undo .sr-only and leave a gap. -->
+      <a class="btn btn-solid btn-small" id="lightbox-verify" href="#" target="_blank" rel="noopener noreferrer"><span data-i18n="cert.verify">Verify <span aria-hidden="true">↗</span><small class="sr-only"> (opens in a new tab)</small></span></a>
       <form method="dialog">
         <button class="round-btn" aria-label="Close certificate viewer" data-i18n-attr="aria-label:lightbox.close">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>

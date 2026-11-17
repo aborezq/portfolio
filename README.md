@@ -16,7 +16,7 @@ style.css         — design tokens, layout, motion, light/dark themes
 script.js         — language and theme, opening sequence, scroll & pointer
                     effects, filters, certificate viewer, contact form
 i18n.js           — the Arabic for every string on the page (see Languages)
-lab.js            — the Lab: a k-nearest-neighbours classifier on a canvas
+lab.js            — the Lab: a k-nearest-neighbors classifier on a canvas
 assets/
   profile-cutout.* — the portrait cut out of its backdrop (avif + webp)
   profile.jpg     — the original photo: fallback for old browsers, search preview
@@ -26,8 +26,15 @@ assets/
   certs/          — one image per certificate, for the viewer and the hover preview
   fonts/          — Anton, Inter, Instrument Serif; for Arabic, Tajawal, Noto Kufi
                     Arabic and Aref Ruqaa; LICENSE.txt
+404.html          — GitHub Pages' page for a missing address (English + Arabic)
+favicon.svg       — the site icon: the "M" of the nav logo, in Anton
+favicon.ico, apple-touch-icon.png, icon-192.png, icon-512.png
+                  — the same icon as PNG/ICO, for search results and home screens
+                    (built from favicon.svg by _src/icons.js)
+site.webmanifest  — names the site and points Android home screens at icon-192/512
 robots.txt, sitemap.xml, CNAME
-_src/             — sources of the CV and the link preview (not published: see below)
+_src/             — sources of the CV and the link preview (build.js), the icons
+                    (icons.js) and the GitHub profile pictures (not published: see below)
 tests/            — Playwright smoke tests (dev only; the site never loads them)
 ```
 
@@ -50,7 +57,8 @@ tests/            — Playwright smoke tests (dev only; the site never loads the
 - **Lab** — the question behind the pattern-recognition research, made
   playable: the same customers, classified by k-NN in raw units or with
   standardized features, with live leave-one-out accuracy for both. Hover to
-  see which neighbours are asked; click to add a customer.
+  see which neighbors are asked; click to add a customer. From the keyboard,
+  the arrow keys move the same probe and Enter adds a customer under it.
 - **Certificates** — 32 credentials grouped by program. Each name opens the
   certificate itself (with a mouse, it also follows the pointer down the list);
   each row links to the issuer's verification page.
@@ -123,7 +131,8 @@ How it behaves:
 The production URL is `https://mohammedawad.online/`. GitHub Pages reads the
 root `CNAME` file to attach that custom domain, while Hostinger manages its DNS.
 If the domain changes, update `CNAME`, the absolute URLs in `index.html`,
-`robots.txt`, and `sitemap.xml` together.
+`robots.txt`, and `sitemap.xml` together. Whenever the page's content changes,
+update `<lastmod>` in `sitemap.xml` to the date of that change.
 
 `index.html` carries a Content-Security-Policy that allows the one inline
 `<head>` script by its SHA-256 hash. After editing that script, recompute the
@@ -167,6 +176,10 @@ read it in order) or `_src/og-card.html` (1200 × 630), then rebuild. GitHub
 Pages does not publish folders whose names start with `_`. After changing the
 preview picture, bump the `?v=` on `og:image` and `twitter:image` in
 `index.html`, so apps that cached the old one fetch it again.
+
+The site icons come from `favicon.svg` the same way. After changing it, run
+`node _src/icons.js` to rebuild `favicon.ico` (16, 32 and 48 px),
+`apple-touch-icon.png` (180 px) and `icon-192.png` / `icon-512.png`.
 
 The pictures of the GitHub profile README ([github.com/aborezq](https://github.com/aborezq)),
 its cover, Nashrati card and section titles, in dark and light, come from
