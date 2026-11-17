@@ -189,7 +189,9 @@ The site icons come from `favicon.svg` the same way. After changing it, run
 
 The pictures of the GitHub profile README ([github.com/aborezq](https://github.com/aborezq)),
 its cover, Nashrati card and section titles, in dark and light, come from
-`_src/readme/` the same way:
+`_src/readme/` the same way; its Lab picture is taken from this page's own Lab,
+as it opens, without the hover hint. The script prints the width to show each
+title at (titles are sized by width in the README, so phones scale them):
 
 ```
 node _src/readme.js ../aborezq/assets

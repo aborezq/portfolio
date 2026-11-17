@@ -36,7 +36,10 @@
 
   .phones { position: absolute; right: 64px; top: 0; bottom: 0; display: flex; gap: 26px; align-items: center; }
   .phone {
-    width: 212px; aspect-ratio: 640 / 1316; overflow: hidden;
+    width: 212px; aspect-ratio: 640 / 1316; overflow: hidden; box-sizing: border-box;
+    /* The inset keeps each screen's title clear of the rounded corner; the
+       phone's background is the top colour of its screen. */
+    padding-top: 14px;
     border: 2px solid var(--line); border-radius: 32px;
     background: var(--surface); box-shadow: 0 30px 60px var(--shadow);
   }
@@ -52,15 +55,15 @@
     <p class="lede">AI-assisted news drafting for field reporters: record an interview, get back the transcript, the people, places and dates, and a draft to review.</p>
     <dl class="stats">
       <div><dt>My role</dt><dd>Team leader</dd></div>
-      <div><dt>Built</dt><dd>Aug – Oct 2026</dd></div>
-      <div><dt>Automated tests</dt><dd>1,500+</dd></div>
+      <div><dt>App built</dt><dd>Aug – Oct 2026</dd></div>
+      <div><dt>Mobile-app tests</dt><dd>1,500+</dd></div>
       <div><dt>Languages</dt><dd>Arabic + English</dd></div>
     </dl>
   </div>
   <div class="phones">
-    <div class="phone"><img src="../../assets/nashrati/en/reports.webp" alt=""></div>
-    <div class="phone"><img src="../../assets/nashrati/en/record.webp" alt=""></div>
-    <div class="phone"><img src="../../assets/nashrati/en/draft.webp" alt=""></div>
+    <div class="phone" style="background: #fff"><img src="../../assets/nashrati/en/reports.webp" alt=""></div>
+    <div class="phone" style="background: #0b1220"><img src="../../assets/nashrati/en/record.webp" alt=""></div>
+    <div class="phone" style="background: #fff"><img src="../../assets/nashrati/en/draft.webp" alt=""></div>
   </div>
   <script>if (new URLSearchParams(location.search).get("theme") === "light") document.documentElement.classList.add("light");</script>
 </body>
