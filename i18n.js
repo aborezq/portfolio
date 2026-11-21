@@ -228,7 +228,6 @@ window.I18N = {
     "link.source": "الشيفرة المصدرية ↖",
     "link.demo": "عرض مباشر ↖",
     "link.code": "الشيفرة ↖",
-    "link.private": "الشيفرة خاصة",
     "link.site": "الموقع ↖",
     "link.bot": "بوت Telegram ↖",
     "link.paper": "قراءة البحث <span aria-hidden=\"true\">↖</span><span class=\"sr-only\"> (تُفتح في علامة تبويب جديدة)</span>",
