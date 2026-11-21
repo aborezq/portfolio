@@ -1442,16 +1442,6 @@ html:not(.js) .js-only { display: none !important; }
   background: var(--accent-strong);
   color: var(--accent-ink);
 }
-/* A project shown without its code: said plainly, not as a dead link. */
-.project-private {
-  padding: 0.45rem 0.95rem;
-  border: 1px dashed var(--border);
-  border-radius: 99px;
-  color: var(--muted);
-  font-size: 0.88rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
 
 .projects-empty { color: var(--muted); margin-top: 1.5rem; }
 
