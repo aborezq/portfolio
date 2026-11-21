@@ -23,6 +23,8 @@ assets/
   og-card.jpg     — the picture a shared link shows (built from _src/)
   Mohammed_Awad_CV.pdf — the CV behind "Download CV" (built from _src/)
   nashrati/       — six screens of the Nashrati app (see below)
+  solar-power/    — the Solar Power website's first screen, in English and Arabic
+                    (site-en/site-ar.webp; i18n.js swaps them with the language)
   certs/          — one image per certificate, for the viewer and the hover preview
   fonts/          — Anton, Inter, Instrument Serif; for Arabic, Tajawal, Noto Kufi
                     Arabic and Aref Ruqaa; LICENSE.txt

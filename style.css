@@ -1411,6 +1411,17 @@ html:not(.js) .js-only { display: none !important; }
 .project-result dt { color: var(--accent-strong); }
 .project-result dd { color: var(--text); }
 .project-result strong { color: var(--accent-strong); font-weight: 700; }
+/* A project with a live website shows it, in the visitor's language
+   (i18n.js swaps the src). */
+.project-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.625);
+  box-shadow: var(--shadow);
+}
 
 .project-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.1rem; }
 .project-links a {

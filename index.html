@@ -510,6 +510,28 @@
 
           <ol class="work-list" id="projects-grid">
 
+            <li class="project-card reveal" data-category="systems ml">
+              <span class="work-index" aria-hidden="true"></span>
+              <div class="project-body">
+                <p class="project-label" data-i18n="psp.label">Featured · Team project · In progress</p>
+                <h4 class="project-title">Solar Power</h4>
+                <dl class="project-case-details">
+                  <div><dt data-i18n="case.problem">Problem</dt><dd data-i18n="psp.d1">Homes in Gaza that run on rooftop solar and a battery have to guess when the battery will be full and when it's safe to switch on heavy appliances, and a cloudy day catches them out.</dd></div>
+                  <div><dt data-i18n="case.mine">My contribution</dt><dd data-i18n="psp.d2">Built the Telegram bot in a team of two, while my teammate built the forecast engine: the button-based sign-up, the commands, every Arabic message and how it reads on a phone, and the webhook and Telegram client. I also set up the repository, the shared contracts, and the database schema.</dd></div>
+                  <div><dt data-i18n="case.approach">Approach</dt><dd data-i18n="psp.d3">One Cloudflare Worker on the free plan. Every morning it turns <span class="nowrap">Open-Meteo's</span> solar forecast into a plan for each home: output hour by hour, when the battery will be full, and the best time for heavy loads. One tap in the evening ("Did your battery fill today?") teaches it each home's correction factor.</dd></div>
+                  <div class="project-shot"><dt data-i18n="psp.shotT">The website</dt><dd><img src="assets/solar-power/site-en.webp" width="1280" height="800" loading="lazy" decoding="async" alt="The Solar Power website: solar panels on a Gaza rooftop at sunset, under the headline “Know your energy before your day begins.” and a button to start free on Telegram." data-i18n-attr="src:psp.shot,alt:psp.shotAlt"></dd></div>
+                </dl>
+                <ul class="project-tags" aria-label="Technologies used" data-i18n-attr="aria-label:tags.aria">
+                  <li>TypeScript</li><li>Cloudflare Workers</li><li>D1</li><li>Queues</li><li>Telegram Bot API</li><li>Open-Meteo</li><li>Vitest</li>
+                </ul>
+              </div>
+              <div class="project-links">
+                <a class="project-link--primary" href="https://solar-power-web.solarpowergaza.workers.dev/" target="_blank" rel="noopener noreferrer" aria-label="Website: Solar Power" data-i18n-attr="aria-label:aria.spSite" data-i18n="link.site">Website ↗</a>
+                <a href="https://t.me/SolarPowerGazaBot" target="_blank" rel="noopener noreferrer" aria-label="Open the Solar Power bot on Telegram" data-i18n-attr="aria-label:aria.spBot" data-i18n="link.bot">Telegram bot ↗</a>
+                <span class="project-private" data-i18n="link.private">Code is private</span>
+              </div>
+            </li>
+
             <li class="project-card reveal" data-category="web systems">
               <span class="work-index" aria-hidden="true"></span>
               <div class="project-body">
@@ -865,6 +887,7 @@
                   <li>BLoC</li>
                   <li>REST APIs</li>
                   <li>Java</li>
+                  <li>TypeScript</li>
                 </ul>
               </div>
               <div class="reveal">
